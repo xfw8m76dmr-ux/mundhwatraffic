@@ -1,3 +1,15 @@
+# robots.txt for mundhwatraffic.com
+# Last updated: 2025-11-07
+# Allow all crawlers to index the live traffic site
+
 User-agent: *
 Allow: /
+
+# Disallow internal files (if ever added)
+Disallow: /README
+Disallow: /LICENSE
+Disallow: /docs/
+Disallow: /private/
+
+# Sitemap location (important for Google indexing)
 Sitemap: https://mundhwatraffic.com/sitemap.xml
