@@ -3,17 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>🚦 Mundhwa Traffic Live | Real-Time Road View</title>
 
-  <!-- SEO meta tags -->
-  <meta name="description" content="Watch live traffic from Mundhwa Bridge, Pune. Updated in real-time with RoadX smart camera feed.">
-  <meta name="keywords" content="mundhwa traffic, pune live traffic, roadx traffic camera, mundhwa bridge camera, mundhwatraffic.com">
+  <!-- Primary Meta Tags -->
+  <title>🚦 Mundhwa Traffic Live | Real-Time Pune Bridge Camera | RoadX</title>
+  <meta name="description" content="Watch live Mundhwa Bridge traffic in Pune, India — streaming 24/7 with RoadX smart camera technology. Check real-time road conditions before you travel.">
+  <meta name="keywords" content="Mundhwa Traffic Live, Pune Live Traffic, Mundhwa Bridge Camera, Pune RoadX Traffic, Mundhwa Bridge Live Stream, RoadX Traffic Pune, Mundhwa Bridge Traffic Jam, Pune Road View">
   <meta name="author" content="RoadX Traffic Team">
-  <meta property="og:title" content="Mundhwa Traffic Live">
-  <meta property="og:description" content="Live view of Mundhwa Bridge, Pune. Stay updated with real-time road traffic.">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Mundhwa Traffic Live | Real-Time Pune Bridge Camera">
+  <meta property="og:description" content="Watch live traffic on Mundhwa Bridge, Pune. Real-time video feed powered by RoadX smart cameras.">
   <meta property="og:image" content="https://mundhwatraffic.com/assets/preview.jpg">
   <meta property="og:url" content="https://mundhwatraffic.com">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta property="og:site_name" content="Mundhwa Traffic Live">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Mundhwa Traffic Live | Real-Time Pune Road View">
+  <meta name="twitter:description" content="Check Mundhwa Bridge traffic conditions live from Pune. Real-time video stream by RoadX.">
+  <meta name="twitter:image" content="https://mundhwatraffic.com/assets/preview.jpg">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://mundhwatraffic.com/">
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
     body {
@@ -27,17 +48,30 @@
       background-color: #111;
       padding: 1rem;
       font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    main {
+      padding: 1rem;
     }
     iframe {
       width: 90%;
+      max-width: 960px;
       height: 70vh;
       border: none;
       border-radius: 12px;
       margin-top: 1rem;
     }
+    p {
+      max-width: 720px;
+      margin: 1rem auto;
+      line-height: 1.5;
+      font-size: 1rem;
+      color: #ddd;
+    }
     footer {
       margin-top: 2rem;
-      opacity: 0.7;
+      opacity: 0.8;
       font-size: 0.9rem;
       padding-bottom: 1rem;
     }
@@ -45,27 +79,78 @@
       color: #00b7ff;
       text-decoration: none;
     }
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
   <header>🚦 Live Traffic Feed – Mundhwa Bridge, Pune</header>
 
-  <!-- Replace LIVE_VIDEO_ID below -->
-  <!-- <iframe 
-    src="https://www.youtube.com/embed/sNuOAWekSdQ?autoplay=1&mute=1"
-    allowfullscreen>
-  </iframe> -->
-   <!--  test channel id ( back up ) UCVJ_tfTOk0Tj-2WLhydJypA -->
-  <!--  prod channel id UCOCdYbhwwwgNXj58pHsU1Fw -->
-  
-  <iframe
-  src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1"
-  allowfullscreen>
-</iframe>
+  <main>
+    <h1>Live Mundhwa Bridge Traffic Camera – Pune, India</h1>
+    <p>
+      Watch <strong>Mundhwa Bridge traffic live</strong> from Pune, India. 
+      Streamed in real time using <strong>RoadX smart traffic cameras</strong>. 
+      Check congestion, road conditions, and travel updates before heading out.
+    </p>
 
+    <!-- YouTube Live Stream -->
+    <iframe
+      src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1"
+      title="Mundhwa Bridge Live Traffic Camera - Pune"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+
+    <p>
+      🚗 Stay updated with <a href="https://mundhwatraffic.com">mundhwatraffic.com</a> — 
+      your local <strong>Pune live traffic</strong> camera for Mundhwa Bridge.
+    </p>
+  </main>
 
   <footer>
-    © 2025 <a href="https://mundhwatraffic.com">mundhwatraffic.com</a> | Powered by RoadX Traffic Cameras
+    © 2025 <a href="https://mundhwatraffic.com">mundhwatraffic.com</a> | Powered by <strong>RoadX Traffic Cameras</strong>
   </footer>
+
+  <!-- Structured Data: Website + LocalBusiness -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": "Mundhwa Traffic Live",
+        "url": "https://mundhwatraffic.com/",
+        "description": "Watch live traffic from Mundhwa Bridge, Pune — powered by RoadX cameras.",
+        "publisher": {
+          "@type": "Organization",
+          "name": "RoadX Traffic",
+          "url": "https://roadxtraffic.com"
+        }
+      },
+      {
+        "@type": "LocalBusiness",
+        "name": "Mundhwa Traffic Camera",
+        "image": "https://mundhwatraffic.com/assets/preview.jpg",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Pune",
+          "addressRegion": "Maharashtra",
+          "addressCountry": "IN"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 18.5372,
+          "longitude": 73.9276
+        },
+        "url": "https://mundhwatraffic.com",
+        "telephone": "+91-0000000000",
+        "openingHours": "Mo-Su 00:00-23:59",
+        "priceRange": "$"
+      }
+    ]
+  }
+  </script>
 </body>
 </html>
