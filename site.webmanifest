@@ -36,6 +36,12 @@
       "sizes": "2048x2732",
       "type": "image/png",
       "purpose": "any"
+    },
+   {
+      "src": "/assets/splash-screen.png",
+      "sizes": "2048x2732",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
