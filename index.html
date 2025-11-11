@@ -52,44 +52,71 @@
   <!-- ✅ Minimal CSS -->
   <style>
     body {
-      margin:0;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,'Inter',sans-serif;
-      background:#0b0b0b;
-      color:#fff;
-      text-align:center;
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+      background: #0b0b0b;
+      color: #fff;
+      text-align: center;
     }
     header {
-      background:#111;
-      padding:1rem;
-      font-size:1.5rem;
-      font-weight:600;
+      background: #111;
+      padding: 1rem;
+      font-size: 1.5rem;
+      font-weight: 600;
     }
-    main { padding:1rem; }
-    #yt-container { position:relative; max-width:960px; margin:1rem auto; }
-    #yt-container img { width:100%; border-radius:12px; display:block; }
+    main { padding: 1rem; }
+    #yt-container {
+      position: relative;
+      max-width: 960px;
+      margin: 1rem auto;
+      aspect-ratio: 16 / 9;
+      height: auto;
+    }
+    #yt-container iframe,
+    #yt-container img {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      display: block;
+    }
+    #yt-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      background: transparent;
+    }
     footer {
-      margin-top:2rem;
-      opacity:.8;
-      font-size:.9rem;
-      padding-bottom:1rem;
+      margin-top: 2rem;
+      opacity: .8;
+      font-size: .9rem;
+      padding-bottom: 1rem;
     }
-    a { color:#33ccff; text-decoration:none; }
-    a:hover { text-decoration:underline; }
-    h1,h2,h3 { font-weight:600; }
-    h1 { font-size:1.8rem; margin-bottom:.3rem; }
-    h2 { font-size:1.3rem; margin-top:2rem; }
+    a { color: #33ccff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    h1, h2, h3 { font-weight: 600; }
+    h1 { font-size: 1.8rem; margin-bottom: .3rem; }
+    h2 { font-size: 1.3rem; margin-top: 2rem; }
     button {
-      background:#00b7ff;
-      color:#fff;
-      border:none;
-      padding:.5rem 1rem;
-      border-radius:6px;
-      cursor:pointer;
+      background: #00b7ff;
+      color: #fff;
+      border: none;
+      padding: .5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
     }
-    button:hover { opacity:0.9; }
+    button:hover { opacity: 0.9; }
   </style>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-TVFRVGXERM',{anonymize_ip:true});</script>
 
+  <!-- ✅ Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-TVFRVGXERM', { anonymize_ip: true });
+  </script>
 </head>
 
 <body>
@@ -99,15 +126,15 @@
     <h1>Live Mundhwa Bridge Traffic Camera – Pune, India</h1>
     <p>Watch <strong>Mundhwa Bridge traffic live</strong> from Pune, India. Streamed in real time using <strong>RoadX smart traffic cameras</strong>.</p>
 
-    <!-- ✅ Lazy YouTube Iframe (Working Embed) -->
+    <!-- ✅ Stable Lazy YouTube Iframe -->
     <div id="yt-container">
-      <img src="https://img.youtube.com/vi/sNuOAWekSdQ/hqdefault.jpg"
-           alt="Mundhwa Bridge Live Traffic Pune Preview"
-           width="960" height="540"
-           loading="lazy"
-           fetchpriority="high"
-           style="border-radius:12px;">
-      <div id="yt-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+      <img
+        src="https://img.youtube.com/vi/sNuOAWekSdQ/hqdefault.jpg"
+        alt="Mundhwa Bridge Live Traffic Pune Preview"
+        width="960" height="540"
+        loading="lazy"
+        fetchpriority="high">
+      <div id="yt-overlay">
         <span style="font-size:1.1rem;opacity:0.8;background:#0008;padding:.5rem 1rem;border-radius:6px;">▶ Play Live Feed</span>
       </div>
     </div>
@@ -140,7 +167,7 @@
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
           loading="lazy"
-          style="width:100%;height:70vh;border:none;border-radius:12px;">
+          style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;">
         </iframe>
       `;
     });
@@ -155,7 +182,7 @@
       }));
     } else { shareBtn.style.display = "none"; }
 
-    // --- Dynamic title refresh ---
+    // --- Dynamic title refresh (non-blocking) ---
     function updateMeta() {
       const t = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
       document.title = `🚦 Mundhwa Traffic Live | Updated ${t}`;
