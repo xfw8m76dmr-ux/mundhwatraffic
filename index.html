@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>🚦 Mundhwa Traffic Live | Real-Time Pune Bridge Camera</title>
   <meta name="description" content="Watch live Mundhwa Bridge traffic in Pune, India — streaming 24/7 with RoadX smart camera technology. Check road conditions before you travel." />
-  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
 
   <!-- ✅ OpenGraph -->
   <meta property="og:title" content="🚦 Mundhwa Traffic Live | Pune" />
@@ -39,155 +39,143 @@
     "name": "Mundhwa Bridge Traffic Live",
     "url": "https://mundhwatraffic.com",
     "description": "Live traffic feed from Mundhwa Bridge, Pune — streaming 24/7 with RoadX smart cameras.",
-    "location": {
-      "@type": "Place",
-      "name": "Mundhwa Bridge, Pune, Maharashtra, India"
-    },
+    "location": {"@type": "Place","name": "Mundhwa Bridge, Pune, Maharashtra, India"},
     "startDate": "2025-01-01T00:00:00+05:30",
     "isLiveBroadcast": true,
     "inLanguage": "en-IN"
   }
   </script>
 
-  <!-- ✅ Minimal CSS -->
   <style>
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
-      background: #0b0b0b;
-      color: #fff;
-      text-align: center;
-    }
-    header {
-      background: #111;
-      padding: 1rem;
-      font-size: 1.5rem;
-      font-weight: 600;
-    }
-    main { padding: 1rem; }
-    #yt-container {
-      position: relative;
-      max-width: 960px;
-      margin: 1rem auto;
-      aspect-ratio: 16 / 9;
-      height: auto;
-    }
-    #yt-container iframe,
-    #yt-container img {
-      width: 100%;
-      height: 100%;
-      border-radius: 12px;
-      display: block;
-    }
-    #yt-overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      background: transparent;
-    }
-    footer {
-      margin-top: 2rem;
-      opacity: .8;
-      font-size: .9rem;
-      padding-bottom: 1rem;
-    }
-    a { color: #33ccff; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    h1, h2, h3 { font-weight: 600; }
-    h1 { font-size: 1.8rem; margin-bottom: .3rem; }
-    h2 { font-size: 1.3rem; margin-top: 2rem; }
-    button {
-      background: #00b7ff;
-      color: #fff;
-      border: none;
-      padding: .5rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover { opacity: 0.9; }
+    body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:#0b0b0b;color:#fff;text-align:center}
+    header{background:#111;padding:1rem;font-size:1.5rem;font-weight:600}
+    main{padding:1rem}
+    #yt-container{position:relative;max-width:960px;margin:1rem auto;aspect-ratio:16/9;height:auto}
+    #yt-container iframe,#yt-container img{width:100%;height:100%;border-radius:12px;display:block}
+    #yt-overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent}
+    footer{margin-top:2rem;opacity:.8;font-size:.9rem;padding-bottom:1rem}
+    a{color:#33ccff;text-decoration:none}
+    a:hover{text-decoration:underline}
+    h1,h2,h3{font-weight:600}
+    h1{font-size:1.8rem;margin-bottom:.3rem}
+    h2{font-size:1.3rem;margin-top:2rem}
+    button{background:#00b7ff;color:#fff;border:none;padding:.5rem 1rem;border-radius:6px;cursor:pointer}
+    button:hover{opacity:.9}
   </style>
 
   <!-- ✅ Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-TVFRVGXERM', { anonymize_ip: true });
+    window.dataLayer=window.dataLayer||[];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js',new Date());
+    gtag('config','G-TVFRVGXERM',{anonymize_ip:true});
+  </script>
+
+  <!-- ✅ OneSignal v16 SDK -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",  // ✅ your real app ID
+        notifyButton: { enable: true },
+      });
+      window.OneSignal = OneSignal; // make accessible globally
+    });
   </script>
 </head>
 
 <body>
-  <header>🚦 Live Traffic Feed – Mundhwa Bridge, Pune</header>
+<header>🚦 Live Traffic Feed – Mundhwa Bridge, Pune</header>
 
-  <main>
-    <h1>Live Mundhwa Bridge Traffic Camera – Pune, India</h1>
-    <p>Watch <strong>Mundhwa Bridge traffic live</strong> from Pune, India. Streamed in real time using <strong>RoadX smart traffic cameras</strong>.</p>
+<main>
+  <h1>Live Mundhwa Bridge Traffic Camera – Pune, India</h1>
+  <p>Watch <strong>Mundhwa Bridge traffic live</strong> from Pune, India. Streamed in real time using <strong>RoadX smart traffic cameras</strong>.</p>
 
-    <!-- ✅ Stable Lazy YouTube Iframe -->
-    <div id="yt-container">
-      <img
-        src="https://img.youtube.com/vi/sNuOAWekSdQ/hqdefault.jpg"
-        alt="Mundhwa Bridge Live Traffic Pune Preview"
-        width="960" height="540"
-        loading="lazy"
-        fetchpriority="high">
-      <div id="yt-overlay">
-        <span style="font-size:1.1rem;opacity:0.8;background:#0008;padding:.5rem 1rem;border-radius:6px;">▶ Play Live Feed</span>
-      </div>
+  <!-- ✅ Stable Lazy YouTube Iframe -->
+  <div id="yt-container">
+    <img src="https://img.youtube.com/vi/sNuOAWekSdQ/hqdefault.jpg"
+         alt="Mundhwa Bridge Live Traffic Pune Preview"
+         width="960" height="540" loading="lazy" fetchpriority="high">
+    <div id="yt-overlay">
+      <span style="font-size:1.1rem;opacity:.8;background:#0008;padding:.5rem 1rem;border-radius:6px;">▶ Play Live Feed</span>
     </div>
+  </div>
 
-    <section id="share-section">
-      <h2>📢 Share Live Feed</h2>
-      <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
-        <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Bridge%20Traffic%20Live!%20https://mundhwatraffic.com" target="_blank" rel="noopener">WhatsApp</a>
-        <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Bridge%20Traffic%20Live!&url=https://mundhwatraffic.com" target="_blank" rel="noopener">X (Twitter)</a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com" target="_blank" rel="noopener">Facebook</a>
-        <button id="nativeShareBtn">📱 Share</button>
-      </div>
-    </section>
+  <!-- ✅ Share -->
+  <section id="share-section">
+    <h2>📢 Share Live Feed</h2>
+    <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
+      <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Bridge%20Traffic%20Live!%20https://mundhwatraffic.com" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Bridge%20Traffic%20Live!&url=https://mundhwatraffic.com" target="_blank" rel="noopener">X (Twitter)</a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com" target="_blank" rel="noopener">Facebook</a>
+      <button id="nativeShareBtn">📱 Share</button>
+    </div>
+  </section>
 
-    <div id="viewer-count" style="margin-top:1rem;font-size:.95rem;opacity:.8;">🔴 Live now on YouTube</div>
-    <p style="font-size:.9rem;opacity:.7;margin-top:1rem;">⚡ Thousands of Pune drivers check this before heading out. Don’t get stuck — bookmark it now!</p>
-  </main>
+  <!-- ✅ Reminder Section -->
+  <section id="reminder-section">
+    <h2>⏰ Set Traffic Reminder</h2>
+    <p>Get a push notification later to re-check the bridge traffic.</p>
+    <input type="number" id="reminder-min" placeholder="Minutes" style="padding:.5rem;width:6rem;">
+    <button id="setReminderBtn">Remind Me Later</button>
+    <p id="reminder-msg" style="opacity:.8;margin-top:.5rem;"></p>
+  </section>
 
-  <footer>© 2025 <a href="https://mundhwatraffic.com">mundhwatraffic.com</a> | Powered by <strong>RoadX Traffic Cameras</strong></footer>
+  <div id="viewer-count" style="margin-top:1rem;font-size:.95rem;opacity:.8;">🔴 Live now on YouTube</div>
+  <p style="font-size:.9rem;opacity:.7;margin-top:1rem;">⚡ Thousands of Pune drivers check this before heading out. Don’t get stuck — bookmark it now!</p>
+</main>
 
-  <script>
-    // --- Lazy load YouTube iframe when clicked ---
-    const ytOverlay = document.getElementById("yt-overlay");
-    ytOverlay.addEventListener("click", () => {
-      const container = document.getElementById("yt-container");
-      container.innerHTML = `
-        <iframe
-          src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1"
-          title="Mundhwa Bridge Live Traffic Camera - Pune"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          loading="lazy"
-          style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;">
-        </iframe>
-      `;
-    });
+<footer>© 2025 <a href="https://mundhwatraffic.com">mundhwatraffic.com</a> | Powered by <strong>RoadX Traffic Cameras</strong></footer>
 
-    // --- Native share ---
-    const shareBtn = document.getElementById("nativeShareBtn");
-    if (navigator.share) {
-      shareBtn.addEventListener("click", () => navigator.share({
-        title: "🚦 Mundhwa Traffic Live | Pune",
-        text: "Check Mundhwa Bridge Traffic Live before leaving!",
-        url: "https://mundhwatraffic.com"
-      }));
-    } else { shareBtn.style.display = "none"; }
+<script>
+  // --- Lazy YouTube ---
+  document.getElementById("yt-overlay").addEventListener("click",()=>{
+    const c=document.getElementById("yt-container");
+    c.innerHTML=`<iframe src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1"
+      title="Mundhwa Bridge Live Traffic Camera - Pune"
+      allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+      allowfullscreen loading="lazy"
+      style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;"></iframe>`;
+  });
 
-    // --- Dynamic title refresh (non-blocking) ---
-    function updateMeta() {
-      const t = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
-      document.title = `🚦 Mundhwa Traffic Live | Updated ${t}`;
+  // --- Native Share ---
+  const shareBtn=document.getElementById("nativeShareBtn");
+  if(navigator.share){
+    shareBtn.addEventListener("click",()=>navigator.share({
+      title:"🚦 Mundhwa Traffic Live | Pune",
+      text:"Check Mundhwa Bridge Traffic Live before leaving!",
+      url:"https://mundhwatraffic.com"
+    }));
+  }else{shareBtn.style.display="none";}
+
+  // --- Title Refresh ---
+  function updateMeta(){
+    const t=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+    document.title=`🚦 Mundhwa Traffic Live | Updated ${t}`;
+  }
+  updateMeta();setInterval(updateMeta,300000);
+
+  // --- Reminder Button ---
+  const btn=document.getElementById("setReminderBtn");
+  const msg=document.getElementById("reminder-msg");
+  btn.addEventListener("click",async ()=>{
+    const mins=parseInt(document.getElementById("reminder-min").value);
+    if(!mins||mins<=0){msg.textContent="Enter valid minutes.";return;}
+    msg.textContent=`✅ Reminder set for ${mins} minute(s).`;
+    if(window.OneSignal && OneSignal.sendSelfNotification){
+      OneSignal.sendSelfNotification(
+        "🚦 Time to re-check Mundhwa Bridge Traffic!",
+        "See live camera now on mundhwatraffic.com",
+        "https://mundhwatraffic.com",
+        "https://mundhwatraffic.com/favicon-512.png",
+        {delay:mins*60}
+      );
+    } else {
+      msg.textContent="⚠️ Notifications not ready yet. Please allow notifications first.";
     }
-    updateMeta(); setInterval(updateMeta, 300000);
-  </script>
+  });
+</script>
 </body>
 </html>
