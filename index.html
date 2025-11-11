@@ -78,10 +78,10 @@
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal) {
       await OneSignal.init({
-        appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",  // ✅ your real app ID
+        appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",  // ✅ your real App ID
         notifyButton: { enable: true },
       });
-      window.OneSignal = OneSignal; // make accessible globally
+      window.OneSignal = OneSignal; // Make available globally
     });
   </script>
 </head>
@@ -115,13 +115,13 @@
   </section>
 
   <!-- ✅ Reminder Section -->
-  <!-- <section id="reminder-section">
+  <section id="reminder-section">
     <h2>⏰ Set Traffic Reminder</h2>
     <p>Get a push notification later to re-check the bridge traffic.</p>
     <input type="number" id="reminder-min" placeholder="Minutes" style="padding:.5rem;width:6rem;">
     <button id="setReminderBtn">Remind Me Later</button>
     <p id="reminder-msg" style="opacity:.8;margin-top:.5rem;"></p>
-  </section> -->
+  </section>
 
   <div id="viewer-count" style="margin-top:1rem;font-size:.95rem;opacity:.8;">🔴 Live now on YouTube</div>
   <p style="font-size:.9rem;opacity:.7;margin-top:1rem;">⚡ Thousands of Pune drivers check this before heading out. Don’t get stuck — bookmark it now!</p>
@@ -130,7 +130,7 @@
 <footer>© 2025 <a href="https://mundhwatraffic.com">mundhwatraffic.com</a> | Powered by <strong>RoadX Traffic Cameras</strong></footer>
 
 <script>
-  // --- Lazy YouTube ---
+  // --- Lazy load YouTube ---
   document.getElementById("yt-overlay").addEventListener("click",()=>{
     const c=document.getElementById("yt-container");
     c.innerHTML=`<iframe src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1"
@@ -157,23 +157,51 @@
   }
   updateMeta();setInterval(updateMeta,300000);
 
-  // --- Reminder Button ---
+  // --- Reminder Button with OneSignal + Safari Fallback ---
   const btn=document.getElementById("setReminderBtn");
   const msg=document.getElementById("reminder-msg");
-  btn.addEventListener("click",async ()=>{
+
+  async function isPushReady(){
+    if(!window.OneSignal||!OneSignal.Notifications) return false;
+    try{
+      const permission=await OneSignal.Notifications.permission;
+      return permission==='granted';
+    }catch{return false;}
+  }
+
+  async function showLocalNotification(title,body,delaySec=0){
+    const reg=await navigator.serviceWorker.getRegistration();
+    if(!reg){alert("No service worker found!");return;}
+    setTimeout(()=>{
+      reg.showNotification(title,{body,icon:"/favicon-512.png",badge:"/favicon-32x32.png"});
+    },delaySec*1000);
+  }
+
+  btn.addEventListener("click",async()=>{
     const mins=parseInt(document.getElementById("reminder-min").value);
     if(!mins||mins<=0){msg.textContent="Enter valid minutes.";return;}
-    msg.textContent=`✅ Reminder set for ${mins} minute(s).`;
-    if(window.OneSignal && OneSignal.sendSelfNotification){
-      OneSignal.sendSelfNotification(
-        "🚦 Time to re-check Mundhwa Bridge Traffic!",
+    msg.textContent=`Setting reminder for ${mins} minute(s)...`;
+
+    await new Promise(res=>setTimeout(res,1000));
+    const ready=await isPushReady();
+
+    if(!ready){
+      msg.textContent="⚠️ Please click 'Allow Notifications' first.";
+      if(window.OneSignal&&OneSignal.Notifications.requestPermission){
+        await OneSignal.Notifications.requestPermission();
+      }
+      return;
+    }
+
+    try{
+      // Safari fallback: local scheduled push via ServiceWorker
+      showLocalNotification("🚦 Time to re-check Mundhwa Bridge Traffic!",
         "See live camera now on mundhwatraffic.com",
-        "https://mundhwatraffic.com",
-        "https://mundhwatraffic.com/favicon-512.png",
-        {delay:mins*60}
-      );
-    } else {
-      msg.textContent="⚠️ Notifications not ready yet. Please allow notifications first.";
+        mins*60);
+      msg.textContent=`✅ Reminder set for ${mins} minute(s).`;
+    }catch(e){
+      console.error(e);
+      msg.textContent="⚠️ Unable to schedule notification.";
     }
   });
 </script>
