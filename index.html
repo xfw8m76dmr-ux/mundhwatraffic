@@ -4,25 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- iOS Splash Screen -->
+  <!-- iOS Splash Screen -->
   <link rel="apple-touch-startup-image" href="/assets/splash-screen.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="google-site-verification" content="TrwQzRUgiAfGgSsFesN65G_leP7b9Hmud4UTekHkyEA" />
-    <!-- Favicons -->
+
+  <!-- Favicons -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="apple-touch-icon" href="/favicon-512.png">
   <link rel="shortcut icon" href="/favicon-512.png">
-
   <link rel="manifest" href="/site.webmanifest">
 
-  
-  <!-- For Android / Windows Tiles -->
+  <!-- Theme -->
   <meta name="theme-color" content="#0b0b0b">
   <meta name="msapplication-TileColor" content="#0b0b0b">
   <meta name="msapplication-TileImage" content="/favicon-512.png">
-
 
   <!-- Primary Meta Tags -->
   <title>🚦 Mundhwa Traffic Live | Real-Time Pune Bridge Camera | 24x7 Live Status</title>
@@ -31,28 +29,24 @@
   <meta name="author" content="RoadX Traffic Team">
   <meta name="robots" content="index, follow">
 
-  <!-- Open Graph / Social Sharing -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="🚦 Mundhwa Traffic Live | Pune">
   <meta property="og:description" content="Watch Mundhwa Bridge traffic live from Pune. Real-time RoadX camera feed updated 24/7.">
   <meta property="og:image" content="https://mundhwatraffic.com/assets/og-preview.png">
   <meta property="og:url" content="https://mundhwatraffic.com">
   <meta property="og:site_name" content="Mundhwa Traffic Live">
-  
-  <!-- Twitter Card -->
+
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="🚦 Mundhwa Traffic Live | Pune">
   <meta name="twitter:description" content="Watch real-time Mundhwa Bridge traffic camera feed powered by RoadX.">
   <meta name="twitter:image" content="https://mundhwatraffic.com/assets/og-preview.png">
 
-
-  <!-- Canonical URL -->
+  <!-- Canonical -->
   <link rel="canonical" href="https://mundhwatraffic.com/">
 
-  <!-- Favicon -->
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-
-  <!-- Preconnect & Fonts -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://www.youtube.com">
@@ -129,9 +123,17 @@
       line-height: 48px;
     }
   </style>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-TVFRVGXERM',{anonymize_ip:true});</script>
 
+  <!-- Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM"></script>
+  <script>
+    window.dataLayer=window.dataLayer||[];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js',new Date());
+    gtag('config','G-TVFRVGXERM',{anonymize_ip:true});
+  </script>
 </head>
+
 <body>
   <header>🚦 Live Traffic Feed – Mundhwa Bridge, Pune</header>
 
@@ -145,20 +147,28 @@
 
     <!-- Lazy-load YouTube Embed -->
     <div id="yt-container">
-        <img
-          src="https://img.youtube.com/vi/sNuOAWekSdQ/hqdefault.jpg"
-          alt="Mundhwa Bridge Live Traffic Pune Preview"
-          width="960"
-          height="540"
-          loading="lazy"
-          fetchpriority="high"
-          onclick="loadVideo()">
+      <img src="https://img.youtube.com/vi/sNuOAWekSdQ/hqdefault.jpg"
+           alt="Mundhwa Bridge Live Traffic Pune Preview"
+           width="960" height="540" loading="lazy"
+           fetchpriority="high" onclick="loadVideo()">
       <button onclick="loadVideo()">▶</button>
     </div>
 
-    <p>
-      🚗 Stay updated with <a href="https://mundhwatraffic.com">mundhwatraffic.com</a> — 
-      your local <strong>Pune live traffic</strong> camera for Mundhwa Bridge.
+    <!-- Share Section -->
+    <section id="share-section" style="margin-top:1.5rem;">
+      <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">📢 Share Live Feed</h3>
+      <div id="share-buttons" style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
+        <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Bridge%20Traffic%20Live!%20https://mundhwatraffic.com" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Bridge%20Traffic%20Live%20Feed%20|%20Check%20before%20you%20leave!&url=https://mundhwatraffic.com" target="_blank" rel="noopener">X (Twitter)</a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com" target="_blank" rel="noopener">Facebook</a>
+        <button id="nativeShareBtn" style="background:#00b7ff;color:white;border:none;padding:0.5rem 1rem;border-radius:6px;cursor:pointer;">📱 Share</button>
+      </div>
+    </section>
+
+    <div id="viewer-count" style="margin-top:1rem;font-size:0.95rem;opacity:0.8;">🔴 Live now on YouTube</div>
+
+    <p style="font-size:0.9rem;opacity:0.7;margin-top:1rem;">
+      ⚡ Thousands of Pune drivers check this before heading out. Don’t get stuck — bookmark it now!
     </p>
   </main>
 
@@ -178,9 +188,36 @@
           style="width:100%;height:70vh;border:none;border-radius:12px;">
         </iframe>`;
     }
+
+    // Native share support
+    const shareBtn = document.getElementById('nativeShareBtn');
+    if (navigator.share) {
+      shareBtn.addEventListener('click', () => {
+        navigator.share({
+          title: '🚦 Mundhwa Traffic Live | Pune',
+          text: 'Check Mundhwa Bridge Traffic Live before leaving!',
+          url: 'https://mundhwatraffic.com'
+        });
+      });
+    } else {
+      shareBtn.style.display = 'none';
+    }
+
+    // Dynamic meta update for freshness
+    function updateMetaTags() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      const newTitle = `🚦 Mundhwa Traffic Live | Updated ${timeStr}`;
+      const newDesc = `Real-time Mundhwa Bridge Traffic in Pune — updated at ${timeStr}. Watch road status live.`;
+      document.title = newTitle;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', newDesc);
+    }
+    updateMetaTags();
+    setInterval(updateMetaTags, 300000); // every 5 min
   </script>
 
-  <!-- Structured Data: Website + LocalBusiness -->
+  <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -194,7 +231,8 @@
           "@type": "Organization",
           "name": "RoadX Traffic",
           "url": "https://roadxtraffic.com"
-        }
+        },
+        "sameAs": ["https://www.youtube.com/@PuneMundhwaTrafficLive"]
       },
       {
         "@type": "LocalBusiness",
