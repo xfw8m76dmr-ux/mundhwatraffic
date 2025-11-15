@@ -56,12 +56,3 @@ jobs:
   </amp-story>
 </body>
 </html>
-EOF
-
-    - name: Commit & push
-      run: |
-        git config --local user.email "github-actions@github.com"
-        git config --local user.name "GitHub Actions"
-        git add stories/
-        git commit -m "Add web story ${{ steps.ts.outputs.TS }}" || echo "No changes"
-        git push
