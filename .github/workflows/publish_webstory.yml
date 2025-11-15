@@ -2,8 +2,8 @@ name: Publish Web Story Hourly
 
 on:
   schedule:
-    - cron: "10 * * * *"
-  workflow_dispatch:
+    - cron: "10 * * * *"   # Runs every hour at the 10th minute
+  workflow_dispatch:        # Allows manual run
 
 jobs:
   build:
@@ -25,6 +25,8 @@ jobs:
       run: |
         TITLE="Mundhwa Live — $(date -u +'%Y-%m-%d %H:00 UTC')"
         VIDEO_URL="https://mundhwatraffic.com/assets/mundhwa_live_short.mp4"
+
+        mkdir -p stories
 
         cat <<EOF > stories/${{ steps.ts.outputs.TS }}.html
 <!doctype html>
@@ -57,3 +59,11 @@ jobs:
 </body>
 </html>
 EOF
+
+    - name: Commit & push
+      run: |
+        git config --local user.email "github-actions@github.com"
+        git config --local user.name "GitHub Actions"
+        git add stories/
+        git commit -m "Add web story ${{ steps.ts.outputs.TS }}" || echo "No changes"
+        git push
