@@ -2,33 +2,30 @@ name: Publish Web Story Hourly
 
 on:
   schedule:
-    - cron: "10 * * * *"   # Runs every hour at the 10th minute
-  workflow_dispatch:        # Allows manual run
+    - cron: "10 * * * *"
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-    - name: Set timestamp
-      id: ts
-      run: echo "TS=$(date -u +'%Y%m%d%H')" >> $GITHUB_OUTPUT
+      - name: Download latest video
+        run: |
+          curl -s -f -o latest.mp4 https://mundhwatraffic.com/assets/mundhwa_live_short.mp4 || echo "Warning: failed to download video"
 
-    - name: Download latest video
-      run: |
-        curl -s -o latest.mp4 https://mundhwatraffic.com/assets/mundhwa_live_short.mp4
+      - name: Create AMP Web Story
+        run: |
+          TS=$(date -u +'%Y%m%d%H')
+          TITLE="Mundhwa Live — $(date -u +'%Y-%m-%d %H:00 UTC')"
+          VIDEO_URL="https://mundhwatraffic.com/assets/mundhwa_live_short.mp4"
 
-    - name: Create AMP Web Story
-      run: |
-        TITLE="Mundhwa Live — $(date -u +'%Y-%m-%d %H:00 UTC')"
-        VIDEO_URL="https://mundhwatraffic.com/assets/mundhwa_live_short.mp4"
+          mkdir -p stories
 
-        mkdir -p stories
-
-        cat <<EOF > stories/${{ steps.ts.outputs.TS }}.html
+          cat > stories/${TS}.html <<EOF
 <!doctype html>
 <html amp>
 <head>
@@ -60,10 +57,11 @@ jobs:
 </html>
 EOF
 
-    - name: Commit & push
-      run: |
-        git config --local user.email "github-actions@github.com"
-        git config --local user.name "GitHub Actions"
-        git add stories/
-        git commit -m "Add web story ${{ steps.ts.outputs.TS }}" || echo "No changes"
-        git push
+      - name: Commit & push
+        run: |
+          TS=$(date -u +'%Y%m%d%H')
+          git config --local user.email "github-actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add stories/
+          git commit -m "Add web story ${TS}" || echo "No changes"
+          git push
