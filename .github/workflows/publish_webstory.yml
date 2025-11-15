@@ -1,0 +1,67 @@
+name: Publish Web Story Hourly
+
+on:
+  schedule:
+    - cron: "10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set timestamp
+      id: ts
+      run: echo "TS=$(date -u +'%Y%m%d%H')" >> $GITHUB_OUTPUT
+
+    - name: Download latest video
+      run: |
+        curl -s -o latest.mp4 https://mundhwatraffic.com/assets/mundhwa_live_short.mp4
+
+    - name: Create AMP Web Story
+      run: |
+        TITLE="Mundhwa Live — $(date -u +'%Y-%m-%d %H:00 UTC')"
+        VIDEO_URL="https://mundhwatraffic.com/assets/mundhwa_live_short.mp4"
+
+        cat <<EOF > stories/${{ steps.ts.outputs.TS }}.html
+<!doctype html>
+<html amp>
+<head>
+  <meta charset="utf-8">
+  <title>$TITLE</title>
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <script async custom-element="amp-story" src="https://cdn.ampproject.org/v0/amp-story-1.0.js"></script>
+</head>
+<body>
+  <amp-story standalone
+     title="$TITLE"
+     publisher="MundhwaTraffic"
+     publisher-logo-src="/assets/logo.png"
+     poster-portrait-src="/assets/default_poster.jpg">
+
+    <amp-story-page id="page1">
+      <amp-story-grid-layer template="fill">
+        <amp-video autoplay loop layout="responsive"
+          width="720" height="1280"
+          poster="/assets/default_poster.jpg"
+          src="$VIDEO_URL">
+        </amp-video>
+      </amp-story-grid-layer>
+    </amp-story-page>
+
+  </amp-story>
+</body>
+</html>
+EOF
+
+    - name: Commit & push
+      run: |
+        git config --local user.email "github-actions@github.com"
+        git config --local user.name "GitHub Actions"
+        git add stories/
+        git commit -m "Add web story ${{ steps.ts.outputs.TS }}" || echo "No changes"
+        git push
