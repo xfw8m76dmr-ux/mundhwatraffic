@@ -1,5 +1,4 @@
 name: Publish Web Story Hourly
-
 on:
   schedule:
     - cron: "10 * * * *"
