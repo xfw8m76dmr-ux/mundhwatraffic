@@ -1,4 +1,5 @@
 name: Publish Web Story Hourly
+
 on:
   schedule:
     - cron: "10 * * * *"
@@ -7,24 +8,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Download latest video
-        run: |
-          curl -s -f -o latest.mp4 https://mundhwatraffic.com/assets/mundhwa_live_short.mp4 || echo "Warning: failed to download video"
-
-      - name: Create AMP Web Story (Python)
+      - name: Create AMP Web Story
         run: |
           python3 - <<'PY'
           from datetime import datetime
           ts = datetime.utcnow().strftime('%Y%m%d%H')
           title = f"Mundhwa Live — {datetime.utcnow().strftime('%Y-%m-%d %H:00 UTC')}"
           video_url = "https://mundhwatraffic.com/assets/mundhwa_live_short.mp4"
-
-          content = f"""<!doctype html>
+          html = f"""<!doctype html>
           <html amp>
           <head>
             <meta charset="utf-8">
@@ -35,12 +30,11 @@ jobs:
           </head>
           <body>
             <amp-story standalone
-               title="{title}"
-               publisher="MundhwaTraffic"
-               publisher-logo-src="/assets/logo.png"
-               poster-portrait-src="/assets/default_poster.jpg">
-
-              <amp-story-page id="page1">
+              title="{title}"
+              publisher="MundhwaTraffic"
+              publisher-logo-src="/assets/logo.png"
+              poster-portrait-src="/assets/default_poster.jpg">
+              <amp-story-page id="p1">
                 <amp-story-grid-layer template="fill">
                   <amp-video autoplay loop layout="responsive"
                     width="720" height="1280"
@@ -49,21 +43,19 @@ jobs:
                   </amp-video>
                 </amp-story-grid-layer>
               </amp-story-page>
-
             </amp-story>
           </body>
           </html>"""
           import os
           os.makedirs("stories", exist_ok=True)
-          with open(f"stories/{ts}.html","w", encoding="utf-8") as f:
-              f.write(content)
-          print(f"Created stories/{ts}.html")
+          with open(f"stories/{ts}.html", "w") as f:
+              f.write(html)
           PY
 
-      - name: Commit & push
+      - name: Commit changes
         run: |
-          git config --local user.email "github-actions@github.com"
-          git config --local user.name "GitHub Actions"
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
           git add stories/
-          git commit -m "Add web story $(date -u +'%Y%m%d%H')" || echo "No changes"
+          git commit -m "Add story" || true
           git push
