@@ -36,7 +36,6 @@
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-TVFRVGXERM', { anonymize_ip: true });
-    
   </script>
 
   <!-- ✅ OneSignal v16 -->
@@ -48,6 +47,10 @@
         appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
         notifyButton: { enable: true },
       });
+
+      // Automatically prompt for push permission
+      OneSignal.Slidedown.promptPush();
+
       window.OneSignal = OneSignal;
     });
   </script>
@@ -131,30 +134,64 @@
 
   <footer>© 2025 <a href="https://mundhwatraffic.com">mundhwatraffic.com</a> | Powered by <strong>RoadX Traffic Cameras</strong></footer>
 
+  <!-- 🚦 Final JS -->
   <script defer>
-    document.addEventListener("DOMContentLoaded",()=>{
-      const overlay=document.getElementById("yt-overlay");
-      overlay.addEventListener("click",()=>{
-        const c=document.getElementById("yt-container");
-        c.innerHTML=`<iframe src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1" allow="autoplay; encrypted-media" allowfullscreen loading="lazy" style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;"></iframe>`;
+    document.addEventListener("DOMContentLoaded", () => {
+
+      /* 🎥 YouTube Live Player */
+      const overlay = document.getElementById("yt-overlay");
+      overlay.addEventListener("click", () => {
+        const c = document.getElementById("yt-container");
+        c.innerHTML = `<iframe src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1" allow="autoplay; encrypted-media" allowfullscreen loading="lazy" style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;"></iframe>`;
       });
 
-      const shareBtn=document.getElementById("nativeShareBtn");
-      if(navigator.share){
-        shareBtn.addEventListener("click",()=>navigator.share({
-          title:"🚦 Mundhwa Traffic Live | Pune",
-          text:"Check Mundhwa Bridge Traffic Live before leaving!",
-          url:"https://mundhwatraffic.com"
+      /* 📱 Native Sharing */
+      const shareBtn = document.getElementById("nativeShareBtn");
+      if (navigator.share) {
+        shareBtn.addEventListener("click", () => navigator.share({
+          title: "🚦 Mundhwa Traffic Live | Pune",
+          text: "Check Mundhwa Bridge Traffic Live before leaving!",
+          url: "https://mundhwatraffic.com"
         }));
-      } else shareBtn.style.display="none";
+      } else {
+        shareBtn.style.display = "none";
+      }
 
-      const btn=document.getElementById("setReminderBtn");
-      const msg=document.getElementById("reminder-msg");
-      btn.addEventListener("click",async()=>{
-        const mins=parseInt(document.getElementById("reminder-min").value);
-        if(!mins||mins<=0){msg.textContent="⚠️ Enter valid minutes.";return;}
-        msg.textContent=`⏳ Reminder set for ${mins} minute(s).`;
+      /* ⏰ Reminder System */
+      const btn = document.getElementById("setReminderBtn");
+      const msg = document.getElementById("reminder-msg");
+
+      btn.addEventListener("click", async () => {
+        const mins = parseInt(document.getElementById("reminder-min").value);
+
+        if (!mins || mins <= 0) {
+          msg.textContent = "⚠️ Enter valid minutes.";
+          return;
+        }
+
+        msg.textContent = "⏳ Scheduling your reminder...";
+
+        try {
+          const res = await fetch("https://mundhwatrafficreminder.k7jzqg8c4k.workers.dev", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ minutes: mins })
+          });
+
+          const data = await res.json();
+
+          if (data.status === "ok") {
+            msg.textContent = `⏰ Reminder scheduled for ${mins} minute(s)!`;
+          } else {
+            msg.textContent = "❌ Failed to schedule notification.";
+          }
+
+        } catch (e) {
+          msg.textContent = "❌ Something went wrong. Please try again.";
+          console.error(e);
+        }
       });
+
     });
   </script>
 </body>
