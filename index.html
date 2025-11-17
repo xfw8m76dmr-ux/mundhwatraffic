@@ -164,93 +164,94 @@
 
   <footer>© 2025 <a href="https://mundhwatraffic.com">mundhwatraffic.com</a> | Powered by <strong>RoadX Traffic Cameras</strong></footer>
 
-  <!-- JS -->
-  <script defer>
-    document.addEventListener("DOMContentLoaded", () => {
+<script defer>
+document.addEventListener("DOMContentLoaded", () => {
 
-      /* 🎥 Load YouTube Live on click */
-      document.getElementById("yt-overlay").addEventListener("click", () => {
-        document.getElementById("yt-container").innerHTML =
-        `<iframe src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1"
-        allow="autoplay; encrypted-media" allowfullscreen loading="lazy"
-        style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;"></iframe>`;
-      });
+  /* 🎥 Load YouTube Live on click */
+  document.getElementById("yt-overlay").addEventListener("click", () => {
+    document.getElementById("yt-container").innerHTML =
+    `<iframe src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1"
+      allow="autoplay; encrypted-media" allowfullscreen loading="lazy"
+      style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;"></iframe>`;
+  });
 
-      /* 📱 Native share */
-      const shareBtn = document.getElementById("nativeShareBtn");
-      if (navigator.share) {
-        shareBtn.addEventListener("click", () => navigator.share({
-          title: "🚦 Mundhwa Traffic Live | Pune",
-          text: "Check Mundhwa Bridge Traffic Live before leaving!",
-          url: "https://mundhwatraffic.com"
-        }));
-      } else {
-        shareBtn.style.display = "none";
-      }
-
-      /* ⏰ Reminder System with Push Subscription Check */
-const msg = document.getElementById("reminder-msg");
-const reminderBtn = document.getElementById("setReminderBtn");
-
-reminderBtn.addEventListener("click", async () => {
-
-  const mins = parseInt(document.getElementById("reminder-min").value);
-
-  if (!mins || mins <= 0) {
-    msg.textContent = "⚠️ Enter valid minutes.";
-    return;
+  /* 📱 Native share */
+  const shareBtn = document.getElementById("nativeShareBtn");
+  if (navigator.share) {
+    shareBtn.addEventListener("click", () => navigator.share({
+      title: "🚦 Mundhwa Traffic Live | Pune",
+      text: "Check Mundhwa Bridge Traffic Live before leaving!",
+      url: "https://mundhwatraffic.com"
+    }));
+  } else {
+    shareBtn.style.display = "none";
   }
 
-  msg.textContent = "🔍 Checking notification permissions...";
+  /* ⏰ Reminder System with Push Subscription Check */
+  const msg = document.getElementById("reminder-msg");
+  const reminderBtn = document.getElementById("setReminderBtn");
 
-  try {
-    // Ensure OneSignal has loaded
-    const OS = window.OneSignal;
-    await OS.initialized;
+  reminderBtn.addEventListener("click", async () => {
 
-    // Check if the user is subscribed
-    let isSubscribed = await OS.User.PushSubscription.isSubscribed();
+    const mins = parseInt(document.getElementById("reminder-min").value);
 
-    // If not subscribed → prompt user right now
-    if (!isSubscribed) {
-      msg.textContent = "🛎 Please allow notifications to set a reminder...";
-      
-      await OS.Slidedown.promptPush();        // Show permission prompt
-      await new Promise(res => setTimeout(res, 1500)); // Wait for user action
-
-      isSubscribed = await OS.User.PushSubscription.isSubscribed();
-    }
-
-    // Still not subscribed after prompt?
-    if (!isSubscribed) {
-      msg.textContent = "❌ Reminder failed — you must allow notifications.";
+    if (!mins || mins <= 0) {
+      msg.textContent = "⚠️ Enter valid minutes.";
       return;
     }
 
-    // If subscribed → schedule the reminder
-    msg.textContent = "⏳ Scheduling your reminder...";
+    msg.textContent = "🔍 Checking notification permissions...";
 
-    const res = await fetch("https://mundhwatrafficreminder.k7jzqg8c4k.workers.dev", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ minutes: mins })
-    });
+    try {
+      // Ensure OneSignal has loaded
+      const OS = window.OneSignal;
+      await OS.initialized;
 
-    const data = await res.json();
+      // Check if user is subscribed
+      let isSubscribed = await OS.User.PushSubscription.isSubscribed();
 
-    if (data.recipients >= 1 || data.id) {
-      msg.textContent = `⏰ Reminder set for ${mins} minute(s)!`;
-    } else {
-      msg.textContent = "❌ No subscribed device found.";
+      // Not subscribed → prompt now
+      if (!isSubscribed) {
+        msg.textContent = "🛎 Please allow notifications to set a reminder...";
+        
+        await OS.Slidedown.promptPush();
+        await new Promise(res => setTimeout(res, 1500));
+
+        isSubscribed = await OS.User.PushSubscription.isSubscribed();
+      }
+
+      // If still not subscribed → stop
+      if (!isSubscribed) {
+        msg.textContent = "❌ Reminder failed — you must allow notifications.";
+        return;
+      }
+
+      // User is subscribed → schedule reminder
+      msg.textContent = "⏳ Scheduling your reminder...";
+
+      const res = await fetch("https://mundhwatrafficreminder.k7jzqg8c4k.workers.dev", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ minutes: mins })
+      });
+
+      const data = await res.json();
+
+      if (data.recipients >= 1 || data.id) {
+        msg.textContent = `⏰ Reminder set for ${mins} minute(s)!`;
+      } else {
+        msg.textContent = "❌ No subscribed device found.";
+      }
+
+    } catch (e) {
+      console.error(e);
+      msg.textContent = "❌ Something went wrong. Please try again.";
     }
+  });
 
-  } catch (e) {
-    console.error(e);
-    msg.textContent = "❌ Something went wrong. Please try again.";
-  }
-});
+}); // <-- FIXED: closes DOMContentLoaded
+</script> <!-- FIXED: properly closed -->
 
-  </script>
 
 </body>
 </html>
