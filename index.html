@@ -23,39 +23,68 @@
   <link rel="apple-touch-icon" href="/favicon-512.png" />
   <link rel="manifest" href="/site.webmanifest" />
 
-  <!-- ⚡ Performance: DNS Preconnect -->
+  <!-- ⚡ Performance -->
   <link rel="preconnect" href="https://www.youtube.com" />
   <link rel="preconnect" href="https://cdn.onesignal.com" />
   <link rel="preconnect" href="https://www.googletagmanager.com" />
-  <link rel="dns-prefetch" href="https://www.youtube.com" />
 
-  <!-- ✅ Google Analytics -->
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-TVFRVGXERM', { anonymize_ip: true });
   </script>
 
-  <!-- ✅ OneSignal v16 -->
+  <!-- OneSignal v16 -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
+    function isSafari() {
+      return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    }
+
     window.OneSignalDeferred = window.OneSignalDeferred || [];
-    OneSignalDeferred.push(async function(OneSignal) {
-      await OneSignal.init({
+    window.OneSignalDeferred.push(async function(OS) {
+
+      await OS.init({
         appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
         notifyButton: { enable: true },
+        slidedown: {
+          prompts: [{
+            type: "push",
+            autoPrompt: false,
+            text: {
+              actionMessage: "Get live traffic alerts instantly!",
+              acceptButton: "Allow",
+              cancelButton: "No Thanks"
+            }
+          }]
+        }
       });
 
-      // Automatically prompt for push permission
-      OneSignal.Slidedown.promptPush();
+      window.OneSignal = OS;
 
-      window.OneSignal = OneSignal;
+      if (isSafari()) {
+        console.warn("Safari does not support Web Push without APNs.");
+        return;
+      }
+
+      await OS.initialized;
+
+      const subscribed = await OS.User.PushSubscription.isSubscribed();
+
+      if (!subscribed) {
+        setTimeout(() => { OS.Slidedown.promptPush(); }, 1500);
+      }
+
+      OS.User.PushSubscription.getId().then(id => {
+        console.log("OneSignal Player ID:", id);
+      });
     });
   </script>
 
-  <!-- ✅ Critical CSS -->
+  <!-- Critical CSS -->
   <style>
     body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:#0b0b0b;color:#fff;text-align:center;line-height:1.6}
     header{background:#111;padding:1rem;font-size:1.5rem;font-weight:600;border-bottom:1px solid #222}
@@ -79,7 +108,7 @@
     footer{margin-top:2rem;opacity:.8;font-size:.9rem;padding-bottom:1rem}
   </style>
 
-  <!-- ✅ Structured Data -->
+  <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -96,6 +125,7 @@
     "thumbnailUrl": "https://mundhwatraffic.com/assets/og-preview.png"
   }
   </script>
+
 </head>
 
 <body>
@@ -107,16 +137,16 @@
 
     <div id="yt-container" aria-label="Live traffic camera feed">
       <span class="live-badge">LIVE</span>
-      <img src="https://raw.githubusercontent.com/xfw8m76dmr-ux/mundhwatraffic/refs/heads/main/favicon-512.png" alt="Mundhwa Bridge live traffic preview" width="960" height="540" loading="lazy" fetchpriority="high">
+      <img src="https://raw.githubusercontent.com/xfw8m76dmr-ux/mundhwatraffic/refs/heads/main/favicon-512.png" alt="Mundhwa Bridge live traffic preview">
       <div id="yt-overlay"><span>▶ Play Live Feed</span></div>
     </div>
 
     <section>
       <h2>📢 Share Live Feed</h2>
       <div class="share-buttons">
-        <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Bridge%20Traffic%20Live!%20https://mundhwatraffic.com" target="_blank" rel="noopener">WhatsApp</a>
-        <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Bridge%20Traffic%20Live!&url=https://mundhwatraffic.com" target="_blank" rel="noopener">X (Twitter)</a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Bridge%20Traffic%20Live!%20https://mundhwatraffic.com" target="_blank">WhatsApp</a>
+        <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Bridge%20Traffic%20Live!&url=https://mundhwatraffic.com" target="_blank">X (Twitter)</a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com" target="_blank">Facebook</a>
         <button id="nativeShareBtn">📱 Share</button>
       </div>
     </section>
@@ -134,18 +164,19 @@
 
   <footer>© 2025 <a href="https://mundhwatraffic.com">mundhwatraffic.com</a> | Powered by <strong>RoadX Traffic Cameras</strong></footer>
 
-  <!-- 🚦 Final JS -->
+  <!-- JS -->
   <script defer>
     document.addEventListener("DOMContentLoaded", () => {
 
-      /* 🎥 YouTube Live Player */
-      const overlay = document.getElementById("yt-overlay");
-      overlay.addEventListener("click", () => {
-        const c = document.getElementById("yt-container");
-        c.innerHTML = `<iframe src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1" allow="autoplay; encrypted-media" allowfullscreen loading="lazy" style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;"></iframe>`;
+      /* 🎥 Load YouTube Live on click */
+      document.getElementById("yt-overlay").addEventListener("click", () => {
+        document.getElementById("yt-container").innerHTML =
+        `<iframe src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1"
+        allow="autoplay; encrypted-media" allowfullscreen loading="lazy"
+        style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;"></iframe>`;
       });
 
-      /* 📱 Native Sharing */
+      /* 📱 Native share */
       const shareBtn = document.getElementById("nativeShareBtn");
       if (navigator.share) {
         shareBtn.addEventListener("click", () => navigator.share({
@@ -157,11 +188,9 @@
         shareBtn.style.display = "none";
       }
 
-      /* ⏰ Reminder System */
-      const btn = document.getElementById("setReminderBtn");
+      /* ⏰ Reminder system */
       const msg = document.getElementById("reminder-msg");
-
-      btn.addEventListener("click", async () => {
+      document.getElementById("setReminderBtn").addEventListener("click", async () => {
         const mins = parseInt(document.getElementById("reminder-min").value);
 
         if (!mins || mins <= 0) {
@@ -180,19 +209,19 @@
 
           const data = await res.json();
 
-          if (data.status === "ok") {
-            msg.textContent = `⏰ Reminder scheduled for ${mins} minute(s)!`;
+          if (data.recipients >= 1 || data.id) {
+            msg.textContent = `⏰ Reminder scheduled for ${mins} min!`;
           } else {
-            msg.textContent = "❌ Failed to schedule notification.";
+            msg.textContent = "❌ No subscribed device found.";
           }
 
-        } catch (e) {
-          msg.textContent = "❌ Something went wrong. Please try again.";
-          console.error(e);
+        } catch {
+          msg.textContent = "❌ Something went wrong.";
         }
       });
 
     });
   </script>
+
 </body>
 </html>
