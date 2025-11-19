@@ -1,2 +1,14 @@
 /stories/:file.html   /stories/:file.html   200!
 /:page.html           /:page.html           200!
+/w    https://mundhwatraffic.com/?utm_source=whatsapp&utm_medium=share&utm_campaign=traffic     301
+/i    https://mundhwatraffic.com/?utm_source=instagram&utm_medium=bio&utm_campaign=traffic      301
+/t    https://mundhwatraffic.com/?utm_source=telegram&utm_medium=channel&utm_campaign=traffic   301
+/y    https://mundhwatraffic.com/?utm_source=youtube&utm_medium=description&utm_campaign=live_stream   301
+/x    https://mundhwatraffic.com/?utm_source=twitter&utm_medium=social&utm_campaign=x_tweets    301
+
+/m    https://mundhwatraffic.com/?utm_source=whatsapp&utm_medium=share&utm_campaign=morning_traffic    301
+/e    https://mundhwatraffic.com/?utm_source=whatsapp&utm_medium=share&utm_campaign=evening_commute    301
+/a    https://mundhwatraffic.com/?utm_source=whatsapp&utm_medium=share&utm_campaign=accident_alert     301
+
+/k    https://mundhwatraffic.com/?utm_source=whatsapp&utm_medium=share&utm_campaign=kharadi_pune       301
+/p    https://mundhwatraffic.com/?utm_source=whatsapp&utm_medium=share&utm_campaign=pcmc_pune          301
