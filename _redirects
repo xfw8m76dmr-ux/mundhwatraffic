@@ -1,5 +1,4 @@
-/stories/:file.html   /stories/:file.html   200!
-/:page.html           /:page.html           200!
+# --- Priority Redirects (must be FIRST) ---
 /w    https://mundhwatraffic.com/?utm_source=whatsapp&utm_medium=share&utm_campaign=traffic     301
 /i    https://mundhwatraffic.com/?utm_source=instagram&utm_medium=bio&utm_campaign=traffic      301
 /t    https://mundhwatraffic.com/?utm_source=telegram&utm_medium=channel&utm_campaign=traffic   301
@@ -12,3 +11,7 @@
 
 /k    https://mundhwatraffic.com/?utm_source=whatsapp&utm_medium=share&utm_campaign=kharadi_pune       301
 /p    https://mundhwatraffic.com/?utm_source=whatsapp&utm_medium=share&utm_campaign=pcmc_pune          301
+
+# --- Your existing passthrough rules (MOVE TO BOTTOM) ---
+/stories/:file.html    /stories/:file.html    200!
+/:page.html            /:page.html            200!
