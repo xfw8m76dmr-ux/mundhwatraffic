@@ -49,69 +49,7 @@
     gtag('config', 'G-TVFRVGXERM', { anonymize_ip:true });
   </script>
 
-  <script>
-    /* ---------------------------------
-   WEEKDAY TRAFFIC ALERT SCHEDULER
----------------------------------- */
 
-const saveBtn = document.getElementById("saveScheduleBtn");
-const removeBtn = document.getElementById("removeAlertsBtn");
-const scheduleStatus = document.getElementById("scheduleStatus");
-
-saveBtn.addEventListener("click", async () => {
-  const selected = [...document.querySelectorAll(".alertTime:checked")]
-    .map(input => input.value);
-
-  if (selected.length === 0) {
-    scheduleStatus.textContent = "Please select at least one time.";
-    return;
-  }
-
-  scheduleStatus.textContent = "Requesting permission…";
-
-  const permission = await OneSignal.Notifications.requestPermission();
-  if (permission !== "granted") {
-    scheduleStatus.textContent = "Notifications blocked.";
-    return;
-  }
-
-  await OneSignal.User.pushSubscription.optIn();
-
-  const playerId = await OneSignal.User.pushSubscription.id();
-  if (!playerId) {
-    scheduleStatus.textContent = "Subscription error.";
-    return;
-  }
-
-  scheduleStatus.textContent = "Saving schedule…";
-
-  const res = await fetch("https://mundhwatrafficreminder.k7jzqg8c4k.workers.dev/setSchedule", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ player_id: playerId, times: selected })
-  });
-
-  const json = await res.json();
-  if (json.error) scheduleStatus.textContent = "Error: " + json.error;
-  else scheduleStatus.textContent = "✅ Schedule saved!";
-});
-
-
-removeBtn.addEventListener("click", async () => {
-  scheduleStatus.textContent = "Removing…";
-
-  const playerId = await OneSignal.User.pushSubscription.id();
-
-  const res = await fetch("https://mundhwatrafficreminder.k7jzqg8c4k.workers.dev/remove", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ player_id: playerId })
-  });
-
-  scheduleStatus.textContent = "🗑️ All notifications removed.";
-});
-
-  </script>
 
   <!-- OneSignal -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
@@ -169,29 +107,6 @@ removeBtn.addEventListener("click", async () => {
     <button id="installBtn" style="display:none;">📱 Add to Home Screen</button>
   </div>
 
-
-  <section id="schedule-alerts" style="margin-top:2rem;">
-  <h2>⏰ Choose Traffic Alert Schedule</h2>
-
-  <p>Receive alerts on weekdays only (Mon–Fri).</p>
-
-  <label>
-    <input type="checkbox" class="alertTime" value="10:00">
-    10:00 AM
-  </label><br>
-
-  <label>
-    <input type="checkbox" class="alertTime" value="16:00">
-    4:00 PM
-  </label><br>
-
-  <!-- Add more time options here if needed -->
-
-  <button id="saveScheduleBtn" style="margin-top:1rem;">Save Schedule</button>
-  <button id="removeAlertsBtn" style="margin-left:1rem;">Remove All Notifications</button>
-
-  <p id="scheduleStatus" style="margin-top:0.7rem; opacity:0.8;"></p>
-</section>
 
 
   <div id="viewer-count" style="margin-top:1rem;opacity:.8;">🔴 Live now on YouTube</div>
