@@ -40,6 +40,12 @@
     #ios-tip{background:#222;border:1px solid #444;border-radius:8px;padding:.6rem 1rem;margin:1rem auto;max-width:400px;font-size:.85rem;opacity:.85;display:none;}
   </style>
 
+  <script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/service-worker.js");
+  }
+</script>
+
   <!-- ✅ Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM"></script>
   <script>
