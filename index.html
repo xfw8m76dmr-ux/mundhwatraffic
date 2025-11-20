@@ -75,7 +75,7 @@
          alt="Mundhwa Bridge Live Traffic Pune Preview"
          width="960" height="540" loading="lazy" fetchpriority="high">
     <div id="yt-overlay">
-      <span style="font-size:3.1rem;opacity:.8;background:#0008;padding:.5rem 1rem;border-radius:6px;">▶ Play Live Feed</span>
+      <span style="font-size:2.1rem;opacity:.8;background:#0008;padding:.5rem 1rem;border-radius:6px;">▶ Play Live Feed</span>
     </div>
   </div>
 
@@ -83,9 +83,9 @@
   <section id="share-section">
     <h2>📢 Share Live Feed</h2>
     <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
-      <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Bridge%20Traffic%20Live!%20https://mundhwatraffic.com" target="_blank">WhatsApp</a>
-      <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Bridge%20Traffic%20Live!&url=https://mundhwatraffic.com" target="_blank">X (Twitter)</a>
-      <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com" target="_blank">Facebook</a>
+      <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Bridge%20Traffic%20Live!%20https://mundhwatraffic.com/w" target="_blank">WhatsApp</a>
+      <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Bridge%20Traffic%20Live!&url=https://mundhwatraffic.com/x" target="_blank">X (Twitter)</a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com/f" target="_blank">Facebook</a>
       <button id="nativeShareBtn">📱 Share</button>
     </div>
   </section>
@@ -143,18 +143,29 @@ if (navigator.share) {
 }
 
 /* ---------------------------------
-   BOOKMARK BUTTON
+   BOOKMARK BUTTON — FIXED FOR ANDROID/iOS/DESKTOP
 ---------------------------------- */
 const bookmarkBtn = document.getElementById('bookmarkBtn');
 const bookmarkHelp = document.getElementById('bookmarkHelp');
 const shortcut = document.getElementById('shortcut');
 
-const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+const ua = navigator.userAgent.toLowerCase();
+const isIOS = /iphone|ipad|ipod/.test(ua);
+const isAndroid = /android/.test(ua);
+const isDesktopMac = navigator.platform.toUpperCase().includes("MAC");
+const isDesktopWin = navigator.platform.toUpperCase().includes("WIN");
 
+/* Correct bookmark/Add-to-home-screen text */
 if (isIOS) {
   shortcut.innerText = "Share → Add to Home Screen";
+} else if (isAndroid) {
+  shortcut.innerText = "Menu ⋮ → Add to Home Screen";
+} else if (isDesktopMac) {
+  shortcut.innerText = "Cmd + D";
+} else if (isDesktopWin) {
+  shortcut.innerText = "Ctrl + D";
 } else {
-  shortcut.innerText = navigator.platform.includes("Mac") ? "Cmd + D" : "Ctrl + D";
+  shortcut.innerText = "Ctrl + D";
 }
 
 bookmarkBtn.addEventListener("click", () => {
