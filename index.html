@@ -46,6 +46,24 @@
   }
 </script>
 
+  <script>
+  let deferredPrompt;
+  const btn = document.getElementById("installBtn");
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    btn.style.display = "inline-block";
+  });
+
+  btn.addEventListener("click", () => {
+    btn.style.display = "none";
+    deferredPrompt.prompt();
+    deferredPrompt = null;
+  });
+</script>
+
+  
   <!-- ✅ Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM"></script>
   <script>
@@ -128,7 +146,15 @@
     <span id="shortcut"></span>  
     <strong>to bookmark this page.</strong>
   </p>
+
+      
 </section>
+ <div style="display:flex;justify-content:center;">
+    <button id="installBtn" style="display:none; padding:10px 20px; border-radius:8px;">
+  📱 Add to Home Screen
+</button>
+</section>
+    
 
 
     <!-- <div id="ios-tip">
