@@ -61,6 +61,23 @@
       window.OneSignal = OneSignal;
     });
   </script>
+
+  <script>
+  const btn = document.getElementById('bookmarkBtn');
+  const help = document.getElementById('bookmarkHelp');
+  const shortcut = document.getElementById('shortcut');
+
+  // Detect platform shortcut
+  shortcut.innerText = navigator.platform.toUpperCase().includes('MAC')
+    ? "Cmd + D"
+    : "Ctrl + D";
+
+  btn.addEventListener('click', () => {
+    // Chrome/Firefox desktop do not allow programmatic bookmarks anymore
+    help.style.display = "block";
+  });
+</script>
+
 </head>
 
 <body>
@@ -87,6 +104,26 @@
         <button id="nativeShareBtn">📱 Share</button>
       </div>
     </section>
+
+    <section id="bookmark-section" style="margin-top:2rem;">
+  <h2>🔖 Add to Bookmarks</h2>
+  <p style="text-align:center;">Quickly access Mundhwa Traffic Live anytime!</p>
+
+  <div style="display:flex;justify-content:center;">
+    <button id="bookmarkBtn"
+      style="padding:0.6rem 1.2rem;font-size:1rem;border-radius:8px;cursor:pointer;">
+      ⭐ Add to Bookmarks
+    </button>
+  </div>
+
+  <!-- Fallback instructions -->
+  <p id="bookmarkHelp" style="display:none;text-align:center;margin-top:1rem;font-size:0.9rem;">
+    📌 <strong>Press</strong>  
+    <span id="shortcut"></span>  
+    <strong>to bookmark this page.</strong>
+  </p>
+</section>
+
 
     <!-- <div id="ios-tip">
       📱 iPhone users: Tap <strong>Share → Add to Home Screen</strong> to enable push alerts for live traffic updates.
