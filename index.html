@@ -69,6 +69,7 @@
 
 <main>
 
+  <!-- YouTube Lazy Preview -->
   <div id="yt-container">
     <img src="https://mundhwatraffic.com/assets/Unknown.jpg"
          alt="Mundhwa Bridge Live Traffic Pune Preview"
@@ -78,7 +79,7 @@
     </div>
   </div>
 
-  <!-- SHARE SECTION -->
+  <!-- SHARE -->
   <section id="share-section">
     <h2>📢 Share Live Feed</h2>
     <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
@@ -89,7 +90,7 @@
     </div>
   </section>
 
-  <!-- BOOKMARK SECTION -->
+  <!-- BOOKMARK -->
   <section id="bookmark-section">
     <h2>🔖 Add to Bookmarks</h2>
     <p>Quickly access Mundhwa Traffic Live anytime!</p>
@@ -99,7 +100,7 @@
     </p>
   </section>
 
-  <!-- A2HS INSTALL BUTTON -->
+  <!-- ANDROID A2HS BUTTON -->
   <div style="margin-top:1rem;">
     <button id="installBtn" style="display:none;">📱 Add to Home Screen</button>
   </div>
@@ -111,10 +112,12 @@
 <footer>© 2025 <a href="/">mundhwatraffic.com</a> | Powered by <strong>RoadX Traffic Cameras</strong></footer>
 
 <!-- =============================== -->
-<!--           SCRIPTS               -->
+<!--             SCRIPTS             -->
 <!-- =============================== -->
 <script>
-/* Lazy YouTube loader */
+/* ---------------------------------
+   LAZY YOUTUBE
+---------------------------------- */
 document.getElementById("yt-overlay").addEventListener("click", () => {
   document.getElementById("yt-container").innerHTML =
     `<iframe src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1"
@@ -123,7 +126,9 @@ document.getElementById("yt-overlay").addEventListener("click", () => {
       style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;"></iframe>`;
 });
 
-/* Native Share */
+/* ---------------------------------
+   NATIVE SHARE
+---------------------------------- */
 const nativeShare = document.getElementById("nativeShareBtn");
 if (navigator.share) {
   nativeShare.addEventListener("click", () => {
@@ -133,23 +138,36 @@ if (navigator.share) {
       url:"https://mundhwatraffic.com"
     });
   });
-} else { nativeShare.style.display = "none"; }
+} else {
+  nativeShare.style.display = "none";
+}
 
-/* Bookmark Button */
-const bookmarkBtn = document.getElementById("bookmarkBtn");
-const bookmarkHelp = document.getElementById("bookmarkHelp");
-const shortcut = document.getElementById("shortcut");
-shortcut.innerText = navigator.platform.includes("Mac") ? "Cmd + D" : "Ctrl + D";
+/* ---------------------------------
+   BOOKMARK BUTTON
+---------------------------------- */
+const bookmarkBtn = document.getElementById('bookmarkBtn');
+const bookmarkHelp = document.getElementById('bookmarkHelp');
+const shortcut = document.getElementById('shortcut');
+
+const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+
+if (isIOS) {
+  shortcut.innerText = "Share → Add to Home Screen";
+} else {
+  shortcut.innerText = navigator.platform.includes("Mac") ? "Cmd + D" : "Ctrl + D";
+}
 
 bookmarkBtn.addEventListener("click", () => {
   bookmarkHelp.style.display = "block";
 });
 
-/* A2HS - Add to Home Screen */
+/* ---------------------------------
+   ANDROID ADD TO HOME SCREEN
+---------------------------------- */
 let deferredPrompt;
 const installBtn = document.getElementById("installBtn");
 
-window.addEventListener("beforeinstallprompt", e => {
+window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
   installBtn.style.display = "inline-block";
@@ -158,12 +176,61 @@ window.addEventListener("beforeinstallprompt", e => {
 installBtn.addEventListener("click", () => {
   installBtn.style.display = "none";
   deferredPrompt.prompt();
+  deferredPrompt = null;
 });
 
-/* Register Service Worker */
+/* ---------------------------------
+   SERVICE WORKER
+---------------------------------- */
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/service-worker.js");
 }
+
+/* ---------------------------------
+   iOS ADD-TO-HOME-SCREEN POPUP
+---------------------------------- */
+(function() {
+  const popup = document.createElement("div");
+  popup.id = "iosInstallPopup";
+  popup.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="/apple-touch-icon.png" width="40" height="40" style="border-radius:8px;">
+      <div style="text-align:left;">
+        <strong>Add to Home Screen</strong><br>
+        Tap <span style="font-size:1.2rem;">⬆️</span> then <b>Add to Home Screen</b>
+      </div>
+    </div>
+  `;
+
+  popup.style.cssText = `
+    display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:#111; color:#fff; padding:14px 18px; border-radius:14px;
+    font-size:0.95rem; z-index:9999; width:85%; max-width:300px;
+    box-shadow:0 8px 20px #0007; opacity:0; transition:opacity 0.4s ease;
+  `;
+
+  document.body.appendChild(popup);
+
+  const isIOSDevice = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches
+                    || window.navigator.standalone === true;
+
+  if (!isIOSDevice) return;
+  if (isStandalone) return;
+  if (localStorage.getItem("a2hs_shown")) return;
+
+  setTimeout(() => {
+    popup.style.display = "block";
+    setTimeout(() => popup.style.opacity = "1", 50);
+  }, 2000);
+
+  setTimeout(() => {
+    popup.style.opacity = "0";
+    setTimeout(() => popup.style.display = "none", 400);
+  }, 10000);
+
+  localStorage.setItem("a2hs_shown", "yes");
+})();
 </script>
 
 </body>
