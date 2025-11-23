@@ -23,137 +23,143 @@
   <link rel="icon" href="/favicon-32x32.png" sizes="32x32" />
   <link rel="apple-touch-icon" href="/favicon-512.png" />
   <link rel="manifest" href="/site.webmanifest" />
-<!-- GA -->
-  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-TVFRVGXERM', { anonymize_ip:true });
-  </script> -->
-<!-- Preload to force browser to fetch faster (helps iOS WebViews) -->
+
+<!-- Preload GA -->
 <link rel="preload" href="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM" as="script">
 
-<!-- Main GA loader -->
 <script defer>
-  // Universal safe dataLayer bootstrap
   window.dataLayer = window.dataLayer || [];
   function gtag(){ dataLayer.push(arguments); }
 
-  // Bootstrap queue – runs even if gtag.js loads late
   gtag('js', new Date());
   gtag('config', 'G-TVFRVGXERM', {
     anonymize_ip: true,
-    transport_type: 'beacon',  // more reliable on FB iOS browser
+    transport_type: 'beacon',
     send_page_view: true
   });
 
-  // Dynamically inject GA with timeout + fallback
   (function loadGA(){
     var g = document.createElement('script');
     g.src = "https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM";
     g.async = true;
-
     g.onerror = function(){
-      console.warn("GA failed to load, retrying...");
+      console.warn("GA retry...");
       setTimeout(loadGA, 1500);
     };
-
     document.head.appendChild(g);
   })();
 </script>
-  <style>
-    body {
-      margin:0;
-      font-family:system-ui,Inter,sans-serif;
-      background:#0b0b0b;
-      color:#fff;
-      text-align:center;
-    }
 
-    header {
-      padding:1.2rem 0 0.5rem;
-      font-size:1.6rem;
-      font-weight:600;
-    }
+<style>
+  body {
+    margin:0;
+    font-family:system-ui,Inter,sans-serif;
+    background:#0b0b0b;
+    color:#fff;
+    text-align:center;
+  }
 
-    main { padding:1rem; }
+  header {
+    padding:1.2rem 0 .2rem;
+    font-size:1.6rem;
+    font-weight:600;
+  }
 
-    /* VIDEO */
-    #yt-container {
-      position:relative;
-      max-width:960px;
-      margin:1rem auto;
-      aspect-ratio:16/9;
-      background:black;
-    }
-    #yt-container iframe,
-    #yt-container img {
-      width:100%;
-      height:100%;
-      border-radius:12px;
-      display:block;
-    }
-    #yt-overlay {
-      position:absolute;
-      top:0; left:0;
-      width:100%; height:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      background:transparent;
-    }
+  #subtitle {
+    margin-top:.2rem;
+    opacity:.85;
+    font-size:1rem;
+  }
 
-    /* SHARE ROW */
-    #share-icons {
-      display:flex;
-      justify-content:center;
-      gap:1.1rem;
-      margin-top:1.2rem;
-    }
-    #share-icons img {
-      width:44px;
-      height:44px;
-      cursor:pointer;
-    }
+  main { padding:1rem; }
 
-    /* BUTTON */
-    .primary-btn {
-      margin-top:1.4rem;
-      background:#1d87ff;
-      color:#fff;
-      border:none;
-      padding:.85rem 2rem;
-      border-radius:12px;
-      font-size:1.1rem;
-      font-weight:600;
-      display:inline-flex;
-      align-items:center;
-      gap:0.5rem;
-      cursor:pointer;
-    }
-    .primary-btn img {
-      width:20px;
-      height:20px;
-    }
+  /* VIDEO */
+  #yt-container {
+    position:relative;
+    max-width:960px;
+    margin:1.2rem auto;
+    aspect-ratio:16/9;
+    background:black;
+  }
+  #yt-container iframe,
+  #yt-container img {
+    width:100%;
+    height:100%;
+    border-radius:12px;
+    display:block;
+  }
+  #yt-overlay {
+    position:absolute;
+    top:0; left:0;
+    width:100%; height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+  }
 
-    footer {
-      opacity:.8;
-      font-size:.9rem;
-      margin-top:2rem;
-      padding-bottom:1rem;
-    }
-  </style>
+  #yt-overlay span {
+    font-size:1.35rem;
+    opacity:.9;
+    background:#0007;
+    padding:.55rem 1.25rem;
+    border-radius:10px;
+    backdrop-filter:blur(4px);
+  }
 
-  
-  
+  /* SHARE ROW */
+  #share-icons {
+    display:flex;
+    justify-content:center;
+    gap:.85rem;
+    margin-top:1rem;
+  }
+  #share-icons img {
+    width:38px;
+    height:38px;
+    cursor:pointer;
+  }
+
+  /* BUTTON */
+  .primary-btn {
+    margin-top:1.4rem;
+    background:#1d87ff;
+    color:#fff;
+    border:none;
+    padding:.85rem 2rem;
+    border-radius:12px;
+    font-size:1.1rem;
+    font-weight:600;
+    display:inline-flex;
+    align-items:center;
+    gap:0.5rem;
+    cursor:pointer;
+  }
+  .primary-btn img {
+    width:20px;
+    height:20px;
+  }
+
+  #viewer-count {
+    margin-top:1.5rem;
+    opacity:.9;
+    font-size:1rem;
+  }
+
+  footer {
+    opacity:.8;
+    font-size:.9rem;
+    margin-top:2rem;
+    padding-bottom:1rem;
+  }
+</style>
 
 </head>
 
 <body>
 
 <header>🚦 Live Traffic View – Mundhwa Bridge, Pune</header>
+<div id="subtitle">Watch real-time traffic before you start your trip.</div>
 
 <main>
 
@@ -164,28 +170,29 @@
          width="960" height="540"
          loading="lazy" fetchpriority="high">
     <div id="yt-overlay">
-      <span style="font-size:2rem;opacity:.8;background:#0008;padding:.5rem 1rem;border-radius:6px;">▶ Play Live</span>
+      <span>▶ Play Live</span>
     </div>
   </div>
 
-  <!-- SHARE ICONS -->
-<section>
-    <h2>📢 Share MundhwaTraffic with someone stuck in traffic 🚗⚠️</h2>
+  <!-- SHARE -->
+  <section>
+    <h2 style="margin-top:1.4rem;">📢 Share MundhwaTraffic with someone stuck in traffic 🚗⚠️</h2>
     <div id="share-icons">
-      <div>
-            <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Traffic%20Live%20https://mundhwatraffic.com/w"
-         target="_blank"><img src="/assets/icons/whatsapp.svg"></a>
-  
-      <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Traffic%20Live&url=https://mundhwatraffic.com/x"
-         target="_blank"><img src="/assets/icons/x.svg"></a>
-  
-      <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com/f"
-         target="_blank"><img src="/assets/icons/facebook.svg"></a>
-  
+      <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Traffic%20Live%20https://mundhwatraffic.com/w" target="_blank">
+        <img src="/assets/icons/whatsapp.svg">
+      </a>
+
+      <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Traffic%20Live&url=https://mundhwatraffic.com/x" target="_blank">
+        <img src="/assets/icons/x.svg">
+      </a>
+
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com/f" target="_blank">
+        <img src="/assets/icons/facebook.svg">
+      </a>
+
       <img id="nativeShareBtn" src="/assets/icons/share.svg">
     </div>
-  </div>
-</section>
+  </section>
 
   <!-- ADD TO HOME -->
   <button class="primary-btn" id="bookmarkBtn">
@@ -193,24 +200,22 @@
     Add to Home
   </button>
 
-  <!-- HELP TEXT -->
   <p id="bookmarkHelp" style="display:none;margin-top:0.8rem;opacity:.9;"></p>
 
-  <div id="viewer-count" style="margin-top:1.5rem;opacity:.85;">🔴 Live on YouTube</div>
+  <div id="viewer-count">🔴 Live on YouTube</div>
 
-  <!-- Hidden Android prompt -->
-  <button id="installBtn" class="primary-btn" style="display:none;margin-top:1rem;">📱 Add to Home Screen</button>
+  <button id="installBtn" class="primary-btn" style="display:none;margin-top:1.2rem;">
+    📱 Add to Home Screen
+  </button>
 
 </main>
 
 <footer>
-  © 2025 <a href="/">mundhwatraffic.com</a> |
+  © 2025 <a href="/" style="color:#9cc6ff">mundhwatraffic.com</a> |
   Powered by <strong>RoadX Traffic Cameras</strong>
 </footer>
 
-<!-- =============================== -->
-<!--           SCRIPTS              -->
-<!-- =============================== -->
+<!-- SCRIPTS -->
 <script>
 /* YOUTUBE */
 document.getElementById("yt-overlay").addEventListener("click", () => {
