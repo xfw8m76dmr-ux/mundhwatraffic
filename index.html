@@ -109,13 +109,45 @@
   </style>
 
   <!-- GA -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM"></script>
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-TVFRVGXERM', { anonymize_ip:true });
-  </script>
+  </script> -->
+<!-- Preload to force browser to fetch faster (helps iOS WebViews) -->
+<link rel="preload" href="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM" as="script">
+
+<!-- Main GA loader -->
+<script defer>
+  // Universal safe dataLayer bootstrap
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+
+  // Bootstrap queue – runs even if gtag.js loads late
+  gtag('js', new Date());
+  gtag('config', 'G-TVFRVGXERM', {
+    anonymize_ip: true,
+    transport_type: 'beacon',  // more reliable on FB iOS browser
+    send_page_view: true
+  });
+
+  // Dynamically inject GA with timeout + fallback
+  (function loadGA(){
+    var g = document.createElement('script');
+    g.src = "https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM";
+    g.async = true;
+
+    g.onerror = function(){
+      console.warn("GA failed to load, retrying...");
+      setTimeout(loadGA, 1500);
+    };
+
+    document.head.appendChild(g);
+  })();
+</script>
+  
 
 </head>
 
