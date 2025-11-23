@@ -25,19 +25,87 @@
   <link rel="manifest" href="/site.webmanifest" />
 
   <style>
-    body { margin:0;font-family:system-ui,Inter,sans-serif;background:#0b0b0b;color:#fff;text-align:center }
-    header { background:#111;padding:1rem;font-size:1.5rem;font-weight:600 }
-    main { padding:1rem }
-    #yt-container { position:relative;max-width:960px;margin:1rem auto;aspect-ratio:16/9;background:black }
-    #yt-container iframe, #yt-container img { width:100%;height:100%;border-radius:12px;display:block }
-    #yt-overlay { position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent }
-    a { color:#33ccff;text-decoration:none }
-    a:hover { text-decoration:underline }
-    h2 { margin-top:2rem;font-size:1.3rem;font-weight:600 }
-    button { background:#00b7ff;color:#fff;border:none;padding:.5rem 1rem;border-radius:6px;cursor:pointer }
-    button:hover { opacity:.9 }
-    footer { opacity:.8;font-size:.9rem;margin-top:2rem;padding-bottom:1rem }
-    #bookmarkHelp { display:none; }
+    body {
+      margin:0;
+      font-family:system-ui,Inter,sans-serif;
+      background:#0b0b0b;
+      color:#fff;
+      text-align:center;
+    }
+
+    header {
+      padding:1.2rem 0 0.5rem;
+      font-size:1.6rem;
+      font-weight:600;
+    }
+
+    main { padding:1rem; }
+
+    /* VIDEO */
+    #yt-container {
+      position:relative;
+      max-width:960px;
+      margin:1rem auto;
+      aspect-ratio:16/9;
+      background:black;
+    }
+    #yt-container iframe,
+    #yt-container img {
+      width:100%;
+      height:100%;
+      border-radius:12px;
+      display:block;
+    }
+    #yt-overlay {
+      position:absolute;
+      top:0; left:0;
+      width:100%; height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      background:transparent;
+    }
+
+    /* SHARE ROW */
+    #share-icons {
+      display:flex;
+      justify-content:center;
+      gap:1.1rem;
+      margin-top:1.2rem;
+    }
+    #share-icons img {
+      width:44px;
+      height:44px;
+      cursor:pointer;
+    }
+
+    /* BUTTON */
+    .primary-btn {
+      margin-top:1.4rem;
+      background:#1d87ff;
+      color:#fff;
+      border:none;
+      padding:.85rem 2rem;
+      border-radius:12px;
+      font-size:1.1rem;
+      font-weight:600;
+      display:inline-flex;
+      align-items:center;
+      gap:0.5rem;
+      cursor:pointer;
+    }
+    .primary-btn img {
+      width:20px;
+      height:20px;
+    }
+
+    footer {
+      opacity:.8;
+      font-size:.9rem;
+      margin-top:2rem;
+      padding-bottom:1rem;
+    }
   </style>
 
   <!-- GA -->
@@ -49,79 +117,65 @@
     gtag('config', 'G-TVFRVGXERM', { anonymize_ip:true });
   </script>
 
-
-
-  <!-- OneSignal -->
-  <!-- <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-  <script>
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    OneSignalDeferred.push(async function(OneSignal) {
-      await OneSignal.init({
-        appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
-        notifyButton: { enable:true },
-      });
-      window.OneSignal = OneSignal;
-    });
-  </script> -->
 </head>
 
 <body>
 
 <header>🚦 Live Traffic View – Mundhwa Bridge, Pune</header>
-<h3>Don't get stuck in jam! Check before you leave</h3>
+
 <main>
 
-  <!-- YouTube Lazy Preview -->
+  <!-- YT Preview -->
   <div id="yt-container">
     <img src="https://mundhwatraffic.com/assets/Unknown.jpg"
          alt="Mundhwa Bridge Live Traffic Pune Preview"
-         width="960" height="540" loading="lazy" fetchpriority="high">
+         width="960" height="540"
+         loading="lazy" fetchpriority="high">
     <div id="yt-overlay">
-      <span style="font-size:2.1rem;opacity:.8;background:#0008;padding:.5rem 1rem;border-radius:6px;">▶ Play Live Feed</span>
+      <span style="font-size:2rem;opacity:.8;background:#0008;padding:.5rem 1rem;border-radius:6px;">▶ Play Live</span>
     </div>
   </div>
 
-  <!-- SHARE -->
-  <section id="share-section">
-    <h2>📢 Share MundhwaTraffic with someone stuck in traffic 🚗⚠️</h2>
-    <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
-      <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Bridge%20Traffic%20Live!%20https://mundhwatraffic.com/w" target="_blank">WhatsApp</a>
-      <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Bridge%20Traffic%20Live!&url=https://mundhwatraffic.com/x" target="_blank">X (Twitter)</a>
-      <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com/f" target="_blank">Facebook</a>
-      <button id="nativeShareBtn">📱 Share</button>
-    </div>
-  </section>
+  <!-- SHARE ICONS -->
+  <div id="share-icons">
+    <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Traffic%20Live%20https://mundhwatraffic.com/w"
+       target="_blank"><img src="/assets/icons/whatsapp.svg"></a>
 
-  <!-- BOOKMARK -->
-  <section id="bookmark-section">
-    <h2>🔖 Add to Bookmarks</h2>
-    <p>Quickly access Mundhwa Traffic Live anytime!</p>
-    <button id="bookmarkBtn">⭐ Add to Bookmarks</button>
-    <p id="bookmarkHelp">
-      📌 <strong>Press</strong> <span id="shortcut"></span> <strong>to bookmark this page.</strong>
-    </p>
-  </section>
+    <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Traffic%20Live&url=https://mundhwatraffic.com/x"
+       target="_blank"><img src="/assets/icons/x.svg"></a>
 
-  <!-- ANDROID A2HS BUTTON -->
-  <div style="margin-top:1rem;">
-    <button id="installBtn" style="display:none;">📱 Add to Home Screen</button>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com/f"
+       target="_blank"><img src="/assets/icons/facebook.svg"></a>
+
+    <img id="nativeShareBtn" src="/assets/icons/share.svg">
   </div>
 
+  <!-- ADD TO HOME -->
+  <button class="primary-btn" id="bookmarkBtn">
+    <img src="/assets/icons/bookmark.svg">
+    Add to Home
+  </button>
 
+  <!-- HELP TEXT -->
+  <p id="bookmarkHelp" style="display:none;margin-top:0.8rem;opacity:.9;"></p>
 
-  <div id="viewer-count" style="margin-top:1rem;opacity:.8;">🔴 Live now on YouTube</div>
+  <div id="viewer-count" style="margin-top:1.5rem;opacity:.85;">🔴 Live on YouTube</div>
+
+  <!-- Hidden Android prompt -->
+  <button id="installBtn" class="primary-btn" style="display:none;margin-top:1rem;">📱 Add to Home Screen</button>
 
 </main>
 
-<footer>© 2025 <a href="/">mundhwatraffic.com</a> | Powered by <strong>RoadX Traffic Cameras</strong></footer>
+<footer>
+  © 2025 <a href="/">mundhwatraffic.com</a> |
+  Powered by <strong>RoadX Traffic Cameras</strong>
+</footer>
 
 <!-- =============================== -->
-<!--             SCRIPTS             -->
+<!--           SCRIPTS              -->
 <!-- =============================== -->
 <script>
-/* ---------------------------------
-   LAZY YOUTUBE
----------------------------------- */
+/* YOUTUBE */
 document.getElementById("yt-overlay").addEventListener("click", () => {
   document.getElementById("yt-container").innerHTML =
     `<iframe src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1"
@@ -130,55 +184,40 @@ document.getElementById("yt-overlay").addEventListener("click", () => {
       style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;"></iframe>`;
 });
 
-/* ---------------------------------
-   NATIVE SHARE
----------------------------------- */
+/* NATIVE SHARE */
 const nativeShare = document.getElementById("nativeShareBtn");
 if (navigator.share) {
   nativeShare.addEventListener("click", () => {
     navigator.share({
       title:"🚦 Mundhwa Traffic Live | Pune",
-      text:"Check Mundhwa Bridge traffic live before leaving!",
+      text:"Check live Mundhwa Bridge traffic.",
       url:"https://mundhwatraffic.com"
     });
   });
 } else {
-  nativeShare.style.display = "none";
+  nativeShare.style.opacity = "0.4";
 }
 
-/* ---------------------------------
-   BOOKMARK BUTTON — FIXED FOR ANDROID/iOS/DESKTOP
----------------------------------- */
+/* BOOKMARK + A2HS */
 const bookmarkBtn = document.getElementById('bookmarkBtn');
 const bookmarkHelp = document.getElementById('bookmarkHelp');
-const shortcut = document.getElementById('shortcut');
-
 const ua = navigator.userAgent.toLowerCase();
-const isIOS = /iphone|ipad|ipod/.test(ua);
-const isAndroid = /android/.test(ua);
-const isDesktopMac = navigator.platform.toUpperCase().includes("MAC");
-const isDesktopWin = navigator.platform.toUpperCase().includes("WIN");
 
-/* Correct bookmark/Add-to-home-screen text */
-if (isIOS) {
-  shortcut.innerText = "Share → Add to Home Screen";
-} else if (isAndroid) {
-  shortcut.innerText = "Menu ⋮ → Add to Home Screen";
-} else if (isDesktopMac) {
-  shortcut.innerText = "Cmd + D";
-} else if (isDesktopWin) {
-  shortcut.innerText = "Ctrl + D";
+if (/iphone|ipad|ipod/.test(ua)) {
+  bookmarkHelp.innerHTML = "⬆️ Share → Add to Home Screen";
+} else if (/android/.test(ua)) {
+  bookmarkHelp.innerHTML = "⋮ Menu → Add to Home Screen";
+} else if (navigator.platform.toUpperCase().includes("MAC")) {
+  bookmarkHelp.innerHTML = "Press <b>Cmd + D</b> to bookmark.";
 } else {
-  shortcut.innerText = "Ctrl + D";
+  bookmarkHelp.innerHTML = "Press <b>Ctrl + D</b> to bookmark.";
 }
 
 bookmarkBtn.addEventListener("click", () => {
   bookmarkHelp.style.display = "block";
 });
 
-/* ---------------------------------
-   ANDROID ADD TO HOME SCREEN
----------------------------------- */
+/* ANDROID A2HS */
 let deferredPrompt;
 const installBtn = document.getElementById("installBtn");
 
@@ -194,58 +233,10 @@ installBtn.addEventListener("click", () => {
   deferredPrompt = null;
 });
 
-/* ---------------------------------
-   SERVICE WORKER
----------------------------------- */
+/* SERVICE WORKER */
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/service-worker.js");
 }
-
-/* ---------------------------------
-   iOS ADD-TO-HOME-SCREEN POPUP
----------------------------------- */
-(function() {
-  const popup = document.createElement("div");
-  popup.id = "iosInstallPopup";
-  popup.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;">
-      <img src="/apple-touch-icon.png" width="40" height="40" style="border-radius:8px;">
-      <div style="text-align:left;">
-        <strong>Add to Home Screen</strong><br>
-        Tap <span style="font-size:1.2rem;">⬆️</span> then <b>Add to Home Screen</b>
-      </div>
-    </div>
-  `;
-
-  popup.style.cssText = `
-    display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
-    background:#111; color:#fff; padding:14px 18px; border-radius:14px;
-    font-size:0.95rem; z-index:9999; width:85%; max-width:300px;
-    box-shadow:0 8px 20px #0007; opacity:0; transition:opacity 0.4s ease;
-  `;
-
-  document.body.appendChild(popup);
-
-  const isIOSDevice = /iPhone|iPad|iPod/.test(navigator.userAgent);
-  const isStandalone = window.matchMedia("(display-mode: standalone)").matches
-                    || window.navigator.standalone === true;
-
-  if (!isIOSDevice) return;
-  if (isStandalone) return;
-  if (localStorage.getItem("a2hs_shown")) return;
-
-  setTimeout(() => {
-    popup.style.display = "block";
-    setTimeout(() => popup.style.opacity = "1", 50);
-  }, 2000);
-
-  setTimeout(() => {
-    popup.style.opacity = "0";
-    setTimeout(() => popup.style.display = "none", 400);
-  }, 10000);
-
-  localStorage.setItem("a2hs_shown", "yes");
-})();
 </script>
 
 </body>
