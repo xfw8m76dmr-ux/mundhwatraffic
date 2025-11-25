@@ -80,18 +80,21 @@
     margin:1.2rem auto;
     aspect-ratio:16/9;
     background:black;
+    border-radius:12px;
+    overflow:hidden;
   }
+
   #yt-container iframe,
   #yt-container img {
     width:100%;
     height:100%;
-    border-radius:12px;
     display:block;
+    border-radius:12px;
   }
+
   #yt-overlay {
     position:absolute;
-    top:0; left:0;
-    width:100%; height:100%;
+    inset:0;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -168,7 +171,7 @@
     <img src="https://mundhwatraffic.com/assets/video_background.png"
          alt="Mundhwa Bridge Live Traffic Pune Preview"
          width="960" height="540"
-         loading="lazy" fetchpriority="high">
+         loading="eager" fetchpriority="high">
     <div id="yt-overlay">
       <span>▶ Play Live</span>
     </div>
@@ -217,14 +220,35 @@
 
 <!-- SCRIPTS -->
 <script>
-/* YOUTUBE */
+/* STABLE YOUTUBE LOAD */
 document.getElementById("yt-overlay").addEventListener("click", () => {
-  document.getElementById("yt-container").innerHTML =
-    `<iframe src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1"
-      allow="accelerometer;autoplay;encrypted-media;picture-in-picture"
-      allowfullscreen loading="lazy"
-      style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;"></iframe>`;
+  const container = document.getElementById("yt-container");
+  container.innerHTML = ""; // remove preview cleanly
+
+  const iframe = document.createElement("iframe");
+  iframe.src =
+    "https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1&playsinline=1&enablejsapi=1&rel=0&controls=1&origin=https://mundhwatraffic.com";
+
+  iframe.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;";
+  iframe.allowFullscreen = true;
+  iframe.style.width = "100%";
+  iframe.style.height = "100%";
+  iframe.style.border = "none";
+  iframe.style.borderRadius = "12px";
+
+  container.appendChild(iframe);
 });
+
+/* KEEP ALIVE (prevents autoplay pause on mobile browsers) */
+setInterval(() => {
+  const iframe = document.querySelector("#yt-container iframe");
+  if (iframe) {
+    iframe.contentWindow.postMessage(
+      '{"event":"command","func":"playVideo"}',
+      "*"
+    );
+  }
+}, 15000);
 
 /* NATIVE SHARE */
 const nativeShare = document.getElementById("nativeShareBtn");
