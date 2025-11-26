@@ -341,10 +341,12 @@ const notifyBtn = document.getElementById("notifyBtn");
 const notifyHelp = document.getElementById("notifyHelp");
 
 function show(msg) {
+  console.log(msg);
   notifyHelp.style.display = "block";
   notifyHelp.innerHTML = msg.replace(/\n/g, "<br>");
 }
 
+/* --- Device detection --- */
 const ua2 = navigator.userAgent.toLowerCase();
 const isIOS = /iphone|ipad|ipod/.test(ua2);
 const isMacSafari = /macintosh/.test(ua2) && /safari/.test(ua2) && !/chrome|firefox|edge/.test(ua2);
@@ -352,8 +354,8 @@ const isPWA =
   window.matchMedia("(display-mode: standalone)").matches ||
   window.navigator.standalone === true;
 
-// -------- LOAD ONESIGNAL --------
-function loadOneSignal() {
+/* --- Load OneSignal dynamically --- */
+function loadOneSignalSDK() {
   return new Promise((resolve, reject) => {
     if (window.OneSignal) {
       show("🟦 OneSignal already loaded.");
@@ -365,87 +367,96 @@ function loadOneSignal() {
     const s = document.createElement("script");
     s.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
     s.async = true;
+
     s.onload = () => {
-      show("✅ OneSignal SDK loaded");
+      show("✅ OneSignal SDK loaded.");
       resolve();
     };
-    s.onerror = (e) => {
-      show("❌ Failed to load OneSignal SDK");
-      reject(e);
+
+    s.onerror = () => {
+      show("❌ ERROR: Failed to load OneSignal SDK");
+      reject("sdk-load-error");
     };
 
     document.head.appendChild(s);
   });
 }
 
-// -------- BUTTON CLICK --------
+/* --- Initialize OneSignal safely --- */
+let alreadyInit = false;
+async function initOneSignal() {
+  if (alreadyInit) {
+    show("🔁 Skipping init (already initialized)");
+    return;
+  }
+
+  show("⏳ Initializing OneSignal…");
+
+  try {
+    await OneSignal.init({
+      appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
+      serviceWorkerPath: "/OneSignalSDKWorker.js",
+      serviceWorkerParam: { scope: "/" },
+      notifyButton: { enable: false }
+    });
+    alreadyInit = true;
+    show("✅ OneSignal.init() finished");
+
+  } catch (err) {
+    show("❌ ERROR in init: " + err);
+  }
+}
+
+/* --- Handle the button click --- */
 notifyBtn.addEventListener("click", async () => {
   show("🟦 CLICKED alert button");
 
-  // --- PLATFORM LIMITATIONS ---
+  /* BLOCK: macOS Safari (unsupported) */
   if (isMacSafari) {
-    show("⚠️ Notifications are not supported on Safari for Mac.");
+    show("❌ Safari on Mac does NOT support push notifications.");
     return;
   }
 
+  /* BLOCK: iOS but NOT PWA */
   if (isIOS && !isPWA) {
-    show("📱 To receive alerts, please install the app:<br><b>Share → Add to Home Screen</b>");
+    show(
+      "📱 <b>Add This Website to Home Screen</b><br>" +
+      "iOS only allows notifications inside a PWA.<br><br>" +
+      "➡️ Tap Share → <b>Add to Home Screen</b>"
+    );
     return;
   }
 
-  if (Notification.permission === "denied") {
-    show("❌ You have blocked notifications in browser settings.");
+  /* Load SDK */
+  try {
+    await loadOneSignalSDK();
+  } catch {
     return;
   }
+
+  await initOneSignal();
+
+  /* Request permission */
+  show("⏳ Requesting permission…");
 
   try {
-    await loadOneSignal();
-  } catch (e) {
-    console.error("SDK load error", e);
+    await OneSignal.Notifications.requestPermission();
+  } catch (err) {
+    show("❌ Permission error: " + err);
     return;
   }
 
-  // -------- INITIALIZE ONESIGNAL --------
-  try {
-    if (!window._osInitialized) {
-      show("⏳ Initializing OneSignal…");
+  /* Check subscription state */
+  show("⏳ Checking permission…");
 
-      await OneSignal.init({
-        appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
-        serviceWorkerPath: "/OneSignalSDKWorker.js",
-        serviceWorkerParam: { scope: "/" },
-      });
+  const permission = await OneSignal.Notifications.permission();
 
-      window._osInitialized = true;
-      show("✅ OneSignal.init() finished");
-    } else {
-      show("🔁 Skipping init (already initialized)");
-    }
-  } catch (e) {
-    show("❌ OneSignal.init() error<br>" + e.message);
-    console.error(e);
-    return;
-  }
-
-  // -------- SUBSCRIBE USER --------
-  try {
-    show("⏳ Asking OneSignal for permission…");
-    await OneSignal.User.PushSubscription.optIn();
-
-    show("⏳ Checking subscription state…");
-
-    const state = await OneSignal.User.PushSubscription.getState();
-    console.log("state", state);
-
-    if (state.optedIn) {
-      show("✅ Subscribed!<br>ID: " + state.id);
-    } else {
-      show("⚠️ Could not subscribe. Please try again.");
-    }
-
-  } catch (e) {
-    show("❌ ERROR during subscription:<br>" + e.message);
-    console.error(e);
+  if (permission === "granted") {
+    show("✅ Subscribed! You will receive traffic alerts.");
+  } else if (permission === "denied") {
+    show("❌ You blocked notifications in browser settings.");
+  } else {
+    show("⚠️ Please allow notifications to subscribe.");
   }
 });
 </script>
