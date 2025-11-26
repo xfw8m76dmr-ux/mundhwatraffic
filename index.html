@@ -391,13 +391,13 @@ OneSignalDeferred.push(async function(OneSignal) {
 ------------------------*/
 notifyBtn.addEventListener("click", async () => {
 
-  show("🟦 CLICKED Alert button");
+  //show("🟦 CLICKED Alert button");
 
   /* ---- Mac Safari: No Support ---- */
-  if (isMacSafari) {
-    show("⚠️ Safari on Mac does NOT support push notifications.");
-    return;
-  }
+  //if (isMacSafari) {
+  //  show("⚠️ Safari on Mac does NOT support push notifications.");
+   // return;
+ // }
 
   /* ---- iOS requires PWA ---- */
   if (isIOS && !isPWA) {
@@ -413,11 +413,11 @@ notifyBtn.addEventListener("click", async () => {
 
   /* ---- Request Push Permission ---- */
   try {
-    show("⏳ Requesting notification permission…");
+   // show("⏳ Requesting notification permission…");
     const permission = await OneSignal.Notifications.requestPermission();
 
-    if (permission !== "granted") {
-      show("❌ Notification permission was not granted.");
+    if (!permission) {
+      //show("❌ Notification permission was not granted.");
       return;
     }
 
@@ -436,7 +436,7 @@ notifyBtn.addEventListener("click", async () => {
 
   } catch (err) {
     console.error(err);
-    show("❌ ERROR: " + err.message);
+   // show("❌ ERROR: " + err.message);
   }
 });
 </script>
