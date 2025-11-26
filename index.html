@@ -312,80 +312,137 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
-  <!-- === ONE SIGNAL LAZY-LOAD + SUBSCRIBE (v16) === -->
-<script>
+  <script>
 const notifyBtn = document.getElementById("notifyBtn");
 const notifyHelp = document.getElementById("notifyHelp");
 
 const ua = navigator.userAgent.toLowerCase();
-
-// --- Device detection ---
 const isIOS = /iphone|ipad|ipod/.test(ua);
-const isMacSafari =
-  /macintosh/.test(ua) &&
-  /safari/.test(ua) &&
-  !/chrome|firefox|edge/.test(ua);
+const isMacSafari = /macintosh/.test(ua) && /safari/.test(ua) && !/chrome|firefox|edge/.test(ua);
+const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
-const isPWA =
-  window.matchMedia('(display-mode: standalone)').matches ||
-  window.navigator.standalone === true;
+function logAndShow(msg, level = "log") {
+  console[level]("[notify-debug]", msg);
+  notifyHelp.style.display = "block";
+  notifyHelp.innerHTML = (typeof msg === "string") ? msg : JSON.stringify(msg);
+}
 
 notifyBtn.addEventListener("click", async () => {
-
-  if (Notification.permission === "denied") {
-    notifyHelp.innerHTML = "⚠️ You have blocked notifications in browser settings.";
-    return;
-  }
-
-  if (isMacSafari) {
-    notifyHelp.innerHTML = "⚠️ Notifications are not supported on Safari for Mac.";
-    return;
-  }
-
-  if (isIOS && !isPWA) {
-    notifyHelp.innerHTML =
-      "📱 To receive alerts on iPhone: <br> <b>Add to Home Screen</b> first.";
-    return;
-  }
-
-  notifyHelp.innerHTML = "⏳ Preparing notifications...";
-
   try {
+    logAndShow("Starting notification flow... ⏳");
+
+    // quick checks
+    logAndShow(`Notification.permission = ${Notification.permission}`);
+    if (Notification.permission === "denied") {
+      logAndShow("⚠️ Browser notifications are blocked. Please enable notifications in browser settings.", "warn");
+      return;
+    }
+
+    if (isMacSafari) {
+      logAndShow("⚠️ Safari on macOS does not support web push. (Use Chrome/Firefox)", "warn");
+      return;
+    }
+
+    if (isIOS && !isPWA) {
+      logAndShow("📱 iOS Safari requires Add to Home Screen (PWA) to receive push. Please install the web app first.", "warn");
+      return;
+    }
+
+    // ensure SW file is reachable
+    try {
+      const res = await fetch("/OneSignalSDKWorker.js", { method: "HEAD" });
+      if (!res.ok) {
+        logAndShow(`⚠️ Service worker not found at /OneSignalSDKWorker.js (status ${res.status}). Ensure file exists at site root.`, "warn");
+        return;
+      }
+    } catch (err) {
+      logAndShow("⚠️ Failed to fetch service worker file. Check network/CORS. " + err.message, "error");
+      return;
+    }
+
     await loadOneSignal();
 
-    await OneSignal.init({
-      appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
-      serviceWorkerPath: "OneSignalSDKWorker.js",
-      notifyButton: { enable: false }
-    });
+    // ensure OneSignal is defined
+    if (!window.OneSignal) {
+      logAndShow("⚠️ OneSignal SDK did not load correctly.", "error");
+      return;
+    }
+    logAndShow("OneSignal SDK loaded.");
 
-    await OneSignal.User.PushSubscription.optIn();
-    const isEnabled = await OneSignal.User.PushSubscription.getOptedIn();
+    // init with try/catch and inspect returned value
+    try {
+      await OneSignal.init({
+        appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
+        serviceWorkerPath: "OneSignalSDKWorker.js",
+        serviceWorkerParam: { scope: "/" },
+        notifyButton: { enable: false }
+      });
+      logAndShow("OneSignal.init() completed.");
+    } catch (err) {
+      logAndShow("⚠️ OneSignal.init() failed: " + (err && err.message ? err.message : JSON.stringify(err)), "error");
+      console.error(err);
+      return;
+    }
 
-    notifyHelp.innerHTML = isEnabled
-      ? "✅ You will now get traffic alerts!"
-      : "⚠️ Could not subscribe. Please try again.";
+    // request opt-in
+    try {
+      await OneSignal.User.PushSubscription.optIn();
+      logAndShow("OneSignal.User.PushSubscription.optIn() resolved — checking subscription state...");
+    } catch (err) {
+      logAndShow("⚠️ optIn() rejected: " + (err && err.message ? err.message : JSON.stringify(err)), "error");
+      console.error(err);
+      return;
+    }
+
+    // check opted-in state (API name may vary; try both possibilities)
+    let isEnabled = false;
+    try {
+      if (OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.getOptedIn) {
+        isEnabled = await OneSignal.User.PushSubscription.getOptedIn();
+      } else if (OneSignal.getUserId) {
+        // fallback: if user id exists they are subscribed
+        const uid = await OneSignal.getUserId();
+        isEnabled = !!uid;
+      } else {
+        logAndShow("⚠️ Can't determine subscription state: API differs. Check OneSignal SDK version.", "warn");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
+    if (isEnabled) {
+      logAndShow("✅ You will now get traffic alerts!");
+    } else {
+      logAndShow("⚠️ Could not subscribe. Check console for details.", "warn");
+    }
 
   } catch (err) {
     console.error(err);
-    notifyHelp.innerHTML = "⚠️ Error enabling notifications.";
+    logAndShow("⚠️ Unexpected error enabling notifications: " + (err.message || JSON.stringify(err)), "error");
   }
 });
 
 function loadOneSignal() {
   return new Promise((resolve, reject) => {
-    if (window.OneSignal) return resolve();
-
+    if (window.OneSignal) {
+      console.log("[notify-debug] OneSignal already present");
+      return resolve();
+    }
     const s = document.createElement("script");
     s.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
     s.async = true;
-    s.onload = resolve;
-    s.onerror = reject;
+    s.onload = () => {
+      console.log("[notify-debug] OneSignal SDK script loaded");
+      resolve();
+    };
+    s.onerror = (e) => {
+      console.error("[notify-debug] OneSignal SDK failed to load", e);
+      reject(new Error("Failed to load OneSignal SDK"));
+    };
     document.head.appendChild(s);
   });
 }
 </script>
-
 
 </body>
 </html>
