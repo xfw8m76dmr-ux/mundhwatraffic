@@ -381,7 +381,7 @@ function loadOneSignal() {
 async function initOneSignal() {
   return OneSignal.init({
     appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
-    serviceWorkerPath: "/OneSignalSDKWorker.js",
+    serviceWorkerPath: "OneSignalSDKWorker.js",
     serviceWorkerParam: { scope: "/" },
     notifyButton: { enable: false } // we use our own button
   });
