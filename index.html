@@ -342,110 +342,99 @@ const notifyBtn = document.getElementById("notifyBtn");
 const notifyHelp = document.getElementById("notifyHelp");
 
 const ua2 = navigator.userAgent.toLowerCase();
-
 const isIOS = /iphone|ipad|ipod/.test(ua2);
-const isMacSafari =
-  /macintosh/.test(ua2) &&
-  /safari/.test(ua2) &&
-  !/chrome|firefox|edge/.test(ua2);
-
+const isMacSafari = /macintosh/.test(ua2) && /safari/.test(ua2) && !/chrome|firefox|edge/.test(ua2);
 const isPWA =
   window.matchMedia("(display-mode: standalone)").matches ||
   window.navigator.standalone === true;
 
-let onesignalInitialized = false;
-
-/* ------------------------------ DEBUG ON SCREEN ------------------------------ */
-function debug(msg) {
+// ---- Helper to show debug on screen ----
+function log(msg) {
   console.log(msg);
   notifyHelp.style.display = "block";
   notifyHelp.innerHTML += msg + "<br>";
 }
-notifyHelp.innerHTML = ""; // clear existing if any
 
-/* ------------------------------ LOAD SDK ------------------------------ */
+// ---- OneSignal Loader ----
 function loadOneSignal() {
   return new Promise((resolve, reject) => {
     if (window.OneSignal) {
-      debug("🟦 OneSignal already present.");
+      log("🟦 OneSignal already present.");
       return resolve();
     }
-    debug("⏳ Loading OneSignal SDK...");
+    log("⏳ Loading OneSignal SDK…");
 
     const s = document.createElement("script");
     s.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
     s.async = true;
-    s.onload = () => {
-      debug("✅ OneSignal SDK loaded");
-      resolve();
-    };
+    s.onload = resolve;
     s.onerror = reject;
     document.head.appendChild(s);
   });
 }
 
-/* ------------------------------ INITIALIZE ONESIGNAL ------------------------------ */
 async function initOneSignal() {
-  if (onesignalInitialized) {
-    debug("🔁 Skipping init (already initialized)");
+  if (OneSignal.initialized) {
+    log("🔁 Skipping init (already initialized)");
     return;
   }
 
-  debug("⏳ Initializing OneSignal…");
+  log("⏳ Initializing OneSignal…");
 
   await OneSignal.init({
     appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
     serviceWorkerPath: "OneSignalSDKWorker.js",
-    notifyButton: { enable: false },
+    notifyButton: { enable: false }
   });
 
-  onesignalInitialized = true;
-  debug("✅ OneSignal.init() finished");
+  log("✅ OneSignal.init() finished");
 }
 
-/* ------------------------------ CLICK HANDLER ------------------------------ */
+// ---- Main Handler ----
 notifyBtn.addEventListener("click", async () => {
-  notifyHelp.innerHTML = ""; // clear previous logs
-  debug("🟦 CLICKED the button");
+  notifyHelp.innerHTML = ""; // clear old logs
+  log("🟦 CLICKED the button");
 
-  /* BLOCKED PLATFORMS */
-  if (isMacSafari) {
-    debug("❌ Safari on Mac does NOT support push notifications.");
-    return;
-  }
-
+  // ---- BLOCK iOS if NOT PWA ----
   if (isIOS && !isPWA) {
-    debug("📱 iPhone detected but NOT installed as PWA.");
-    debug("👉 Please Add to Home Screen first to enable alerts.");
+    log("📱 <b>To get alerts on iPhone:</b> Add this website to your Home Screen.<br>Open Share → <b>Add to Home Screen</b>.");
     return;
   }
 
-  /* CHECK PERMISSION BLOCK */
-  if (Notification.permission === "denied") {
-    debug("❌ Notifications are BLOCKED in browser settings.");
+  // ---- Block Mac Safari ----
+  if (isMacSafari) {
+    log("⚠️ Notifications not supported on Safari for Mac.");
     return;
   }
 
   try {
     await loadOneSignal();
+    log("✅ OneSignal SDK loaded");
+
     await initOneSignal();
 
-    // ------------------------ REQUEST PERMISSION ------------------------
-    debug("⏳ Calling optIn()…");
+    // ---- opt-in ----
+    log("⏳ Calling optIn()…");
     await OneSignal.User.PushSubscription.optIn();
 
-    debug("⏳ Checking subscription…");
+    // ---- subscription check using v16 API ----
+    log("⏳ Checking subscription…");
 
-    // Correct API for v16: check directly
-    const sub = await OneSignal.User.PushSubscription.getSubscriptionId();
+    const subObj = OneSignal.User.PushSubscription;
+    const isEnabled = subObj.optedIn;
+    const subId = subObj.id; // null if not subscribed
 
-    if (sub) {
-      debug("✅ SUBSCRIBED: You will now get traffic alerts!");
+    log("🔍 optedIn = " + isEnabled);
+    log("🔍 subscriptionId = " + subId);
+
+    if (isEnabled && subId) {
+      log("🎉 <b>You will now receive traffic alerts!</b>");
     } else {
-      debug("⚠️ User NOT subscribed.");
+      log("❌ Subscription did not complete.");
     }
+
   } catch (err) {
-    debug("❌ ERROR: " + err.message);
+    log("❌ ERROR: " + err.message);
     console.error(err);
   }
 });
