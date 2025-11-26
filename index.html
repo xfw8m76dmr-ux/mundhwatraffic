@@ -317,9 +317,9 @@ if ("serviceWorker" in navigator) {
 const notifyBtn = document.getElementById("notifyBtn");
 const notifyHelp = document.getElementById("notifyHelp");
 
-const ua = navigator.userAgent.toLowerCase();
+const ua2 = navigator.userAgent.toLowerCase();
 const isIOS = /iphone|ipad|ipod/.test(ua);
-const isMacSafari = /macintosh/.test(ua) && /safari/.test(ua) && !/chrome|firefox|edge/.test(ua);
+const isMacSafari = /macintosh/.test(ua) && /safari/.test(ua) && !/chrome|firefox|edge/.test(ua2);
 const isPWA = window.matchMedia('(display-mode: standalone)').matches ||
               window.navigator.standalone === true;
 
