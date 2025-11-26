@@ -317,45 +317,54 @@ if ("serviceWorker" in navigator) {
 const notifyBtn = document.getElementById("notifyBtn");
 const notifyHelp = document.getElementById("notifyHelp");
 
-const ua2 = navigator.userAgent.toLowerCase();
+const ua = navigator.userAgent.toLowerCase();
+
+// --- Device detection ---
 const isIOS = /iphone|ipad|ipod/.test(ua);
-const isMacSafari = /macintosh/.test(ua) && /safari/.test(ua) && !/chrome|firefox|edge/.test(ua2);
-const isPWA = window.matchMedia('(display-mode: standalone)').matches ||
-              window.navigator.standalone === true;
+const isMacSafari =
+  /macintosh/.test(ua) &&
+  /safari/.test(ua) &&
+  !/chrome|firefox|edge/.test(ua);
+
+const isPWA =
+  window.matchMedia('(display-mode: standalone)').matches ||
+  window.navigator.standalone === true;
 
 notifyBtn.addEventListener("click", async () => {
 
-  /* ---------- BLOCK MAC SAFARI ---------- */
+  if (Notification.permission === "denied") {
+    notifyHelp.innerHTML = "⚠️ You have blocked notifications in browser settings.";
+    return;
+  }
+
   if (isMacSafari) {
-    notifyHelp.style.display = "block";
-    notifyHelp.innerHTML =
-      "⚠️ Notifications are not supported on Safari for Mac.";
+    notifyHelp.innerHTML = "⚠️ Notifications are not supported on Safari for Mac.";
     return;
   }
 
-  /* ---------- iOS REQUIREMENT ---------- */
   if (isIOS && !isPWA) {
-    notifyHelp.style.display = "block";
     notifyHelp.innerHTML =
-      "📱 To receive alerts on iPhone: <br> <b>Add to Home Screen</b> first (Share → Add to Home Screen).";
+      "📱 To receive alerts on iPhone: <br> <b>Add to Home Screen</b> first.";
     return;
   }
 
-  notifyHelp.style.display = "block";
   notifyHelp.innerHTML = "⏳ Preparing notifications...";
 
-  /* ---------- LOAD ONESIGNAL SDK AFTER CLICK ---------- */
   try {
     await loadOneSignal();
-    await initOneSignal();
 
-    const result = await OneSignal.User.PushSubscription.optIn();
+    await OneSignal.init({
+      appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
+      serviceWorkerPath: "OneSignalSDKWorker.js",
+      notifyButton: { enable: false }
+    });
 
-    if (result) {
-      notifyHelp.innerHTML = "✅ You will now get traffic alerts!";
-    } else {
-      notifyHelp.innerHTML = "⚠️ Could not subscribe. Please try again.";
-    }
+    await OneSignal.User.PushSubscription.optIn();
+    const isEnabled = await OneSignal.User.PushSubscription.getOptedIn();
+
+    notifyHelp.innerHTML = isEnabled
+      ? "✅ You will now get traffic alerts!"
+      : "⚠️ Could not subscribe. Please try again.";
 
   } catch (err) {
     console.error(err);
@@ -363,7 +372,6 @@ notifyBtn.addEventListener("click", async () => {
   }
 });
 
-/* Dynamically load OneSignal */
 function loadOneSignal() {
   return new Promise((resolve, reject) => {
     if (window.OneSignal) return resolve();
@@ -374,16 +382,6 @@ function loadOneSignal() {
     s.onload = resolve;
     s.onerror = reject;
     document.head.appendChild(s);
-  });
-}
-
-/* Initialize OneSignal */
-async function initOneSignal() {
-  return OneSignal.init({
-    appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
-    serviceWorkerPath: "OneSignalSDKWorker.js",
-    serviceWorkerParam: { scope: "/" },
-    notifyButton: { enable: false } // we use our own button
   });
 }
 </script>
