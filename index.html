@@ -351,12 +351,12 @@ function dbg(msg) {
 dbg("🔍 Script loaded.");
 
 // --- Device detection ---
-const ua = navigator.userAgent.toLowerCase();
-dbg("User agent: " + ua);
+const ua2 = navigator.userAgent.toLowerCase();
+dbg("User agent: " + ua2);
 
-const isIOS = /iphone|ipad|ipod/.test(ua);
-const isMacSafari = /macintosh/.test(ua) && /safari/.test(ua) &&
-                    !/chrome|firefox|edge/.test(ua);
+const isIOS = /iphone|ipad|ipod/.test(ua2);
+const isMacSafari = /macintosh/.test(ua2) && /safari/.test(ua2) &&
+                    !/chrome|firefox|edge/.test(ua2);
 
 const isPWA =
   window.matchMedia('(display-mode: standalone)').matches ||
