@@ -312,137 +312,121 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
+  <div id="notifyHelp" style="
+  display:block;
+  background:#111;
+  color:#0f0;
+  font-family:monospace;
+  padding:10px;
+  margin-top:10px;
+  white-space:pre-wrap;
+  border-radius:8px;
+  max-height:300px;
+  overflow-y:auto;
+"></div>
+
   <script>
 const notifyBtn = document.getElementById("notifyBtn");
 const notifyHelp = document.getElementById("notifyHelp");
 
+function dbg(msg) {
+  console.log("[DEBUG]", msg);
+  notifyHelp.textContent += msg + "\n";
+}
+
 const ua = navigator.userAgent.toLowerCase();
 const isIOS = /iphone|ipad|ipod/.test(ua);
 const isMacSafari = /macintosh/.test(ua) && /safari/.test(ua) && !/chrome|firefox|edge/.test(ua);
-const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-function logAndShow(msg, level = "log") {
-  console[level]("[notify-debug]", msg);
-  notifyHelp.style.display = "block";
-  notifyHelp.innerHTML = (typeof msg === "string") ? msg : JSON.stringify(msg);
-}
+const isPWA = window.matchMedia('(display-mode: standalone)').matches ||
+              window.navigator.standalone === true;
 
 notifyBtn.addEventListener("click", async () => {
-  try {
-    logAndShow("Starting notification flow... ⏳");
 
-    // quick checks
-    logAndShow(`Notification.permission = ${Notification.permission}`);
-    if (Notification.permission === "denied") {
-      logAndShow("⚠️ Browser notifications are blocked. Please enable notifications in browser settings.", "warn");
-      return;
-    }
+  notifyHelp.textContent = "";  // clear each click
+  dbg("=== Notification Debug Start ===");
+  dbg("UserAgent: " + navigator.userAgent);
+  dbg("isIOS = " + isIOS);
+  dbg("isMacSafari = " + isMacSafari);
+  dbg("isPWA = " + isPWA);
+  dbg("Notification.permission = " + Notification.permission);
 
-    if (isMacSafari) {
-      logAndShow("⚠️ Safari on macOS does not support web push. (Use Chrome/Firefox)", "warn");
-      return;
-    }
-
-    if (isIOS && !isPWA) {
-      logAndShow("📱 iOS Safari requires Add to Home Screen (PWA) to receive push. Please install the web app first.", "warn");
-      return;
-    }
-
-    // ensure SW file is reachable
-    try {
-      const res = await fetch("/OneSignalSDKWorker.js", { method: "HEAD" });
-      if (!res.ok) {
-        logAndShow(`⚠️ Service worker not found at /OneSignalSDKWorker.js (status ${res.status}). Ensure file exists at site root.`, "warn");
-        return;
-      }
-    } catch (err) {
-      logAndShow("⚠️ Failed to fetch service worker file. Check network/CORS. " + err.message, "error");
-      return;
-    }
-
-    await loadOneSignal();
-
-    // ensure OneSignal is defined
-    if (!window.OneSignal) {
-      logAndShow("⚠️ OneSignal SDK did not load correctly.", "error");
-      return;
-    }
-    logAndShow("OneSignal SDK loaded.");
-
-    // init with try/catch and inspect returned value
-    try {
-      await OneSignal.init({
-        appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
-        serviceWorkerPath: "OneSignalSDKWorker.js",
-        serviceWorkerParam: { scope: "/" },
-        notifyButton: { enable: false }
-      });
-      logAndShow("OneSignal.init() completed.");
-    } catch (err) {
-      logAndShow("⚠️ OneSignal.init() failed: " + (err && err.message ? err.message : JSON.stringify(err)), "error");
-      console.error(err);
-      return;
-    }
-
-    // request opt-in
-    try {
-      await OneSignal.User.PushSubscription.optIn();
-      logAndShow("OneSignal.User.PushSubscription.optIn() resolved — checking subscription state...");
-    } catch (err) {
-      logAndShow("⚠️ optIn() rejected: " + (err && err.message ? err.message : JSON.stringify(err)), "error");
-      console.error(err);
-      return;
-    }
-
-    // check opted-in state (API name may vary; try both possibilities)
-    let isEnabled = false;
-    try {
-      if (OneSignal.User && OneSignal.User.PushSubscription && OneSignal.User.PushSubscription.getOptedIn) {
-        isEnabled = await OneSignal.User.PushSubscription.getOptedIn();
-      } else if (OneSignal.getUserId) {
-        // fallback: if user id exists they are subscribed
-        const uid = await OneSignal.getUserId();
-        isEnabled = !!uid;
-      } else {
-        logAndShow("⚠️ Can't determine subscription state: API differs. Check OneSignal SDK version.", "warn");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-
-    if (isEnabled) {
-      logAndShow("✅ You will now get traffic alerts!");
-    } else {
-      logAndShow("⚠️ Could not subscribe. Check console for details.", "warn");
-    }
-
-  } catch (err) {
-    console.error(err);
-    logAndShow("⚠️ Unexpected error enabling notifications: " + (err.message || JSON.stringify(err)), "error");
+  if (Notification.permission === "denied") {
+    return dbg("❌ Permission BLOCKED in browser settings.");
   }
+
+  if (isMacSafari) {
+    return dbg("❌ Safari on macOS does NOT support Web Push.");
+  }
+
+  if (isIOS && !isPWA) {
+    return dbg("❌ iOS Safari needs Add to Home Screen (PWA).");
+  }
+
+  dbg("Checking service worker availability...");
+
+  try {
+    const r = await fetch("/OneSignalSDKWorker.js", { method: "HEAD" });
+    dbg("SW status: " + r.status);
+    if (!r.ok) return dbg("❌ Service worker missing OR wrong path.");
+  } catch (e) {
+    return dbg("❌ Service worker fetch error: " + e);
+  }
+
+  dbg("Loading OneSignal SDK...");
+
+  await loadOneSignal();
+  dbg("SDK loaded: " + !!window.OneSignal);
+
+  dbg("Calling OneSignal.init()...");
+
+  try {
+    await OneSignal.init({
+      appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
+      serviceWorkerPath: "OneSignalSDKWorker.js",
+      serviceWorkerParam: { scope: "/" },
+      notifyButton: { enable: false }
+    });
+    dbg("OneSignal.init() success");
+  } catch (err) {
+    return dbg("❌ OneSignal.init() failed: " + err);
+  }
+
+  dbg("Requesting opt-in...");
+  try {
+    await OneSignal.User.PushSubscription.optIn();
+    dbg("optIn() resolved");
+  } catch (e) {
+    return dbg("❌ optIn() rejected: " + e);
+  }
+
+  dbg("Checking subscription status...");
+
+  let isEnabled = false;
+  try {
+    isEnabled = await OneSignal.User.PushSubscription.getOptedIn();
+  } catch (e) {
+    dbg("⚠️ getOptedIn() failed: " + e);
+  }
+
+  if (isEnabled) {
+    dbg("✅ Subscribed! You will receive traffic alerts.");
+  } else {
+    dbg("❌ Failed to subscribe.");
+  }
+
+  dbg("=== End ===");
 });
 
 function loadOneSignal() {
   return new Promise((resolve, reject) => {
-    if (window.OneSignal) {
-      console.log("[notify-debug] OneSignal already present");
-      return resolve();
-    }
+    if (window.OneSignal) return resolve();
     const s = document.createElement("script");
     s.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
-    s.async = true;
-    s.onload = () => {
-      console.log("[notify-debug] OneSignal SDK script loaded");
-      resolve();
-    };
-    s.onerror = (e) => {
-      console.error("[notify-debug] OneSignal SDK failed to load", e);
-      reject(new Error("Failed to load OneSignal SDK"));
-    };
+    s.onload = resolve;
+    s.onerror = reject;
     document.head.appendChild(s);
   });
 }
 </script>
-
 </body>
 </html>
