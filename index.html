@@ -340,10 +340,9 @@ if ("serviceWorker" in navigator) {
 const notifyBtn = document.getElementById("notifyBtn");
 const notifyHelp = document.getElementById("notifyHelp");
 
-function log(msg) {
-  console.log(msg);
+function show(msg) {
   notifyHelp.style.display = "block";
-  notifyHelp.innerHTML = msg;
+  notifyHelp.innerHTML = msg.replace(/\n/g, "<br>");
 }
 
 const ua2 = navigator.userAgent.toLowerCase();
@@ -353,83 +352,102 @@ const isPWA =
   window.matchMedia("(display-mode: standalone)").matches ||
   window.navigator.standalone === true;
 
-let oneSignalInitialized = false;
-
-notifyBtn.addEventListener("click", async () => {
-  log("🟦 CLICKED alert button");
-
-  /* ----------- iOS requirement ----------- */
-  if (isIOS && !isPWA) {
-    log("📱 <b>Add to Home Screen first</b><br>Tap Share → Add to Home Screen to enable alerts.");
-    return;
-  }
-
-  /* ----------- Safari Mac Not Supported ----------- */
-  if (isMacSafari) {
-    log("⚠️ Safari on Mac does NOT support push notifications.");
-    return;
-  }
-
-  /* ----------- Load OneSignal SDK ----------- */
-  log("⏳ Loading OneSignal SDK…");
-  try {
-    await loadOneSignal();
-    log("🟦 OneSignal SDK loaded.");
-  } catch (err) {
-    log("❌ Failed to load SDK: " + err);
-    return;
-  }
-
-  /* ----------- Initialize OneSignal (only once) ----------- */
-  if (!oneSignalInitialized) {
-    log("⏳ Initializing OneSignal…");
-    try {
-      await OneSignal.init({
-        appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
-        serviceWorkerPath: "OneSignalSDKWorker.js",
-      });
-      oneSignalInitialized = true;
-      log("✅ OneSignal.init() finished");
-    } catch (err) {
-      log("❌ OneSignal init error: " + err);
-      return;
-    }
-  } else {
-    log("🔁 Skipping init (already initialized)");
-  }
-
-  /* ----------- Subscribe user ----------- */
-  log("⏳ Calling optIn()…");
-  try {
-    await OneSignal.User.PushSubscription.optIn();
-    log("⏳ Checking subscription…");
-
-    // The ONLY reliable v16 API
-    const sub = await OneSignal.User.PushSubscription.getSubscription();
-    if (sub && sub.id) {
-      log("✅ Subscribed! Subscription ID:<br>" + sub.id);
-    } else {
-      log("⚠️ Could not verify subscription, but optIn() finished.");
-    }
-  } catch (err) {
-    log("❌ ERROR during subscription: " + err);
-  }
-});
-
-/* ----------- LOAD SDK DYNAMICALLY ----------- */
+// -------- LOAD ONESIGNAL --------
 function loadOneSignal() {
   return new Promise((resolve, reject) => {
     if (window.OneSignal) {
-      return resolve(); // already loaded
+      show("🟦 OneSignal already loaded.");
+      return resolve();
     }
+
+    show("⏳ Loading OneSignal SDK…");
+
     const s = document.createElement("script");
     s.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
     s.async = true;
-    s.onload = resolve;
-    s.onerror = reject;
+    s.onload = () => {
+      show("✅ OneSignal SDK loaded");
+      resolve();
+    };
+    s.onerror = (e) => {
+      show("❌ Failed to load OneSignal SDK");
+      reject(e);
+    };
+
     document.head.appendChild(s);
   });
 }
+
+// -------- BUTTON CLICK --------
+notifyBtn.addEventListener("click", async () => {
+  show("🟦 CLICKED alert button");
+
+  // --- PLATFORM LIMITATIONS ---
+  if (isMacSafari) {
+    show("⚠️ Notifications are not supported on Safari for Mac.");
+    return;
+  }
+
+  if (isIOS && !isPWA) {
+    show("📱 To receive alerts, please install the app:<br><b>Share → Add to Home Screen</b>");
+    return;
+  }
+
+  if (Notification.permission === "denied") {
+    show("❌ You have blocked notifications in browser settings.");
+    return;
+  }
+
+  try {
+    await loadOneSignal();
+  } catch (e) {
+    console.error("SDK load error", e);
+    return;
+  }
+
+  // -------- INITIALIZE ONESIGNAL --------
+  try {
+    if (!window._osInitialized) {
+      show("⏳ Initializing OneSignal…");
+
+      await OneSignal.init({
+        appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
+        serviceWorkerPath: "/OneSignalSDKWorker.js",
+        serviceWorkerParam: { scope: "/" },
+      });
+
+      window._osInitialized = true;
+      show("✅ OneSignal.init() finished");
+    } else {
+      show("🔁 Skipping init (already initialized)");
+    }
+  } catch (e) {
+    show("❌ OneSignal.init() error<br>" + e.message);
+    console.error(e);
+    return;
+  }
+
+  // -------- SUBSCRIBE USER --------
+  try {
+    show("⏳ Asking OneSignal for permission…");
+    await OneSignal.User.PushSubscription.optIn();
+
+    show("⏳ Checking subscription state…");
+
+    const state = await OneSignal.User.PushSubscription.getState();
+    console.log("state", state);
+
+    if (state.optedIn) {
+      show("✅ Subscribed!<br>ID: " + state.id);
+    } else {
+      show("⚠️ Could not subscribe. Please try again.");
+    }
+
+  } catch (e) {
+    show("❌ ERROR during subscription:<br>" + e.message);
+    console.error(e);
+  }
+});
 </script>
 
 </body>
