@@ -336,90 +336,109 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
+<!-- Load OneSignal SDK -->
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
 <script>
-const btn = document.getElementById("notifyBtn");
-const help = document.getElementById("notifyHelp");
+/* -----------------------
+   DOM Elements
+------------------------*/
+const notifyBtn = document.getElementById("notifyBtn");
+const notifyHelp = document.getElementById("notifyHelp");
 
-// --- DEBUG helper ---
-function show(msg) {
-  help.innerHTML += `<div>${msg}</div>`;
-  console.log(msg);
-}
-
-// --- Device detection ---
+/* -----------------------
+   Device Detection
+------------------------*/
 const ua2 = navigator.userAgent.toLowerCase();
 const isIOS = /iphone|ipad|ipod/.test(ua2);
-const isMacSafari = /macintosh/.test(ua2) && /safari/.test(ua2) && !/chrome|firefox|edge/.test(ua2);
-const isPWA = window.matchMedia('(display-mode: standalone)').matches ||
-              window.navigator.standalone === true;
+const isMacSafari =
+  /macintosh/.test(ua2) &&
+  /safari/.test(ua2) &&
+  !/chrome|firefox|edge/.test(ua2);
 
-btn.addEventListener("click", async () => {
-  help.innerHTML = ""; // reset
-  //show("🟦 CLICKED");
+const isPWA =
+  window.matchMedia('(display-mode: standalone)').matches ||
+  window.navigator.standalone === true;
 
-  // --- iOS rule ---
-  if (isIOS && !isPWA) {
-    show("📱 Add to Home Screen first to receive alerts on iPhone.<br>Share → Add to Home Screen");
-    return;
-  }
+/* -----------------------
+   On-Screen Logger
+------------------------*/
+function show(msg){
+  notifyHelp.style.display = "block";
+  notifyHelp.innerHTML = msg;
+}
 
-  // --- Unsupported browser ---
-  //if (isMacSafari) {
-    //show("❌ Safari on macOS does NOT support push notifications.");
-    //return;
- // }
-
-  // --- If already granted ---
-  if (Notification.permission == "granted") {
-    show("🔔 Already subscribed!");
-  }
-
+/* -----------------------
+   Initialize OneSignal
+------------------------*/
+window.OneSignalDeferred = window.OneSignalDeferred || [];
+OneSignalDeferred.push(async function(OneSignal) {
   try {
-    //show("⏳ Loading OneSignal SDK...");
-
-    await loadOneSignal();
-
-   // show("✅ SDK loaded. Initializing...");
-
     await OneSignal.init({
       appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
-      serviceWorkerPath: "/OneSignalSDKWorker.js",
+      serviceWorkerPath: "OneSignalSDKWorker.js",
+      serviceWorkerParam: { scope: "/" },
+      notifyButton: { enable: false }
     });
-
-    //show("✅ OneSignal.init() complete");
-   // show("⏳ Requesting permission...");
-
-    const permission = await OneSignal.Notifications.requestPermission();
-    //show("Permission result: " + permission);
-
-    if (permission) {
-      show("🎉 You will now get traffic alerts!");
-    } else {
-      show("⚠️ Permission denied or closed.");
-    }
-
-  } catch (err) {
-    show("❌ ERROR: " + err.message);
-    console.error(err);
+    console.log("OneSignal initialized.");
+  } catch (e) {
+    console.error("Init error:", e);
   }
 });
 
-// --- load SDK dynamically ---
-function loadOneSignal() {
-  return new Promise((resolve, reject) => {
-    if (window.OneSignal) {
-      return resolve();
+/* -----------------------
+   Click Handler
+------------------------*/
+notifyBtn.addEventListener("click", async () => {
+
+  show("🟦 CLICKED Alert button");
+
+  /* ---- Mac Safari: No Support ---- */
+  if (isMacSafari) {
+    show("⚠️ Safari on Mac does NOT support push notifications.");
+    return;
+  }
+
+  /* ---- iOS requires PWA ---- */
+  if (isIOS && !isPWA) {
+    show(`
+      📱 <b>Add to Home Screen required:</b><br>
+      To receive traffic alerts on iPhone:<br>
+      → Tap <b>Share</b><br>
+      → Tap <b>Add to Home Screen</b><br>
+      Then open the app from the home screen.
+    `);
+    return;
+  }
+
+  /* ---- Request Push Permission ---- */
+  try {
+    show("⏳ Requesting notification permission…");
+    const permission = await OneSignal.Notifications.requestPermission();
+
+    if (permission !== "granted") {
+      show("❌ Notification permission was not granted.");
+      return;
     }
 
-    const s = document.createElement("script");
-    s.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
-    s.async = true;
-    s.onload = resolve;
-    s.onerror = () => reject(new Error("Failed to load OneSignal SDK"));
-    document.head.appendChild(s);
-  });
-}
-</script>
+    /* ---- Subscribe user ---- */
+    show("⏳ Subscribing…");
 
+    await OneSignal.User.PushSubscription.optIn();
+
+    const isEnabled = await OneSignal.User.PushSubscription.isOptedIn();
+
+    if (isEnabled) {
+      show("✅ You will now receive traffic alerts!");
+    } else {
+      show("❌ Could not subscribe. Try again.");
+    }
+
+  } catch (err) {
+    console.error(err);
+    show("❌ ERROR: " + err.message);
+  }
+});
+</script>
 </body>
 </html>
