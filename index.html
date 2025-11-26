@@ -355,7 +355,7 @@ const isPWA = window.matchMedia('(display-mode: standalone)').matches ||
 
 btn.addEventListener("click", async () => {
   help.innerHTML = ""; // reset
-  show("🟦 CLICKED");
+  //show("🟦 CLICKED");
 
   // --- iOS rule ---
   if (isIOS && !isPWA) {
@@ -364,35 +364,35 @@ btn.addEventListener("click", async () => {
   }
 
   // --- Unsupported browser ---
-  if (isMacSafari) {
-    show("❌ Safari on macOS does NOT support push notifications.");
-    return;
-  }
+  //if (isMacSafari) {
+    //show("❌ Safari on macOS does NOT support push notifications.");
+    //return;
+ // }
 
   // --- If already granted ---
-  if (Notification.permission === "granted") {
+  if (Notification.permission == "granted") {
     show("🔔 Already subscribed!");
   }
 
   try {
-    show("⏳ Loading OneSignal SDK...");
+    //show("⏳ Loading OneSignal SDK...");
 
     await loadOneSignal();
 
-    show("✅ SDK loaded. Initializing...");
+   // show("✅ SDK loaded. Initializing...");
 
     await OneSignal.init({
       appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
       serviceWorkerPath: "/OneSignalSDKWorker.js",
     });
 
-    show("✅ OneSignal.init() complete");
-    show("⏳ Requesting permission...");
+    //show("✅ OneSignal.init() complete");
+   // show("⏳ Requesting permission...");
 
     const permission = await OneSignal.Notifications.requestPermission();
-    show("Permission result: " + permission);
+    //show("Permission result: " + permission);
 
-    if (permission === "granted") {
+    if (permission) {
       show("🎉 You will now get traffic alerts!");
     } else {
       show("⚠️ Permission denied or closed.");
