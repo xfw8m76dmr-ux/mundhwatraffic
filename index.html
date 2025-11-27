@@ -166,6 +166,10 @@
 
 <main>
 
+  <button id="notifyBtn" style="margin-top:1.5rem;">
+   🔔 Alert me when traffic’s bad
+  </button>
+
   <!-- YT Preview -->
   <div id="yt-container">
     <img src="https://mundhwatraffic.com/assets/video_background.png"
@@ -211,9 +215,7 @@
     📱 Add to Home Screen
   </button>
 
-  <button id="notifyBtn" style="margin-top:1.5rem;">
-   🔔 Alert me if there is traffic
-  </button>
+
 
 
   <div id="notifyHelp" style="
@@ -422,16 +424,16 @@ notifyBtn.addEventListener("click", async () => {
     }
 
     /* ---- Subscribe user ---- */
-    show("⏳ Subscribing…");
+    // show("⏳ Subscribing…");
 
     await OneSignal.User.PushSubscription.optIn();
 
     const isEnabled = await OneSignal.User.PushSubscription.isOptedIn();
 
     if (isEnabled) {
-      show("✅ You will now receive traffic alerts!");
+      // show("✅ You will now receive traffic alerts!");
     } else {
-      show("❌ Could not subscribe. Try again.");
+      // show("❌ Could not subscribe. Try again.");
     }
 
   } catch (err) {
