@@ -15,7 +15,6 @@
 
 /k    https://mundhwatraffic.com/?utm_source=whatsapp&utm_medium=share&utm_campaign=kharadi_pune       301
 /p    https://mundhwatraffic.com/?utm_source=whatsapp&utm_medium=share&utm_campaign=pcmc_pune          301
-/push    https://mundhwatraffic.com/?utm_source=push&utm_medium=notification&utm_campaign=traffic_alerts    301
 
 # --- Your existing passthrough rules (MOVE TO BOTTOM) ---
 /stories/:file.html    /stories/:file.html    200!
