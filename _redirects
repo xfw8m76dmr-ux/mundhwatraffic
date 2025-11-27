@@ -1,6 +1,7 @@
 # --- Priority Redirects (must be FIRST) ---
 /push   https://mundhwatraffic.com/?utm_source=push&utm_medium=notification&utm_campaign=traffic_alerts    301
 
+/r    https://mundhwatraffic.com/?utm_source=reddit&utm_medium=post&utm_campaign=traffic     301
 /w    https://mundhwatraffic.com/?utm_source=whatsapp&utm_medium=share&utm_campaign=traffic     301
 /i    https://mundhwatraffic.com/?utm_source=instagram&utm_medium=bio&utm_campaign=traffic      301
 /t    https://mundhwatraffic.com/?utm_source=telegram&utm_medium=channel&utm_campaign=traffic   301
