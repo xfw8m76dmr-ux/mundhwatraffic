@@ -492,14 +492,14 @@ notifyBtn.addEventListener("click", async () => {
     }
 
     /* ---- Subscribe user ---- */
-    // show("⏳ Subscribing…");
+    show("⏳ Subscribing…");
 
     await OneSignal.User.PushSubscription.optIn();
 
     const isEnabled = await OneSignal.User.PushSubscription.isOptedIn();
 
     if (isEnabled) {
-      // show("✅ You will now receive traffic alerts!");
+      show("✅ You will now receive traffic alerts!");
     } else {
       // show("❌ Could not subscribe. Try again.");
     }
