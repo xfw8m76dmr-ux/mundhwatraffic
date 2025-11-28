@@ -168,7 +168,7 @@
 
   /* Full-width button: bold, high contrast, accessible */
   .notify-btn{
-    width: 100%;
+    width: 80%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -247,6 +247,19 @@
   <div id="notify-desc" class="notify-desc">No spam — only realtime jam alerts for this route.</div>
 </div>
 
+  
+  <div id="notifyHelp" style="
+  display:block;
+  background:#111;
+  color:#0f0;
+  font-family:monospace;
+  padding:10px;
+  margin-top:10px;
+  white-space:pre-wrap;
+  border-radius:8px;
+  max-height:300px;
+  overflow-y:auto;
+"></div>
 
   <!-- SHARE -->
   <section>
@@ -285,18 +298,6 @@
 
 
 
-  <div id="notifyHelp" style="
-  display:block;
-  background:#111;
-  color:#0f0;
-  font-family:monospace;
-  padding:10px;
-  margin-top:10px;
-  white-space:pre-wrap;
-  border-radius:8px;
-  max-height:300px;
-  overflow-y:auto;
-"></div>
 
   <div id="debugBox" style="
   white-space:pre-wrap;
@@ -471,7 +472,7 @@ notifyBtn.addEventListener("click", async () => {
   /* ---- iOS requires PWA ---- */
   if (isIOS && !isPWA) {
     show(`
-      📱 <b>Add to Home Screen required:</b><br>
+      📱 <b>Add to Home Screen required:</b> <br>
       To receive traffic alerts on iPhone:<br>
       → Tap <b>Share</b><br>
       → Tap <b>Add to Home Screen</b><br>
