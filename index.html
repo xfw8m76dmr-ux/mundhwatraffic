@@ -73,7 +73,6 @@
 
   main { padding:1rem; }
 
-  /* VIDEO */
   #yt-container {
     position:relative;
     max-width:960px;
@@ -83,7 +82,6 @@
     border-radius:12px;
     overflow:hidden;
   }
-
   #yt-container iframe,
   #yt-container img {
     width:100%;
@@ -91,7 +89,6 @@
     display:block;
     border-radius:12px;
   }
-
   #yt-overlay {
     position:absolute;
     inset:0;
@@ -100,7 +97,6 @@
     justify-content:center;
     cursor:pointer;
   }
-
   #yt-overlay span {
     font-size:1.35rem;
     opacity:.9;
@@ -110,7 +106,6 @@
     backdrop-filter:blur(4px);
   }
 
-  /* SHARE ROW */
   #share-icons {
     display:flex;
     justify-content:center;
@@ -123,7 +118,6 @@
     cursor:pointer;
   }
 
-  /* BUTTON */
   .primary-btn {
     margin-top:1.4rem;
     background:#1d87ff;
@@ -156,7 +150,6 @@
     padding-bottom:1rem;
   }
 
-    /* Container spacing */
   .notify-wrap{
     margin-top: 1.5rem;
     width: 100%;
@@ -166,7 +159,6 @@
     align-items: stretch;
   }
 
-  /* Full-width button: bold, high contrast, accessible */
   .notify-btn{
     width: 80%;
     display: inline-flex;
@@ -180,19 +172,15 @@
     border: none;
     cursor: pointer;
     margin: 0 auto;
-
-    /* High-visibility amber/orange. Good contrast on dark bg. */
     background: linear-gradient(180deg, #ffb84d 0%, #ff9f1a 100%);
-    color: #0b0b00; /* near-black text for contrast */
+    color: #0b0b00;
     box-shadow: 0 6px 18px rgba(255,159,26,0.18), inset 0 -2px 0 rgba(0,0,0,0.06);
     transition: transform 160ms ease, box-shadow 160ms ease;
   }
-
   .notify-btn:hover{ transform: translateY(-2px); box-shadow: 0 10px 26px rgba(255,159,26,0.22); }
   .notify-btn:active{ transform: translateY(0); box-shadow: 0 6px 18px rgba(255,159,26,0.18); }
   .notify-btn:focus{ outline: 3px solid rgba(255,159,26,0.18); outline-offset: 3px; }
 
-  /* Small microcopy under the button */
   .notify-desc{
     font-size: 0.86rem;
     color: rgba(255,255,255,0.72);
@@ -201,12 +189,10 @@
     margin: 0 auto;
   }
 
-  /* Respect prefers-reduced-motion */
   @media (prefers-reduced-motion: reduce){
     .notify-btn{ transition: none; transform: none; }
   }
 
-  /* Dark-mode safety: if your site has light background, invert colors */
   @media (prefers-color-scheme: light){
     .notify-btn{
       color:#000;
@@ -214,7 +200,6 @@
     }
     .notify-desc{ color: rgba(0,0,0,0.64); }
   }
-
 </style>
 
 </head>
@@ -226,9 +211,6 @@
 
 <main>
 
-
-
-  <!-- YT Preview -->
   <div id="yt-container">
     <img src="https://mundhwatraffic.com/assets/video_background.png"
          alt="Mundhwa Bridge Live Traffic Pune Preview"
@@ -239,7 +221,6 @@
     </div>
   </div>
 
-<!-- Container just under the video -->
 <div class="notify-wrap" role="region" aria-label="Traffic alert signup">
   <button id="notifyBtn" class="notify-btn" aria-describedby="notify-desc">
     🔔 Notify me when Mundhwa is jammed
@@ -261,7 +242,6 @@
   overflow-y:auto;
 "></div>
 
-  <!-- SHARE -->
   <section>
     <h3 style="margin-top:1.4rem;">📢 Share MundhwaTraffic with someone stuck in traffic 🚗⚠️</h3>
     <div id="share-icons">
@@ -281,12 +261,6 @@
     </div>
   </section>
 
-  <!-- ADD TO HOME 
-  <button class="primary-btn" id="bookmarkBtn">
-    <img src="/assets/icons/bookmark.svg">
-    Add to Home
-  </button> -->
-
   <p id="bookmarkHelp" style="display:none;margin-top:0.8rem;opacity:.9;"></p>
 
   <div id="viewer-count">🔴 Live on YouTube</div>
@@ -294,10 +268,6 @@
   <button id="installBtn" class="primary-btn" style="display:none;margin-top:1.2rem;">
     📱 Add to Home Screen
   </button>
-
-
-
-
 
   <div id="debugBox" style="
   white-space:pre-wrap;
@@ -319,12 +289,10 @@
   Powered by <strong>RoadX Traffic Cameras</strong>
 </footer>
 
-<!-- SCRIPTS -->
 <script>
-/* STABLE YOUTUBE LOAD */
 document.getElementById("yt-overlay").addEventListener("click", () => {
   const container = document.getElementById("yt-container");
-  container.innerHTML = ""; // remove preview cleanly
+  container.innerHTML = "";
 
   const iframe = document.createElement("iframe");
   iframe.src =
@@ -340,7 +308,6 @@ document.getElementById("yt-overlay").addEventListener("click", () => {
   container.appendChild(iframe);
 });
 
-/* KEEP ALIVE (prevents autoplay pause on mobile browsers) */
 setInterval(() => {
   const iframe = document.querySelector("#yt-container iframe");
   if (iframe) {
@@ -351,7 +318,6 @@ setInterval(() => {
   }
 }, 15000);
 
-/* NATIVE SHARE */
 const nativeShare = document.getElementById("nativeShareBtn");
 if (navigator.share) {
   nativeShare.addEventListener("click", () => {
@@ -365,7 +331,6 @@ if (navigator.share) {
   nativeShare.style.opacity = "0.4";
 }
 
-/* BOOKMARK + A2HS */
 const bookmarkBtn = document.getElementById('bookmarkBtn');
 const bookmarkHelp = document.getElementById('bookmarkHelp');
 const ua = navigator.userAgent.toLowerCase();
@@ -384,7 +349,6 @@ bookmarkBtn.addEventListener("click", () => {
   bookmarkHelp.style.display = "block";
 });
 
-/* ANDROID A2HS */
 let deferredPrompt;
 const installBtn = document.getElementById("installBtn");
 
@@ -400,26 +364,28 @@ installBtn.addEventListener("click", () => {
   deferredPrompt = null;
 });
 
-/* SERVICE WORKER */
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/service-worker.js");
 }
 </script>
 
-<!-- Load OneSignal SDK -->
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 
 <script>
-/* -----------------------
-   DOM Elements
-------------------------*/
 const notifyBtn = document.getElementById("notifyBtn");
 const notifyHelp = document.getElementById("notifyHelp");
 
+/* Display helper */
+function show(msg){
+  notifyHelp.style.display = "block";
+  notifyHelp.innerHTML = msg;
+}
+
 /* -----------------------
-   Device Detection
+   Device + Browser Detection
 ------------------------*/
 const ua2 = navigator.userAgent.toLowerCase();
+
 const isIOS = /iphone|ipad|ipod/.test(ua2);
 const isMacSafari =
   /macintosh/.test(ua2) &&
@@ -430,17 +396,13 @@ const isPWA =
   window.matchMedia('(display-mode: standalone)').matches ||
   window.navigator.standalone === true;
 
-/* -----------------------
-   On-Screen Logger
-------------------------*/
-function show(msg){
-  notifyHelp.style.display = "block";
-  notifyHelp.innerHTML = msg;
-}
+const isFacebookBrowser =
+  navigator.userAgent.includes("FBAN") ||
+  navigator.userAgent.includes("FBAV");
 
-/* -----------------------
-   Initialize OneSignal
-------------------------*/
+const isInstagramBrowser =
+  navigator.userAgent.includes("Instagram");
+
 window.OneSignalDeferred = window.OneSignalDeferred || [];
 OneSignalDeferred.push(async function(OneSignal) {
   try {
@@ -456,59 +418,62 @@ OneSignalDeferred.push(async function(OneSignal) {
   }
 });
 
-/* -----------------------
-   Click Handler
-------------------------*/
 notifyBtn.addEventListener("click", async () => {
 
-  //show("🟦 CLICKED Alert button");
+  /* ---- FB/IG In-app Browser Block ---- */
+  if (isFacebookBrowser || isInstagramBrowser) {
 
-  /* ---- Mac Safari: No Support ---- */
-  //if (isMacSafari) {
-  //  show("⚠️ Safari on Mac does NOT support push notifications.");
-   // return;
- // }
+    if (isIOS) {
+      show(`
+        ⚠️ <b>Traffic alerts can't work inside Facebook on iPhone.</b><br><br>
+        To enable alerts:<br>
+        1️⃣ Tap <b>•••</b> in top-right<br>
+        2️⃣ Tap <b>Open in Safari</b><br>
+        3️⃣ Safari → <b>Share</b> → <b>Add to Home Screen</b><br>
+        4️⃣ Open the app from your home screen<br><br>
+        🔔 Then tap Notify again.
+      `);
+    } else {
+      show(`
+        ⚠️ <b>Facebook browser does not support traffic alerts.</b><br><br>
+        Please open this page in <b>Chrome</b> to enable notifications.<br><br>
+        👉 Tap the <b>⋯</b> menu → <b>Open in browser</b>
+      `);
+    }
+
+    return;
+  }
 
   /* ---- iOS requires PWA ---- */
   if (isIOS && !isPWA) {
     show(`
       📱 <b>Add to Home Screen required:</b> <br>
-      To receive traffic alerts on iPhone:<br>
+      To receive traffic alerts:<br>
       → Tap <b>Share</b><br>
       → Tap <b>Add to Home Screen</b><br>
-      Then open the app from the home screen.
+      Then open from the home screen.
     `);
     return;
   }
 
-  /* ---- Request Push Permission ---- */
   try {
-   // show("⏳ Requesting notification permission…");
     const permission = await OneSignal.Notifications.requestPermission();
 
-    if (!permission) {
-      //show("❌ Notification permission was not granted.");
-      return;
-    }
+    if (!permission) return;
 
-    /* ---- Subscribe user ---- */
     show("⏳ Subscribing…");
-
     await OneSignal.User.PushSubscription.optIn();
 
     const isEnabled = await OneSignal.User.PushSubscription.isOptedIn();
 
     if (isEnabled) {
       show("✅ You will now receive traffic alerts!");
-    } else {
-      // show("❌ Could not subscribe. Try again.");
     }
-
   } catch (err) {
     console.error(err);
-   // show("❌ ERROR: " + err.message);
   }
 });
 </script>
+
 </body>
 </html>
