@@ -219,6 +219,9 @@
 
     <div id="yt-overlay"> 
       <span>▶ Under Maintenance - We would be back soon! Subscribe for notifications </span>
+      <!-- ▶ Under Maintenance - We would be back soon! Subscribe for notifications -->
+      <!-- ▶ Play Live -->
+      
     </div>
   </div>
 
@@ -291,6 +294,9 @@
 <script>
 document.getElementById("Xyt-overlay").addEventListener("click", () => {
   const container = document.getElementById("yt-container");
+  if(container.innerHTML.toLowerCase().includes('maintenance'.toLowerCase()))
+    return;
+  
   container.innerHTML = "";
 
   const iframe = document.createElement("iframe");
