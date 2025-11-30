@@ -484,5 +484,31 @@ notifyBtn.addEventListener("click", async () => {
 });
 </script>
 
+  <script>
+(function() {
+  const ua = navigator.userAgent.toLowerCase();
+
+  const isIOS = /iphone|ipad|ipod/.test(ua);
+  const isPWA =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    navigator.standalone === true;
+
+  if (isIOS && isPWA) {
+    const audio = document.createElement("audio");
+    audio.autoplay = true;
+    audio.loop = true;
+    audio.hidden = true;
+
+    // Inline silent MP3 (no network call)
+    audio.src =
+      "data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
+    document.body.appendChild(audio);
+
+    console.log("iOS PWA keepalive audio enabled");
+  }
+})();
+</script>
+
 </body>
 </html>
