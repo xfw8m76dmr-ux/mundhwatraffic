@@ -1,1 +1,55 @@
-c
+
+
+
+<!-- FILE: mundhwa-cctv-live.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Mundhwa CCTV Live — Real-Time Bridge Camera Feed & Traffic View</title>
+  <meta name="description" content="View the live Mundhwa CCTV feed updated every few minutes. Check real-time bridge traffic with camera snapshots and congestion indicators.">
+  <link rel="canonical" href="https://mundhwatraffic.com/mundhwa-cctv-live">
+  <meta name="robots" content="index,follow">
+  <style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;margin:0;padding:0;color:#111}header{background:#0b74da;color:#fff;padding:18px}.container{max-width:980px;margin:24px auto;padding:0 16px}img.responsive{max-width:100%;height:auto;border:1px solid #e6e6e6}.meta{font-size:14px;color:#666;margin-top:8px}footer{padding:20px;text-align:center;color:#666;font-size:13px;border-top:1px solid #f0f0f0;margin-top:40px}</style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1 style="margin:0;font-size:20px">Mundhwa CCTV Live Feed</h1>
+      <nav style="margin-top:8px">
+        <a href="/mundhwa-traffic-live">Live</a>
+        <a href="/pune-mundhwa-jam-today">Is it jammed?</a>
+        <a href="/pune-traffic-updates">Pune updates</a>
+        <a href="/mundhwa-cctv-live">CCTV</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <p class="meta">Last snapshot: <time id="lastUpdated">{timestamp}</time></p>
+
+    <figure>
+      <img class="responsive" id="cctvImage" src="/images/mundhwa-traffic-latest.jpg" alt="Mundhwa CCTV live snapshot">
+      <figcaption class="meta">Snapshot captured at <span id="imageTs">{timestamp}</span>. Updated every few minutes.</figcaption>
+    </figure>
+
+    <p style="margin-top:18px">If the snapshot fails to update, try refreshing the page. We capture and serve a new image every few minutes.</p>
+  </main>
+
+  <footer>
+    &copy; {year} MundhwaTraffic
+  </footer>
+
+  <script>
+    (function(){
+      var now=new Date();var ts=now.toLocaleString('en-IN');document.getElementById('lastUpdated').textContent=ts;document.getElementById('imageTs').textContent=ts;document.querySelector('footer').innerHTML='&copy; '+now.getFullYear()+' MundhwaTraffic';
+      // Optional: auto-refresh image every 3 minutes
+      setInterval(function(){
+        var img=document.getElementById('cctvImage');
+        img.src='/images/mundhwa-traffic-latest.jpg?ts='+Date.now();
+      }, 3*60*1000);
+    })();
+  </script>
+</body>
+</html>
