@@ -1,1 +1,126 @@
-c
+<!-- FILE: mundhwa-traffic-live.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Mundhwa Traffic Live — Real-Time Jam Status, Congestion & CCTV Updates</title>
+  <meta name="description" content="Check real-time Mundhwa Bridge traffic conditions, live congestion status, road delays, peak hours, and CCTV updates. Updated every few minutes.">
+  <link rel="canonical" href="https://mundhwatraffic.com/mundhwa-traffic-live">
+  <meta name="robots" content="index,follow">
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;margin:0;padding:0;color:#111}
+    header{background:#0b74da;color:#fff;padding:18px}
+    .container{max-width:980px;margin:24px auto;padding:0 16px}
+    img.responsive{max-width:100%;height:auto;border:1px solid #e6e6e6}
+    .meta{font-size:14px;color:#666;margin-top:8px}
+    .badge{display:inline-block;background:#eee;padding:6px 8px;border-radius:6px;margin-right:8px}
+    nav a{color:#fff;margin-right:12px;text-decoration:none}
+    footer{padding:20px;text-align:center;color:#666;font-size:13px;border-top:1px solid #f0f0f0;margin-top:40px}
+  </style>
+
+  <!-- FAQ Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is Mundhwa Bridge jammed right now?",
+        "acceptedAnswer": {"@type":"Answer","text":"You can check the real-time Mundhwa Bridge traffic jam status on this page, updated every few minutes."}
+      },
+      {
+        "@type": "Question",
+        "name": "What time is peak traffic at Mundhwa?",
+        "acceptedAnswer": {"@type":"Answer","text":"Peak traffic at Mundhwa typically occurs between 9:00–11:00 AM and 6:00–8:30 PM, depending on office timings."}
+      },
+      {
+        "@type": "Question",
+        "name": "Does Mundhwa Bridge have a live camera?",
+        "acceptedAnswer": {"@type":"Answer","text":"Yes, the live CCTV snapshot updates every few minutes, giving a real-time view of traffic."}
+      }
+    ]
+  }
+  </script>
+
+  <!-- LocalBusiness Schema -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"LocalBusiness",
+    "name":"Mundhwa Traffic Live",
+    "description":"Real-time Mundhwa Bridge traffic and live CCTV updates.",
+    "areaServed":"Mundhwa, Pune",
+    "url":"https://mundhwatraffic.com"
+  }
+  </script>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1 style="margin:0;font-size:20px">Mundhwa Traffic Live</h1>
+      <nav style="margin-top:8px">
+        <a href="/mundhwa-traffic-live">Live</a>
+        <a href="/pune-mundhwa-jam-today">Is it jammed?</a>
+        <a href="/pune-traffic-updates">Pune updates</a>
+        <a href="/mundhwa-cctv-live">CCTV</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <p class="meta">Updated: <time id="lastUpdated">{timestamp}</time></p>
+
+    <section aria-labelledby="live-h1">
+      <h2 id="live-h1">Live congestion level</h2>
+      <p>Current status: <strong id="status">Loading…</strong></p>
+
+      <figure>
+        <img class="responsive" id="liveImage" src="/images/mundhwa-traffic-latest.jpg" alt="Live Mundhwa Traffic — Updated {timestamp}">
+        <figcaption class="meta">Live Mundhwa Bridge traffic as of <span id="imageTs">{timestamp}</span>. Updated every few minutes.</figcaption>
+      </figure>
+
+      <div style="margin-top:16px">
+        <span class="badge">Delay: <strong id="delay">—</strong></span>
+        <span class="badge">Peak hours: 9–11 AM, 6–8:30 PM</span>
+      </div>
+
+      <p style="margin-top:18px">Use this page to check Mundhwa traffic before you leave. For continuous updates, enable push notifications or join our community.</p>
+    </section>
+
+    <section style="margin-top:28px">
+      <h3>Quick tips</h3>
+      <ul>
+        <li>Leave earlier to avoid the morning peak (9–11 AM).</li>
+        <li>Prefer alternate route via {example-route} when heavy congestion is shown.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    &copy; {year} MundhwaTraffic — Live traffic updates for Mundhwa, Pune
+  </footer>
+
+  <script>
+    // Simple JS to replace placeholders. Replace with your templating system or server-side render.
+    (function(){
+      var now = new Date();
+      var ts = now.toLocaleString('en-IN');
+      document.getElementById('lastUpdated').textContent = ts;
+      var imgTsEls = document.querySelectorAll('#imageTs');
+      for(var i=0;i<imgTsEls.length;i++) imgTsEls[i].textContent = ts;
+      var yearEls = document.querySelectorAll('footer');
+      for(var i=0;i<yearEls.length;i++) yearEls[i].innerHTML = '&copy; ' + now.getFullYear() + ' MundhwaTraffic — Live traffic updates for Mundhwa, Pune';
+      // Placeholder status/delay (replace with real API)
+      document.getElementById('status').textContent = 'Moderate';
+      document.getElementById('delay').textContent = '8 min';
+    })();
+  </script>
+</body>
+</html>
+
+
+
+
+
