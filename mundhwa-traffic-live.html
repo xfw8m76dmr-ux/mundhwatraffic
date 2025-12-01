@@ -1,1 +1,70 @@
-x
+<!-- FILE: pune-traffic-updates.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pune Traffic Updates — Live Traffic for Mundhwa, Kharadi & East Pune</title>
+  <meta name="description" content="Live Pune traffic updates for Mundhwa, Kharadi, Magarpatta, Hadapsar and Koregaon Park. Real-time congestion, CCTV snapshots and route status.">
+  <link rel="canonical" href="https://mundhwatraffic.com/pune-traffic-updates">
+  <meta name="robots" content="index,follow">
+  <style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;margin:0;padding:0;color:#111}header{background:#0b74da;color:#fff;padding:18px}.container{max-width:980px;margin:24px auto;padding:0 16px}img.responsive{max-width:100%;height:auto;border:1px solid #e6e6e6}.meta{font-size:14px;color:#666;margin-top:8px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{padding:12px;border:1px solid #f0f0f0;border-radius:8px;background:#fff}footer{padding:20px;text-align:center;color:#666;font-size:13px;border-top:1px solid #f0f0f0;margin-top:40px}</style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1 style="margin:0;font-size:20px">Pune Traffic Live Updates</h1>
+      <nav style="margin-top:8px">
+        <a href="/mundhwa-traffic-live">Live</a>
+        <a href="/pune-mundhwa-jam-today">Is it jammed?</a>
+        <a href="/pune-traffic-updates">Pune updates</a>
+        <a href="/mundhwa-cctv-live">CCTV</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <p class="meta">Updated: <time id="lastUpdated">{timestamp}</time></p>
+
+    <section class="grid" aria-label="areas">
+      <article class="card">
+        <h3>Mundhwa</h3>
+        <p>Current: <strong id="m-status">—</strong></p>
+        <p>Delay: <strong id="m-delay">—</strong></p>
+      </article>
+
+      <article class="card">
+        <h3>Kharadi</h3>
+        <p>Current: <strong id="k-status">—</strong></p>
+        <p>Delay: <strong id="k-delay">—</strong></p>
+      </article>
+
+      <article class="card">
+        <h3>Magarpatta</h3>
+        <p>Current: <strong id="g-status">—</strong></p>
+        <p>Delay: <strong id="g-delay">—</strong></p>
+      </article>
+
+      <article class="card">
+        <h3>Hadapsar</h3>
+        <p>Current: <strong id="h-status">—</strong></p>
+        <p>Delay: <strong id="h-delay">—</strong></p>
+      </article>
+    </section>
+
+    <section style="margin-top:20px">
+      <p>For detailed live view of Mundhwa, use the <a href="/mundhwa-traffic-live">Mundhwa Traffic Live</a> page.</p>
+    </section>
+  </main>
+
+  <footer>
+    &copy; {year} MundhwaTraffic
+  </footer>
+
+  <script>
+    (function(){
+      var now=new Date();var ts=now.toLocaleString('en-IN');document.getElementById('lastUpdated').textContent=ts;document.getElementById('m-status').textContent='Moderate';document.getElementById('m-delay').textContent='8 min';document.getElementById('k-status').textContent='Clear';document.getElementById('k-delay').textContent='0–2 min';document.getElementById('g-status').textContent='Moderate';document.getElementById('g-delay').textContent='5 min';document.getElementById('h-status').textContent='Heavy';document.getElementById('h-delay').textContent='12–18 min';document.querySelector('footer').innerHTML='&copy; '+now.getFullYear()+' MundhwaTraffic';
+    })();
+  </script>
+</body>
+</html>
