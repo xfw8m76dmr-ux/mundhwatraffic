@@ -124,18 +124,20 @@ function waitForGA(callback, tries = 20) {
 }
 
 fetch('/geo')
-  .then(res => res.json())
-  .then(loc => {
+  .then((res) => res.json())
+  .then((loc) => {
     waitForGA(() => {
-      // ✔ Correct GA4-compatible syntax
-      gtag('set', {
-        user_properties: {
-          user_area: loc.area,
-          user_zone: loc.zone
-        }
+      // GA4 user properties update (correct format)
+      gtag('set', 'user_properties', {
+        user_area: loc?.area || 'unknown',
+        user_zone: loc?.zone || 'unknown'
       });
     });
+  })
+  .catch(err => {
+    console.error("Geo fetch failed:", err);
   });
+
 </script>
 
 <style>
