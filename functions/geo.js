@@ -1,7 +1,15 @@
-// V2 Pune Geo Resolver — Cloudflare Worker (polygon + nearest fallback + confidence + heuristics)
-//
-// NOTE: This is the same V2 we produced earlier but with an expanded PIN_AREA mapping
-// that includes the postal codes and locality names you supplied.
+// =======================================================
+//                     V3 — INDIA GEO RESOLVER
+//             LAT/LON FIRST → PIN FALLBACK ONLY
+// =======================================================
+
+/*
+V3 Priority:
+1. Polygon match (Cloudflare lat/lon)
+2. Nearest centroid fallback
+3. PIN → only if lat/lon missing
+4. City fallback
+*/
 
 const AREA_POLYGONS = {
   "Kharadi": { polygon: [[18.545,73.940],[18.545,73.982],[18.575,73.982],[18.575,73.940]] },
@@ -17,264 +25,210 @@ const AREA_POLYGONS = {
   "Camp": { polygon: [[18.505,73.860],[18.505,73.895],[18.530,73.895],[18.530,73.860]] },
   "Kothrud": { polygon: [[18.485,73.780],[18.485,73.825],[18.525,73.825],[18.525,73.780]] },
   "Bibwewadi": { polygon: [[18.470,73.860],[18.470,73.900],[18.500,73.900],[18.500,73.860]] }
-  // add more polygons later as desired...
+  // You can keep adding more polygons over time
 };
 
-// Precompute centroids
-for (const [name, obj] of Object.entries(AREA_POLYGONS)) {
-  const poly = obj.polygon;
-  const centroid = polygonCentroid(poly);
-  obj.centroid = centroid;
+// Compute centroids
+function polygonCentroid(poly) {
+  let sumLat = 0, sumLon = 0;
+  for (const [lat, lon] of poly) { sumLat += lat; sumLon += lon; }
+  return [sumLat / poly.length, sumLon / poly.length];
 }
 
-// -----------------
-// Expanded PIN_AREA
-// -----------------
-// Integrated the postal descriptions you provided. Keys are postal codes (strings).
-// Values are normalized area names that match or map to polygon keys when possible.
-// I've preserved descriptive localities (after the comma) as comments for reference.
+for (const area of Object.values(AREA_POLYGONS)) {
+  area.centroid = polygonCentroid(area.polygon);
+}
+
+// PIN fallback mapping (used ONLY if lat/lon unavailable)
 const PIN_AREA = {
-  // core city codes (from your list)
-  "411001": "Camp",               // Pune H.O., C.D.A. (O), Dr. B.A. Chowk, Ghorpuri Bazar, Pune Cantt East, Pune New Bazar, Sachapir Street, Agarkar Nagar
-  "411002": "Sadashiv Peth",      // Pune City, Bajirao Road, Kapad Ganj, Nana Peth, Raviwar Peth, Shukrawar Peth, M.Fule market, Ashok Nagar Colony
-  "411003": "Khadki",             // Ammunition Factory Khadki, East Khadki, H.E. Factory, Khadki Bazar, Botanical Garden
-  "411004": "Deccan Gymkhana",    // A.R. Shala, Deccan Gymkhana, Film Institute
-  "411005": "Shivajinagar",       // Congress House Road, S.S.C. Exam Board, Shivajinagar
-  "411006": "Yerwada",            // Yerwada, Yerwada T.S.
-  "411007": "Aundh",              // Aundh, Ganeshkhind, Ashok Nagar
-  "411008": "Baner",              // Baner Road
-  "411009": "Parvati",            // Parvati, Parvati Gaon
-  "411011": "Kasba Peth",         // Kasba Peth, Mangalwar Peth, Rasta Peth
-  "411012": "Dapodi",             // Dapodi, Dapodi Bazar
-  "411013": "HADAPSAR-IND",       // Hadapsar I.E. (industrial)
-  "411014": "Kharadi",            // 9 DRD, Dukirkline, Vadgaon Sheri, Viman Nagar, Kharadi
-  "411015": "Viman Nagar",        // Dhanori, Dighi Camp, Vishrantwadi
-  "411016": "Model Colony",       // Gokhalenagar, Govt. Polytechnic, Model Colony, Shivaji Housing Society
-  "411017": "Pimpri",             // Kalewadi, Pimpri Colony, Pimpri Waghire
-  "411018": "Pimpri",             // Masulkar Colony, Nehrunagar, Pimpri P F
-  "411019": "Chinchwad",          // Chinchwad East
+  "411001": "Camp",
+  "411002": "Sadashiv Peth",
+  "411003": "Khadki",
+  "411004": "Deccan Gymkhana",
+  "411005": "Shivajinagar",
+  "411006": "Yerwada",
+  "411007": "Aundh",
+  "411008": "Baner",
+  "411009": "Parvati",
+  "411011": "Kasba Peth",
+  "411012": "Dapodi",
+  "411013": "Hadapsar",
+  "411014": "Kharadi",
+  "411015": "Viman Nagar",
+  "411016": "Model Colony",
+  "411017": "Pimpri",
+  "411018": "Pimpri",
+  "411019": "Chinchwad",
   "411020": "Range Hills",
-  "411021": "Bavdhan",            // Armament, Bavdhan, Sus
-  "411022": "SRPF",               // SRPF
+  "411021": "Bavdhan",
+  "411022": "SRPF",
   "411023": "Agalambe",
-  "411026": "Bhosari",            // Bhosari I.E., Indrayaninagar
-  "411027": "Sangavi",            // Aundh Camp, Sangavi
-  "411028": "Hadapsar",           // Gondhale Nagar, Hadapsar, Sasanenagar
-  "411030": "Sadashiv Peth",      // Lokmanyanagar, Narayan Peth, S.P. College, Sadashiv Peth, Shaniwar Peth
+  "411026": "Bhosari",
+  "411027": "Sangavi",
+  "411028": "Hadapsar",
+  "411030": "Sadashiv Peth",
   "411031": "CME",
-  "411032": "Airport",            // Airport, IAF Station, Vidyanagar
-  "411033": "Punawale",           // Chinchwadgaon, Jambhe, Punawale, Thathawade, Thergaon
+  "411032": "Airport",
+  "411033": "Punawale",
   "411034": "Kasarwadi",
   "411035": "Akurdi",
-  "411036": "Mundhwa",            // Mundhwa, Mundhwa AV
-  "411037": "Bibwewadi",          // Bibwewadi, Market Yard, Salisbury Park, T.V. Nagar
-  "411038": "Kothrud",            // Bhusari Colony, Ex. Serviceman Colony, Kothrud
-  "411039": "Bhosari-Goan",
-  "411040": "Wanowarie",          // AFMC, Wanowarie
-  "411041": "Dhayari",            // Dhayari, Nanded, Sinhgad Technical Education Society, Vadgaon Budruk
-  "411042": "Bhukum",             // Bhavani Peth, Ghorpade Peth, Guruwar Peth, Ambarvet, Andgaon, Bhugaon, Bhukum, Ghotavade
-  "411044": "Yamunanagar",        // P.C.N.T., Yamunanagar
-  "411045": "Baner",              // Baner Gaon
-  "411046": "Ambegaon",           // Ambegaon Bk, Ambegaon Budruk, Ambegaon Pathar
+  "411036": "Mundhwa",
+  "411037": "Bibwewadi",
+  "411038": "Kothrud",
+  "411039": "Bhosari",
+  "411040": "Wanowarie",
+  "411041": "Dhayari",
+  "411042": "Bhukum",
+  "411044": "Yamunanagar",
+  "411045": "Baner",
+  "411046": "Ambegaon",
   "411047": "Lohegaon",
-  "411048": "Kondhwa",            // Khondhwa KH, Kondhwa BK, Kondhwa Lh, N.I.B.M.
+  "411048": "Kondhwa",
   "411051": "Anandnagar",
-  "411052": "Karve Nagar",        // Karvenagar, Navsahyadri
-  "411057": "Wakad",              // Infotech Park Hinjewadi, Marunji, Wakad
+  "411052": "Karve Nagar",
+  "411057": "Wakad",
   "411058": "Warje",
-  "411060": "Undri",              // Mohamadwadi (Undri / Pisoli area)
+  "411060": "Undri",
   "411061": "Pimple Gurav",
   "411062": "Chikhali",
-  // Pune Rural / Taluka examples you provided (added where clear)
-  "410506": "Maval",              // Adhale Bk, Chandkhed, Bebedhol
-  "410401": "Maval",              // Ambavane, Bhangarwadi
-  "410402": "Maval",
-  "410507": "Maval",              // Ambale, Ambi
-  "410509": "Maval",              // Adivare, Asane, Bhimashankar, Dimbhe Colony
-  "410505": "Maval",              // Amboli
-  "410511": "Maval",
-  "410512": "Maval",
-  "410513": "Maval",              // Bibi, Chas
-  "410516": "Maval",              // Gangapur Kh
-  "412115": "Mulshi",             // Mulshi Taluka
-  "412210": "Shirur",
-  "412207": "Wagholi",            // Ashtapur, Awhalwadi, Wagholi
-  "412211": "Shirur",             // Alegaon, Amble, Andhalgaon, Chinchani Camp
-  "412208": "Shirur",             // Burunjwadi
-  "412209": "Shirur",             // Bhamburde, Ganegaon Khalasa
-  "412216": "Shirur",             // Fulgaon
-  "412218": "Shirur",             // Amdahad
-  "412305": "Purandar",
-  "412301": "Purandar",           // Bhivadi, Bhivari, Bopgaon, Chambli, Diwa...
-  "412303": "Purandar",
-  "412212": "Velha",
-  "410503": "Ambegaon",
-  "412408": "Ambegaon",
-  "412406": "Ambegaon",
-  "412405": "Ambegaon",
-  "412404": "Ambegaon",
-  "412402": "Ambegaon",
-  "412409": "Ambegaon",
-  "412410": "Ambegaon",
-  "413801": "Daund",
-  "413802": "Daund",
-  "413803": "Daund",
-  "413102": "Baramati",
-  "413103": "Baramati",
-  "413104": "Baramati",
-  "413133": "Baramati",
-  "413106": "Indapur",
-  "413130": "Indapur",
-  "413105": "Indapur",
-  "413132": "Indapur",
-  "413114": "Indapur",
-  "410502": "Junnar",
-  "412401": "Junnar",
-  "412411": "Junnar",
-  "412412": "Junnar",
-  "410501": "Khed",
-  "412105": "Khed",
-  "412114": "Khed",
-  "412202": "Khed",
-  "412203": "Khed"
-  // You can continue adding more postal codes here as needed
+  // Rural (fallback only)
+  "412207": "Wagholi",
+  "412307": "Manjari",
+  "412308": "Phursungi",
 };
 
-// ---------- same helper functions as earlier ----------
-function toNum(v) { if (v === null || v === undefined) return null; const n = Number(v); return Number.isFinite(n) ? n : null; }
-function polygonCentroid(poly) { let sumLat = 0, sumLon = 0; for (const [lat, lon] of poly) { sumLat += lat; sumLon += lon; } return [sumLat / poly.length, sumLon / poly.length]; }
+// ---------------- Helpers ----------------
+function toNum(v){ if(v===null||v===undefined)return null; const n=Number(v); return Number.isFinite(n)?n:null; }
+
 function pointInPolygon(point, poly) {
-  const x = point[1], y = point[0];
+  const [lat, lon] = point;  
   let inside = false;
-  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const xi = poly[i][1], yi = poly[i][0];
-    const xj = poly[j][1], yj = poly[j][0];
-    const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi + 0.0) + xi);
+  for (let i=0,j=poly.length-1;i<poly.length;j=i++) {
+    const [latI,lonI]=poly[i], [latJ,lonJ]=poly[j];
+    const intersect = ((lonI>lon)!==(lonJ>lon)) &&
+      lat < (latJ-latI)*(lon-lonI)/(lonJ-lonI) + latI;
     if (intersect) inside = !inside;
   }
   return inside;
 }
-function haversineMeters(lat1, lon1, lat2, lon2) {
-  const R = 6371000; const toRad = (d) => d * Math.PI / 180;
-  const φ1 = toRad(lat1), φ2 = toRad(lat2);
-  const Δφ = toRad(lat2 - lat1), Δλ = toRad(lon2 - lon1);
-  const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c;
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R=6371000; const toRad=d=>d*Math.PI/180;
+  const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
-// Precompute centroids for polygons
-for (const [name, obj] of Object.entries(AREA_POLYGONS)) {
-  obj.centroid = polygonCentroid(obj.polygon);
-}
-
-function resolveAreaV2({ postal, city, lat, lon, cf, headers }) {
+// ------------- V3 Resolver ---------------
+function resolveAreaV3({ postal, city, lat, lon }) {
   const latN = toNum(lat);
   const lonN = toNum(lon);
   const postalStr = postal ? String(postal).trim() : null;
 
-  const probable_private_relay = (!postalStr && (latN === null || lonN === null) && !!city);
-  const xff = headers.get("x-forwarded-for") || "";
-  const probable_vpn_or_proxy = (postalStr && (latN === null || lonN === null)) || (xff.split(",").length > 1);
-
-  // 1) PIN exact match
-  if (postalStr && PIN_AREA[postalStr]) {
-    return { area: PIN_AREA[postalStr], method: "pin", confidence: "high", matched_pin: postalStr, distance_meters: null };
-  }
-
-  // 2) polygon containment
+  // -------------------------------
+  // 1) If lat/lon available → ALWAYS USE LAT/LON FIRST
+  // -------------------------------
   if (latN !== null && lonN !== null) {
+
+    // 1a) Polygon match
     for (const [area, obj] of Object.entries(AREA_POLYGONS)) {
       if (pointInPolygon([latN, lonN], obj.polygon)) {
-        return { area, method: "polygon", confidence: "high", matched_pin: null, distance_meters: 0 };
+        return {
+          area,
+          method: "polygon",
+          confidence: "high",
+          matched_pin: null,
+          distance_meters: 0
+        };
       }
     }
 
-    // 3) nearest-area fallback
+    // 1b) Nearest centroid fallback
     let best = null;
     for (const [area, obj] of Object.entries(AREA_POLYGONS)) {
-      const [cLat, cLon] = obj.centroid;
-      const d = haversineMeters(latN, lonN, cLat, cLon);
-      if (!best || d < best.distance) best = { area, distance: d };
+      const [cLat,cLon] = obj.centroid;
+      const d = haversine(latN, lonN, cLat, cLon);
+      if (!best || d < best.distance) best = {area, distance: d};
     }
-    if (best) {
-      let confidence = "low";
-      if (best.distance <= 500) confidence = "high";
-      else if (best.distance <= 2000) confidence = "medium";
-      else confidence = "low";
-      return { area: best.area, method: "nearest", confidence, matched_pin: null, distance_meters: Math.round(best.distance) };
-    }
+
+    let conf = "low";
+    if (best.distance <= 600) conf = "high";
+    else if (best.distance <= 2000) conf = "medium";
+
+    return {
+      area: best.area,
+      method: "nearest",
+      confidence: conf,
+      matched_pin: null,
+      distance_meters: Math.round(best.distance),
+    };
   }
 
-  if (city === "Pune") return { area: "Pune (Approx)", method: "city", confidence: "low", matched_pin: null, distance_meters: null };
-  return { area: city || "Pune", method: "fallback", confidence: "low", matched_pin: null, distance_meters: null };
-}
+  // -------------------------------
+  // 2) Only if lat/lon missing → use PIN
+  // -------------------------------
+  if (postalStr && PIN_AREA[postalStr]) {
+    return {
+      area: PIN_AREA[postalStr],
+      method: "pin",
+      confidence: "medium",
+      matched_pin: postalStr,
+      distance_meters: null
+    };
+  }
 
-function makeGA4UserProperties(result) {
+  // -------------------------------
+  // 3) City fallback
+  // -------------------------------
+  if (city === "Pune") {
+    return {
+      area: "Pune (Approx)",
+      method: "city",
+      confidence: "low",
+      matched_pin: null,
+      distance_meters: null
+    };
+  }
+
+  // -------------------------------
+  // 4) Last fallback
+  // -------------------------------
   return {
-    user_area: result.area,
-    user_area_method: result.method,
-    user_area_confidence: result.confidence,
-    user_area_distance_meters: result.distance_meters !== null ? String(result.distance_meters) : null
+    area: city || "Pune",
+    method: "fallback",
+    confidence: "low",
+    matched_pin: null,
+    distance_meters: null
   };
 }
 
-function resolveZone(postal) {
-  if (["411014","411015","411028","411036","411006","411047","412207","412307","412308"].includes(postal)) return "East Pune";
-  if (["411038","411029","411058","411052","411007","411045","411021"].includes(postal)) return "West Pune";
-  if (["411057","411033","411017","411019","411035","411044","411039","412101"].includes(postal)) return "North Pune (PCMC / Hinjewadi)";
-  if (["411037","411046","411043","411060"].includes(postal)) return "South Pune";
-  return "Pune";
-}
+// ---------------- Cloudflare Handler ----------------
 
 export async function onRequest({ request }) {
-  try {
-    const cf = request.cf || {};
-    const headers = request.headers;
+  const cf = request.cf || {};
+  const headers = request.headers;
 
-    const ip     = request.headers.get("cf-connecting-ip") || null;
-    const city   = cf.city || null;
-    const postal = cf.postalCode || null;
-    const region = cf.region || null;
-    const lat    = cf.latitude || null;
-    const lon    = cf.longitude || null;
+  const ip     = headers.get("cf-connecting-ip");
+  const city   = cf.city || null;
+  const postal = cf.postalCode || null;
+  const region = cf.region || null;
+  const lat    = cf.latitude || null;
+  const lon    = cf.longitude || null;
 
-    const heuristics = {
-      probable_private_relay: (!postal && (!lat || !lon) && !!city),
-      probable_vpn_or_proxy: (postal && (!lat || !lon)) || ((headers.get("x-forwarded-for") || "").split(",").length > 1)
-    };
+  const result = resolveAreaV3({ postal, city, lat, lon });
 
-    const resolved = resolveAreaV2({ postal, city, lat, lon, cf, headers });
-    const zone = resolveZone(postal);
-    const ga4_props = makeGA4UserProperties(resolved);
+  const payload = {
+    ip,
+    city,
+    postal,
+    region,
+    latitude: lat,
+    longitude: lon,
+    ...result,
+    timestamp: new Date().toISOString()
+  };
 
-    const payload = {
-      ip,
-      city,
-      postal,
-      region,
-      latitude: lat === undefined ? null : lat,
-      longitude: lon === undefined ? null : lon,
-      area: resolved.area,
-      zone,
-      method: resolved.method,
-      confidence: resolved.confidence,
-      matched_pin: resolved.matched_pin,
-      distance_meters: resolved.distance_meters,
-      heuristics,
-      ga4_user_properties: ga4_props,
-      timestamp: new Date().toISOString()
-    };
-
-    return new Response(JSON.stringify(payload, null, 2), {
-      headers: { "Content-Type": "application/json" }
-    });
-
-  } catch (err) {
-    const errPayload = { error: String(err) };
-    return new Response(JSON.stringify(errPayload, null, 2), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
-    });
-  }
+  return new Response(JSON.stringify(payload, null, 2), {
+    headers: { "Content-Type": "application/json" }
+  });
 }
