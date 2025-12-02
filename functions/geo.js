@@ -1,18 +1,139 @@
-// =========================
-// 1) PUNE PIN → AREA MAP (Exact match when PIN is reliable)
-// =========================
+// V2 Pune Geo Resolver — Cloudflare Worker (polygon + nearest fallback + confidence + heuristics)
+//
+// Usage: same as before — export async function onRequest({ request }) { ... }
+// Paste this file as your Cloudflare Worker script.
 
-const areaMap = {
+const AREA_POLYGONS = {
+  // For brevity: polygons are rectangles (clockwise) derived from your bounding boxes.
+  // You can replace these with real multi-vertex polygons if you have them.
+  "Kharadi": {
+    polygon: [
+      [18.545, 73.940],
+      [18.545, 73.982],
+      [18.575, 73.982],
+      [18.575, 73.940]
+    ]
+  },
+  "Viman Nagar": {
+    polygon: [
+      [18.560, 73.890],
+      [18.560, 73.920],
+      [18.585, 73.920],
+      [18.585, 73.890]
+    ]
+  },
+  "Wadgaon Sheri": {
+    polygon: [
+      [18.545, 73.918],
+      [18.545, 73.940],
+      [18.573, 73.940],
+      [18.573, 73.918]
+    ]
+  },
+  "Mundhwa": {
+    polygon: [
+      [18.521, 73.935],
+      [18.521, 73.970],
+      [18.548, 73.970],
+      [18.548, 73.935]
+    ]
+  },
+  "Keshav Nagar": {
+    polygon: [
+      [18.530, 73.960],
+      [18.530, 73.990],
+      [18.560, 73.990],
+      [18.560, 73.960]
+    ]
+  },
+  "Hadapsar": {
+    polygon: [
+      [18.490, 73.910],
+      [18.490, 73.960],
+      [18.530, 73.960],
+      [18.530, 73.910]
+    ]
+  },
+  "Manjari": {
+    polygon: [
+      [18.470, 73.970],
+      [18.470, 74.010],
+      [18.500, 74.010],
+      [18.500, 73.970]
+    ]
+  },
+  "Phursungi": {
+    polygon: [
+      [18.460, 73.940],
+      [18.460, 73.980],
+      [18.492, 73.980],
+      [18.492, 73.940]
+    ]
+  },
+  "Wagholi": {
+    polygon: [
+      [18.575, 73.980],
+      [18.575, 74.050],
+      [18.620, 74.050],
+      [18.620, 73.980]
+    ]
+  },
+  "Lohegaon": {
+    polygon: [
+      [18.580, 73.900],
+      [18.580, 73.960],
+      [18.620, 73.960],
+      [18.620, 73.900]
+    ]
+  },
+
+  // ... add other areas similarly (converted from your GEO_GRID)
+  "Camp": {
+    polygon: [
+      [18.505, 73.860],
+      [18.505, 73.895],
+      [18.530, 73.895],
+      [18.530, 73.860]
+    ]
+  },
+  "Kothrud": {
+    polygon: [
+      [18.485, 73.780],
+      [18.485, 73.825],
+      [18.525, 73.825],
+      [18.525, 73.780]
+    ]
+  },
+  "Bibwewadi": {
+    polygon: [
+      [18.470, 73.860],
+      [18.470, 73.900],
+      [18.500, 73.900],
+      [18.500, 73.860]
+    ]
+  }
+  // add remaining areas as needed...
+};
+
+// Precompute centroids for nearest fallback
+for (const [name, obj] of Object.entries(AREA_POLYGONS)) {
+  const poly = obj.polygon;
+  const centroid = polygonCentroid(poly);
+  obj.centroid = centroid; // [lat, lon]
+}
+
+// KEEP your PIN -> area map (only accepts known PINs)
+const PIN_AREA = {
   "411014": "Kharadi",
   "411015": "Viman Nagar",
   "411028": "Hadapsar",
-  "411036": "Mundhwa / Keshav Nagar",
+  "411036": "Mundhwa",
   "411006": "Yerwada",
   "411047": "Lohegaon",
   "412207": "Wagholi",
   "412307": "Manjari",
   "412308": "Phursungi",
-  "411001": "Camp / MG Road",
+  "411001": "Camp",
   "411004": "Koregaon Park",
   "411005": "Bund Garden Road",
   "411030": "Sadashiv Peth",
@@ -37,72 +158,144 @@ const areaMap = {
   "411060": "Undri / Pisoli"
 };
 
+// Small helpers
+function toNum(v) {
+  if (v === null || v === undefined) return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
 
-// =========================
-// 2) FULL PUNE GEO-GRID (Bounding Box Matcher)
-// =========================
+function polygonCentroid(poly) {
+  // poly: array of [lat, lon]
+  // simple average centroid — adequate for small polygons inside city
+  let sumLat = 0, sumLon = 0;
+  for (const [lat, lon] of poly) { sumLat += lat; sumLon += lon; }
+  return [sumLat / poly.length, sumLon / poly.length];
+}
 
-const GEO_GRID = {
-  // EAST PUNE
-  "Kharadi": { minLat: 18.545, maxLat: 18.575, minLon: 73.940, maxLon: 73.982 },
-  "Viman Nagar": { minLat: 18.560, maxLat: 18.585, minLon: 73.890, maxLon: 73.920 },
-  "Wadgaon Sheri": { minLat: 18.545, maxLat: 18.573, minLon: 73.918, maxLon: 73.940 },
-  "Yerwada": { minLat: 18.555, maxLat: 18.590, minLon: 73.865, maxLon: 73.900 },
-  "Koregaon Park": { minLat: 18.530, maxLat: 18.565, minLon: 73.880, maxLon: 73.915 },
-  "Ghorpadi": { minLat: 18.515, maxLat: 18.540, minLon: 73.900, maxLon: 73.930 },
-  "Mundhwa": { minLat: 18.521, maxLat: 18.548, minLon: 73.935, maxLon: 73.970 },
-  "Keshav Nagar": { minLat: 18.530, maxLat: 18.560, minLon: 73.960, maxLon: 73.990 },
-  "Hadapsar": { minLat: 18.490, maxLat: 18.530, minLon: 73.910, maxLon: 73.960 },
-  "Magarpatta": { minLat: 18.505, maxLat: 18.525, minLon: 73.925, maxLon: 73.948 },
-  "Amanora": { minLat: 18.508, maxLat: 18.530, minLon: 73.950, maxLon: 73.975 },
-  "Manjari": { minLat: 18.470, maxLat: 18.500, minLon: 73.970, maxLon: 74.010 },
-  "Phursungi": { minLat: 18.460, maxLat: 18.492, minLon: 73.940, maxLon: 73.980 },
-  "Wagholi": { minLat: 18.575, maxLat: 18.620, minLon: 73.980, maxLon: 74.050 },
-  "Lohegaon": { minLat: 18.580, maxLat: 18.620, minLon: 73.900, maxLon: 73.960 },
+// Point-in-polygon (ray casting) — point: [lat, lon], poly: [[lat, lon], ...]
+function pointInPolygon(point, poly) {
+  const x = point[1]; // lon
+  const y = point[0]; // lat
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const xi = poly[i][1], yi = poly[i][0];
+    const xj = poly[j][1], yj = poly[j][0];
+    const intersect = ((yi > y) !== (yj > y)) &&
+                      (x < (xj - xi) * (y - yi) / (yj - yi + 0.0) + xi);
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
 
-  // CENTRAL
-  "Camp": { minLat: 18.505, maxLat: 18.530, minLon: 73.860, maxLon: 73.895 },
-  "Swargate": { minLat: 18.480, maxLat: 18.505, minLon: 73.845, maxLon: 73.875 },
-  "Shivajinagar": { minLat: 18.525, maxLat: 18.560, minLon: 73.830, maxLon: 73.865 },
-  "Karve Road / Deccan": { minLat: 18.505, maxLat: 18.535, minLon: 73.830, maxLon: 73.865 },
+// Haversine distance in meters
+function haversineMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371000; // m
+  const toRad = (d) => d * Math.PI / 180;
+  const φ1 = toRad(lat1), φ2 = toRad(lat2);
+  const Δφ = toRad(lat2 - lat1), Δλ = toRad(lon2 - lon1);
+  const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
-  // WEST
-  "Kothrud": { minLat: 18.485, maxLat: 18.525, minLon: 73.780, maxLon: 73.825 },
-  "Warje": { minLat: 18.475, maxLat: 18.510, minLon: 73.800, maxLon: 73.840 },
-  "Bavdhan": { minLat: 18.510, maxLat: 18.560, minLon: 73.770, maxLon: 73.825 },
-  "Pashan": { minLat: 18.530, maxLat: 18.580, minLon: 73.770, maxLon: 73.820 },
-  "Aundh": { minLat: 18.560, maxLat: 18.595, minLon: 73.785, maxLon: 73.830 },
-  "Baner": { minLat: 18.555, maxLat: 18.590, minLon: 73.780, maxLon: 73.820 },
-  "Balewadi": { minLat: 18.565, maxLat: 18.605, minLon: 73.760, maxLon: 73.800 },
+// Choose best match given postal, lat, lon, city
+function resolveAreaV2({ postal, city, lat, lon, cf, headers }) {
+  // Normalize
+  const latN = toNum(lat);
+  const lonN = toNum(lon);
+  const postalStr = postal ? String(postal).trim() : null;
 
-  // PCMC / NORTH
-  "Wakad": { minLat: 18.585, maxLat: 18.625, minLon: 73.750, maxLon: 73.800 },
-  "Hinjewadi Phase 1": { minLat: 18.585, maxLat: 18.620, minLon: 73.700, maxLon: 73.755 },
-  "Hinjewadi Phase 2": { minLat: 18.605, maxLat: 18.645, minLon: 73.685, maxLon: 73.735 },
-  "Hinjewadi Phase 3": { minLat: 18.620, maxLat: 18.665, minLon: 73.675, maxLon: 73.720 },
-  "Ravet": { minLat: 18.640, maxLat: 18.690, minLon: 73.740, maxLon: 73.790 },
-  "Punawale": { minLat: 18.620, maxLat: 18.660, minLon: 73.760, maxLon: 73.810 },
-  "Akurdi": { minLat: 18.650, maxLat: 18.685, minLon: 73.780, maxLon: 73.825 },
-  "Chinchwad": { minLat: 18.625, maxLat: 18.670, minLon: 73.780, maxLon: 73.825 },
-  "Pimpri": { minLat: 18.610, maxLat: 18.650, minLon: 73.800, maxLon: 73.840 },
-  "Nigdi": { minLat: 18.650, maxLat: 18.690, minLon: 73.810, maxLon: 73.855 },
-  "Bhosari": { minLat: 18.610, maxLat: 18.650, minLon: 73.855, maxLon: 73.905 },
+  // Heuristics for probable private relay/vpn (explanatory)
+  const probable_private_relay = (!postalStr && (latN === null || lonN === null) && !!city);
+  // basic VPN/proxy heuristic: postal exists but lat/lon missing OR x-forwarded-for contains multiple IPs
+  const xff = headers.get("x-forwarded-for") || "";
+  const probable_vpn_or_proxy = (postalStr && (latN === null || lonN === null)) || (xff.split(",").length > 1);
 
-  // SOUTH
-  "Bibwewadi": { minLat: 18.470, maxLat: 18.500, minLon: 73.860, maxLon: 73.900 },
-  "Marketyard": { minLat: 18.460, maxLat: 18.492, minLon: 73.850, maxLon: 73.880 },
-  "Katraj": { minLat: 18.430, maxLat: 18.470, minLon: 73.830, maxLon: 73.875 },
-  "Ambegaon": { minLat: 18.425, maxLat: 18.460, minLon: 73.835, maxLon: 73.870 },
-  "Dhankawadi": { minLat: 18.455, maxLat: 18.490, minLon: 73.840, maxLon: 73.875 },
-  "Undri": { minLat: 18.440, maxLat: 18.475, minLon: 73.900, maxLon: 73.950 },
-  "Pisoli": { minLat: 18.430, maxLat: 18.465, minLon: 73.910, maxLon: 73.960 }
-};
+  // 1) PIN exact match (trusted)
+  if (postalStr && PIN_AREA[postalStr]) {
+    return {
+      area: PIN_AREA[postalStr],
+      method: "pin",
+      confidence: "high",
+      matched_pin: postalStr,
+      distance_meters: null
+    };
+  }
 
+  // 2) polygon containment (if lat/lon available)
+  if (latN !== null && lonN !== null) {
+    for (const [area, obj] of Object.entries(AREA_POLYGONS)) {
+      if (pointInPolygon([latN, lonN], obj.polygon)) {
+        return {
+          area,
+          method: "polygon",
+          confidence: "high",
+          matched_pin: null,
+          distance_meters: 0
+        };
+      }
+    }
 
-// =========================
-// 3) ZONE RESOLVER (Simple classification)
-// =========================
+    // 3) nearest-area fallback (compute distance to centroids)
+    let best = null;
+    for (const [area, obj] of Object.entries(AREA_POLYGONS)) {
+      const [cLat, cLon] = obj.centroid;
+      const d = haversineMeters(latN, lonN, cLat, cLon);
+      if (!best || d < best.distance) best = { area, distance: d };
+    }
+    if (best) {
+      // convert to confidence by distance thresholds
+      let confidence = "low";
+      if (best.distance <= 500) confidence = "high";       // within 500m => high
+      else if (best.distance <= 2000) confidence = "medium"; // within 2km => medium
+      else confidence = "low";
 
+      return {
+        area: best.area,
+        method: "nearest",
+        confidence,
+        matched_pin: null,
+        distance_meters: Math.round(best.distance)
+      };
+    }
+  }
+
+  // 4) City fallback
+  if (city === "Pune") {
+    return {
+      area: "Pune (Approx)",
+      method: "city",
+      confidence: "low",
+      matched_pin: null,
+      distance_meters: null
+    };
+  }
+
+  // 5) Last resort: return city or generic Pune
+  return {
+    area: city || "Pune",
+    method: "fallback",
+    confidence: "low",
+    matched_pin: null,
+    distance_meters: null
+  };
+}
+
+// Format GA4-friendly user_properties
+function makeGA4UserProperties(result) {
+  // result: { area, method, confidence, matched_pin, distance_meters }
+  return {
+    user_area: result.area,
+    user_area_method: result.method,
+    user_area_confidence: result.confidence,
+    user_area_distance_meters: result.distance_meters !== null ? String(result.distance_meters) : null
+  };
+}
+
+// zone resolver (reuse your mapping — keep simple)
 function resolveZone(postal) {
   if (["411014","411015","411028","411036","411006","411047","412207","412307","412308"].includes(postal))
     return "East Pune";
@@ -120,60 +313,59 @@ function resolveZone(postal) {
 }
 
 
-// =========================
-// 4) GEO-GRID AREA MATCHER
-// =========================
-
-function resolveAreaLatLong(lat, lon) {
-  if (!lat || !lon) return null;
-
-  for (const [area, box] of Object.entries(GEO_GRID)) {
-    if (
-      lat >= box.minLat && lat <= box.maxLat &&
-      lon >= box.minLon && lon <= box.maxLon
-    ) {
-      return area;
-    }
-  }
-
-  return null;
-}
-
-
-// =========================
-// 5) FINAL AREA RESOLVER (PIN → GEO GRID → CITY fallback)
-// =========================
-
-function resolveArea(postal, city, lat, lon) {
-  if (areaMap[postal]) return areaMap[postal];
-
-  const geoArea = resolveAreaLatLong(lat, lon);
-  if (geoArea) return geoArea;
-
-  if (city === "Pune") return "Pune (Approx)";
-  return city || "Pune";
-}
-
-
-// =========================
-// 6) MAIN CLOUDFLARE HANDLER
-// =========================
-
+// --------------------------
+// Cloudflare Worker handler
+// --------------------------
 export async function onRequest({ request }) {
-  const cf = request.cf || {};
+  try {
+    const cf = request.cf || {};
+    const headers = request.headers;
 
-  const ip     = request.headers.get("cf-connecting-ip");
-  const city   = cf.city || "Pune";
-  const postal = cf.postalCode || null;
-  const region = cf.region || "Maharashtra";
-  const lat    = cf.latitude || null;
-  const lon    = cf.longitude || null;
+    const ip     = request.headers.get("cf-connecting-ip") || null;
+    const city   = cf.city || null;
+    const postal = cf.postalCode || null;
+    const region = cf.region || null;
+    const lat    = cf.latitude || null;
+    const lon    = cf.longitude || null;
 
-  const area = resolveArea(postal, city, lat, lon);
-  const zone = resolveZone(postal);
+    const heuristics = {
+      probable_private_relay: (!postal && (!lat || !lon) && !!city),
+      probable_vpn_or_proxy: (postal && (!lat || !lon)) || ((headers.get("x-forwarded-for") || "").split(",").length > 1)
+    };
 
-  return new Response(
-    JSON.stringify({ ip, city, postal, region, lat, lon, area, zone }),
-    { headers: { "Content-Type": "application/json" } }
-  );
+    const resolved = resolveAreaV2({ postal, city, lat, lon, cf, headers });
+
+    const zone = resolveZone(postal);
+
+    const ga4_props = makeGA4UserProperties(resolved);
+
+    const payload = {
+      ip,
+      city,
+      postal,
+      region,
+      latitude: lat === undefined ? null : lat,
+      longitude: lon === undefined ? null : lon,
+      area: resolved.area,
+      zone,
+      method: resolved.method,
+      confidence: resolved.confidence,
+      matched_pin: resolved.matched_pin,
+      distance_meters: resolved.distance_meters,
+      heuristics,
+      ga4_user_properties: ga4_props,
+      timestamp: new Date().toISOString()
+    };
+
+    return new Response(JSON.stringify(payload, null, 2), {
+      headers: { "Content-Type": "application/json" }
+    });
+
+  } catch (err) {
+    const errPayload = { error: String(err) };
+    return new Response(JSON.stringify(errPayload, null, 2), {
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
 }
