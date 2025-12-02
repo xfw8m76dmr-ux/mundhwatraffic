@@ -127,9 +127,12 @@ fetch('/geo')
   .then(res => res.json())
   .then(loc => {
     waitForGA(() => {
-      gtag('set', 'user_properties', {
-        user_area: loc.area,
-        user_zone: loc.zone
+      // ✔ Correct GA4-compatible syntax
+      gtag('set', {
+        user_properties: {
+          user_area: loc.area,
+          user_zone: loc.zone
+        }
       });
     });
   });
