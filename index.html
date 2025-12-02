@@ -100,6 +100,7 @@
     send_page_view: true
   });
 
+  // Load GA script with retry
   (function loadGA(){
     var g = document.createElement('script');
     g.src = "https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM";
@@ -110,6 +111,28 @@
     };
     document.head.appendChild(g);
   })();
+</script>
+
+<script>
+// Wait until GA is ready before setting user properties
+function waitForGA(callback, tries = 20) {
+  if (typeof gtag === "function" && window.dataLayer) {
+    callback();
+  } else if (tries > 0) {
+    setTimeout(() => waitForGA(callback, tries - 1), 150);
+  }
+}
+
+fetch('/geo')
+  .then(res => res.json())
+  .then(loc => {
+    waitForGA(() => {
+      gtag('set', 'user_properties', {
+        user_area: loc.area,
+        user_zone: loc.zone
+      });
+    });
+  });
 </script>
 
 <style>
