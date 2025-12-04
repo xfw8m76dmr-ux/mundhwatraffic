@@ -635,5 +635,38 @@ notifyBtn.addEventListener("click", async () => {
 
     // Your notifyBtn event listener can be placed here too
   </script>
+
+    <script>
+    // GLOBAL JS ERROR HANDLER
+    window.addEventListener("error", (e) => {
+      fetch("/errors", {
+        method: "POST",
+        body: JSON.stringify({
+          type: "error",
+          message: e.message,
+          file: e.filename,
+          line: e.lineno,
+          col: e.colno,
+          stack: e.error?.stack,
+          url: location.href,
+          ua: navigator.userAgent
+        })
+      });
+    });
+
+    // PROMISE ERROR HANDLER
+    window.addEventListener("unhandledrejection", (e) => {
+      fetch("/errors", {
+        method: "POST",
+        body: JSON.stringify({
+          type: "promise",
+          reason: e.reason?.toString(),
+          stack: e.reason?.stack,
+          url: location.href,
+          ua: navigator.userAgent
+        })
+      });
+    });
+  </script>
 </body>
 </html>
