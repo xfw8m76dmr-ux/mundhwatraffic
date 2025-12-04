@@ -668,5 +668,51 @@ notifyBtn.addEventListener("click", async () => {
       });
     });
   </script>
+
+  <!-- Ad container (hidden until 5th visit) -->
+<div id="bottomAdContainer" style="
+    display:none;
+    width:100%;
+    position:fixed;
+    bottom:0;
+    left:0;
+    z-index:9999;
+    text-align:center;
+    padding:8px 0;
+    background:rgba(0,0,0,0.9);
+">
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-3625430905597433"
+        data-ad-slot="5393173301"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+</div>
+
+  <script>
+(function() {
+    // Count visits using localStorage
+    let visits = localStorage.getItem("visit_count");
+    visits = visits ? parseInt(visits) + 1 : 1;
+    localStorage.setItem("visit_count", visits);
+
+    // Show ads only after visit #5
+    if (visits >= 5) {
+        document.getElementById("bottomAdContainer").style.display = "block";
+
+        // Dynamically load Google Ads script
+        const adScript = document.createElement("script");
+        adScript.async = true;
+        adScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3625430905597433";
+        adScript.crossOrigin = "anonymous";
+        document.head.appendChild(adScript);
+
+        // Initialize ad slot after script loads
+        adScript.onload = () => {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        };
+    }
+})();
+</script>
 </body>
 </html>
