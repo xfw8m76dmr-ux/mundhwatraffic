@@ -6,7 +6,7 @@
   <title>🚦 Mundhwa Bridge Pune Traffic Live | Real-Time Camera</title>
   <meta name="description" content="Watch live Mundhwa Bridge traffic in Pune, India — streaming 24/7 with RoadX smart camera technology. Check road conditions before you travel." />
   <meta name="robots" content="index,follow,max-image-preview:large" />
-
+  
   <!-- OG / Social -->
   <meta property="og:title" content="🚦 Mundhwa Traffic Live | Pune" />
   <meta property="og:description" content="Watch Mundhwa Bridge traffic live from Pune. Real-time RoadX camera feed updated 24/7." />
@@ -76,7 +76,8 @@
 }
 </script>
 
-
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3625430905597433"
+crossorigin="anonymous"></script>
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -693,28 +694,42 @@ notifyBtn.addEventListener("click", async () => {
         data-full-width-responsive="false">
     </ins>
 </div>
+<script>
+(function () {
 
-  <script>
-(function() {
+    // Track visits using localStorage
     let visits = localStorage.getItem("visit_count");
     visits = visits ? parseInt(visits) + 1 : 1;
     localStorage.setItem("visit_count", visits);
 
-    if (visits >= 0) {
+    // Load ads if user qualifies (currently >= 0 for testing)
+    if (visits >= 5) {
+
         const adDiv = document.getElementById("bottomAdContainer");
+        if (!adDiv) return; // safety check
+
         adDiv.style.display = "flex";
 
-        const adScript = document.createElement("script");
-        adScript.async = true;
-        adScript.src =
-          "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3625430905597433";
-        adScript.crossOrigin = "anonymous";
-        document.head.appendChild(adScript);
+        // Prevent double-loading script
+        if (!window.__adsenseScriptLoaded) {
+            window.__adsenseScriptLoaded = true;
 
-        adScript.onload = () => {
+            const adScript = document.createElement("script");
+            adScript.async = true;
+            adScript.src = 
+              "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3625430905597433";
+            adScript.crossOrigin = "anonymous";
+            document.head.appendChild(adScript);
+
+            adScript.onload = () => {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            };
+        } else {
+            // Script already loaded → just init the ad
             (adsbygoogle = window.adsbygoogle || []).push({});
-        };
+        }
     }
+
 })();
 </script>
 
