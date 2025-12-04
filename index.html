@@ -527,19 +527,19 @@ notifyBtn.addEventListener("click", async () => {
 
     if (isIOS) {
       showToast(`
-        ⚠️ <b>Traffic alerts can't work inside Facebook on iPhone.</b><br><br>
-        To enable alerts:<br>
-        1️⃣ Tap <b>•••</b> in top-right<br>
-        2️⃣ Tap <b>Open in Safari</b><br>
-        3️⃣ Safari → <b>Share</b> → <b>Add to Home Screen</b><br>
-        4️⃣ Open the app from your home screen<br><br>
+        ⚠️ Traffic alerts can't work inside Facebook on iPhone.
+        To enable alerts:
+        1️⃣ Tap ••• in top-right
+        2️⃣ Tap Open in Safari
+        3️⃣ Safari → "Share" → Add to Home Screen
+        4️⃣ Open the app from your home screen
         🔔 Then tap Notify again.
       `);
     } else {
       showToast(`
-        ⚠️ <b>Facebook browser does not support traffic alerts.</b><br><br>
-        Please open this page in <b>Chrome</b> to enable notifications.<br><br>
-        👉 Tap the <b>⋯</b> menu → <b>Open in browser</b>
+        ⚠️ Facebook browser does not support traffic alerts.
+        Please open this page in "Chrome" to enable notifications.
+        👉 Tap the "menu → Open in browser
       `);
     }
 
@@ -549,10 +549,10 @@ notifyBtn.addEventListener("click", async () => {
   /* ---- iOS requires PWA ---- */
   if (isIOS && !isPWA) {
     showToast(`
-      📱 <b>Add to Home Screen required:</b> <br>
-      To receive traffic alerts:<br>
-      → Tap <b>Share</b><br>
-      → Tap <b>Add to Home Screen</b><br>
+      📱 Add to Home Screen required:
+      To receive traffic alerts:
+      → Tap Share
+      → Tap Add to Home Screen
       Then open from the home screen.
     `);
     return;
