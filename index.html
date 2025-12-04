@@ -316,7 +316,7 @@ fetch('/geo')
 
 <div class="notify-wrap" role="region" aria-label="Traffic alert signup">
   <button id="notifyBtn" class="notify-btn" aria-describedby="notify-desc">
-    🔔 Alert me when Mundhwa is jammed
+    🔔 Alert me on WhatsApp when Mundhwa is jammed
   </button>
   <div id="notify-desc" class="notify-desc">No spam — only realtime jam alerts for this route.</div>
   <div id="notify-desc" class="notify-desc">AI-powered alerts — may be imperfect at times. </div>
@@ -519,11 +519,14 @@ OneSignalDeferred.push(async function(OneSignal) {
 
 notifyBtn.addEventListener("click", async () => {
 
+  showToast("You'll get instant browser alerts for now. WhatsApp alerts coming soon.");
+
+
   /* ---- FB/IG In-app Browser Block ---- */
   if (isFacebookBrowser || isInstagramBrowser) {
 
     if (isIOS) {
-      show(`
+      showToast(`
         ⚠️ <b>Traffic alerts can't work inside Facebook on iPhone.</b><br><br>
         To enable alerts:<br>
         1️⃣ Tap <b>•••</b> in top-right<br>
@@ -533,7 +536,7 @@ notifyBtn.addEventListener("click", async () => {
         🔔 Then tap Notify again.
       `);
     } else {
-      show(`
+      showToast(`
         ⚠️ <b>Facebook browser does not support traffic alerts.</b><br><br>
         Please open this page in <b>Chrome</b> to enable notifications.<br><br>
         👉 Tap the <b>⋯</b> menu → <b>Open in browser</b>
@@ -545,7 +548,7 @@ notifyBtn.addEventListener("click", async () => {
 
   /* ---- iOS requires PWA ---- */
   if (isIOS && !isPWA) {
-    show(`
+    showToast(`
       📱 <b>Add to Home Screen required:</b> <br>
       To receive traffic alerts:<br>
       → Tap <b>Share</b><br>
@@ -560,16 +563,16 @@ notifyBtn.addEventListener("click", async () => {
 
     if (!permission) return;
 
-    show("⏳ Subscribing…");
+    showToast("⏳ Subscribing…");
     await OneSignal.User.PushSubscription.optIn();
 
     const isEnabled = await OneSignal.User.PushSubscription.isOptedIn();
 
     if (isEnabled) {
-      show("✅ You will now receive traffic alerts!");
+      showToast("✅ You will now receive traffic alerts!");
     }
   } catch (err) {
-    show("✅ You will now receive traffic alerts!");
+    showToast("✅ You will now receive traffic alerts!");
     console.error(err);
   }
 });
@@ -601,5 +604,36 @@ notifyBtn.addEventListener("click", async () => {
 })();
 </script>
 
+    <script>
+    // 👉 Put showToast function HERE
+    function showToast(message) {
+      const toast = document.createElement("div");
+      toast.textContent = message;
+      toast.style = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #222;
+        color: #fff;
+        padding: 12px 18px;
+        border-radius: 8px;
+        font-size: 14px;
+        opacity: 0;
+        transition: opacity 0.4s;
+        z-index: 99999;
+      `;
+      document.body.appendChild(toast);
+
+      requestAnimationFrame(() => { toast.style.opacity = 1; });
+
+      setTimeout(() => {
+        toast.style.opacity = 0;
+        setTimeout(() => toast.remove(), 400);
+      }, 2500);
+    }
+
+    // Your notifyBtn event listener can be placed here too
+  </script>
 </body>
 </html>
