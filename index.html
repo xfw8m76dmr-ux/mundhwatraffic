@@ -671,7 +671,6 @@ notifyBtn.addEventListener("click", async () => {
   </script>
 
   <!-- Ad container (hidden until 5th visit) -->
-<!-- Small Floating Ad Banner (hidden until 5th visit) -->
 <div id="bottomAdContainer" style="
     display:none;
     width:100%;
@@ -686,52 +685,55 @@ notifyBtn.addEventListener("click", async () => {
     justify-content:center;
     box-shadow:0 -2px 8px rgba(0,0,0,0.3);
 ">
-    <ins class="adsbygoogle"
+    <ins id="adSlot" class="adsbygoogle"
         style="display:inline-block;width:100%;height:60px;"
         data-ad-client="ca-pub-3625430905597433"
         data-ad-slot="5393173301"
         data-ad-format="horizontal"
-        data-full-width-responsive="false">
-    </ins>
+        data-full-width-responsive="false"></ins>
 </div>
 <script>
 (function () {
-
-    // Track visits using localStorage
     let visits = localStorage.getItem("visit_count");
     visits = visits ? parseInt(visits) + 1 : 1;
     localStorage.setItem("visit_count", visits);
 
-    // Load ads if user qualifies (currently >= 0 for testing)
     if (visits >= 5) {
 
         const adDiv = document.getElementById("bottomAdContainer");
-        if (!adDiv) return; // safety check
+        const adSlot = document.getElementById("adSlot");
 
-        adDiv.style.display = "flex";
+        const adScript = document.createElement("script");
+        adScript.async = true;
+        adScript.src = 
+          "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3625430905597433";
+        adScript.crossOrigin = "anonymous";
+        document.head.appendChild(adScript);
 
-        // Prevent double-loading script
-        if (!window.__adsenseScriptLoaded) {
-            window.__adsenseScriptLoaded = true;
+        adScript.onload = () => {
+            try {
+                (adsbygoogle = window.adsbygoogle || []).push({
+                    params: {
+                        onload: function () {
+                            // AD IS LOADED → show container
+                            adDiv.style.display = "flex";
+                        }
+                    }
+                });
 
-            const adScript = document.createElement("script");
-            adScript.async = true;
-            adScript.src = 
-              "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3625430905597433";
-            adScript.crossOrigin = "anonymous";
-            document.head.appendChild(adScript);
+                // Fallback: if ad doesn't load, keep hidden
+                setTimeout(() => {
+                    if (adSlot.innerHTML.trim() !== "") {
+                        adDiv.style.display = "flex";
+                    }
+                }, 1500);
 
-            adScript.onload = () => {
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            };
-        } else {
-            // Script already loaded → just init the ad
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        }
+            } catch (e) {
+                // No ad loaded → keep hidden
+            }
+        };
     }
-
 })();
 </script>
-
 </body>
 </html>
