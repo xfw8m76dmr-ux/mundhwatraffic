@@ -91,56 +91,63 @@ crossorigin="anonymous"></script>
 
 
 <script defer>
+  // GA dataLayer bootstrap
   window.dataLayer = window.dataLayer || [];
   function gtag(){ dataLayer.push(arguments); }
 
-  gtag('js', new Date());
-  gtag('config', 'G-TVFRVGXERM', {
-    anonymize_ip: true,
-    transport_type: 'beacon',
-    send_page_view: true
-  });
-
-  // Load GA script with retry
+  // Load GA4 script with retry & config after load
   (function loadGA(){
-    var g = document.createElement('script');
-    g.src = "https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM";
-    g.async = true;
-    g.onerror = function(){
-      console.warn("GA retry...");
+    const s = document.createElement('script');
+    s.src = "https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM";
+    s.async = true;
+
+    // When GA loads successfully, configure it
+    s.onload = function() {
+      gtag('js', new Date());
+      gtag('config', 'G-TVFRVGXERM', {
+        anonymize_ip: true,
+        transport_type: 'beacon',
+        send_page_view: true
+      });
+    };
+
+    // Retry if failed (mobile networks sometimes block on first try)
+    s.onerror = function() {
+      console.warn("GA failed, retrying…");
       setTimeout(loadGA, 1500);
     };
-    document.head.appendChild(g);
+
+    document.head.appendChild(s);
   })();
 </script>
 
+
 <script>
-// Wait until GA is ready before setting user properties
-function waitForGA(callback, tries = 20) {
-  if (typeof gtag === "function" && window.dataLayer) {
+// Wait until GA is fully ready
+function waitForGA(callback, tries = 30) {
+  if (typeof gtag === "function" && window.dataLayer?.push) {
     callback();
   } else if (tries > 0) {
     setTimeout(() => waitForGA(callback, tries - 1), 150);
   }
 }
 
+// Fetch user's location tags & send as user_properties
 fetch('/geo')
-  .then((res) => res.json())
-  .then((loc) => {
+  .then(res => res.json())
+  .then(loc => {
     waitForGA(() => {
-      // GA4 user properties update (correct format)
       gtag('set', 'user_properties', {
         user_area: loc?.area || 'unknown',
         user_zone: loc?.zone || 'unknown'
       });
     });
   })
-  .catch(err => {
-    console.error("Geo fetch failed:", err);
-  });
-
+  .catch(err => console.error("Geo fetch failed:", err));
 </script>
 
+<!-- Load true watch-time tracking -->
+<script src="/tracking.js" defer></script>
 <style>
   body {
     margin:0;
