@@ -689,30 +689,6 @@ notifyBtn.addEventListener("click", async () => {
         data-full-width-responsive="true"></ins>
 </div>
 
-  <script>
-(function() {
-    // Count visits using localStorage
-    let visits = localStorage.getItem("visit_count");
-    visits = visits ? parseInt(visits) + 1 : 1;
-    localStorage.setItem("visit_count", visits);
 
-    // Show ads only after visit #5
-    if (visits >= 5) {
-        document.getElementById("bottomAdContainer").style.display = "block";
-
-        // Dynamically load Google Ads script
-        const adScript = document.createElement("script");
-        adScript.async = true;
-        adScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3625430905597433";
-        adScript.crossOrigin = "anonymous";
-        document.head.appendChild(adScript);
-
-        // Initialize ad slot after script loads
-        adScript.onload = () => {
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        };
-    }
-})();
-</script>
 </body>
 </html>
