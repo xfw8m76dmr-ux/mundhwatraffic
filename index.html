@@ -670,25 +670,53 @@ notifyBtn.addEventListener("click", async () => {
   </script>
 
   <!-- Ad container (hidden until 5th visit) -->
+<!-- Small Floating Ad Banner (hidden until 5th visit) -->
 <div id="bottomAdContainer" style="
     display:none;
     width:100%;
+    height:60px;
     position:fixed;
     bottom:0;
     left:0;
     z-index:9999;
-    text-align:center;
-    padding:8px 0;
-    background:rgba(0,0,0,0.9);
+    background:rgba(0,0,0,0.92);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 -2px 8px rgba(0,0,0,0.3);
 ">
     <ins class="adsbygoogle"
-        style="display:block"
+        style="display:inline-block;width:100%;height:60px;"
         data-ad-client="ca-pub-3625430905597433"
         data-ad-slot="5393173301"
-        data-ad-format="auto"
-        data-full-width-responsive="true"></ins>
+        data-ad-format="horizontal"
+        data-full-width-responsive="false">
+    </ins>
 </div>
 
+  <script>
+(function() {
+    let visits = localStorage.getItem("visit_count");
+    visits = visits ? parseInt(visits) + 1 : 1;
+    localStorage.setItem("visit_count", visits);
+
+    if (visits >= 5) {
+        const adDiv = document.getElementById("bottomAdContainer");
+        adDiv.style.display = "flex";
+
+        const adScript = document.createElement("script");
+        adScript.async = true;
+        adScript.src =
+          "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3625430905597433";
+        adScript.crossOrigin = "anonymous";
+        document.head.appendChild(adScript);
+
+        adScript.onload = () => {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        };
+    }
+})();
+</script>
 
 </body>
 </html>
