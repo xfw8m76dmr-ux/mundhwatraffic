@@ -328,7 +328,7 @@ fetch('/geo')
 
 <div class="notify-wrap" role="region" aria-label="Traffic alert signup">
   <button id="notifyBtn" class="notify-btn" aria-describedby="notify-desc">
-    🔔 Alert me on WhatsApp when Mundhwa is jammed
+    🔔 Get Heavy Traffic Alerts
   </button>
   <div id="notify-desc" class="notify-desc">No spam — only realtime jam alerts for this route.</div>
   <div id="notify-desc" class="notify-desc">AI-powered alerts — may be imperfect at times. </div>
@@ -606,11 +606,7 @@ OneSignalDeferred.push(async function(OneSignal) {
   }
 });
 
-notifyBtn.addEventListener("click", async () => {
-
-  alert("You'll get instant browser alerts for now. WhatsApp alerts coming soon.");
-
-
+notifyBtn.addEventListener("click", async () => 
   /* ---- FB/IG In-app Browser Block ---- */
   if (isFacebookBrowser || isInstagramBrowser) {
 
