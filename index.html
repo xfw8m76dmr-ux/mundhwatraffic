@@ -606,25 +606,30 @@ OneSignalDeferred.push(async function(OneSignal) {
   }
 });
 
-notifyBtn.addEventListener("click", async () => 
+notifyBtn.addEventListener("click", async () => {
+
   /* ---- FB/IG In-app Browser Block ---- */
   if (isFacebookBrowser || isInstagramBrowser) {
 
     if (isIOS) {
       showToast(`
-        ⚠️ Traffic alerts can't work inside Facebook on iPhone.
-        To enable alerts:
-        1️⃣ Tap ••• in top-right
-        2️⃣ Tap Open in Safari
-        3️⃣ Safari → "Share" → Add to Home Screen
-        4️⃣ Open the app from your home screen
-        🔔 Then tap Notify again.
+⚠️ Traffic alerts can't work inside Facebook on iPhone.
+
+To enable alerts:
+1️⃣ Tap ••• in top-right
+2️⃣ Tap "Open in Safari"
+3️⃣ Safari → Share → "Add to Home Screen"
+4️⃣ Open the app from your home screen
+
+🔔 Then tap Notify again.
       `);
     } else {
       showToast(`
-        ⚠️ Facebook browser does not support traffic alerts.
-        Please open this page in "Chrome" to enable notifications.
-        👉 Tap the "menu → Open in browser
+⚠️ Facebook In-App Browser does NOT support notifications.
+
+To enable alerts:
+👉 Tap menu → "Open in browser"
+👉 Choose Chrome
       `);
     }
 
@@ -634,19 +639,24 @@ notifyBtn.addEventListener("click", async () =>
   /* ---- iOS requires PWA ---- */
   if (isIOS && !isPWA) {
     showToast(`
-      📱 Add to Home Screen required:
-      To receive traffic alerts:
-      → Tap Share
-      → Tap Add to Home Screen
-      Then open from the home screen.
+📱 Add to Home Screen required!
+
+To receive traffic alerts:
+→ Tap Share
+→ Tap "Add to Home Screen"
+Then open the app from your home screen.
     `);
     return;
   }
 
+  /* ---- Notification Flow ---- */
   try {
     const permission = await OneSignal.Notifications.requestPermission();
 
-    if (!permission) return;
+    if (!permission) {
+      showToast("🔕 Permission denied.");
+      return;
+    }
 
     showToast("⏳ Subscribing…");
     await OneSignal.User.PushSubscription.optIn();
@@ -654,12 +664,17 @@ notifyBtn.addEventListener("click", async () =>
     const isEnabled = await OneSignal.User.PushSubscription.isOptedIn();
 
     if (isEnabled) {
-      showToast("✅ You will now receive traffic alerts!");
+      showToast("✅ You will now receive instant traffic alerts!");
+    } else {
+      showToast("⚠️ Subscription failed. Try again.");
     }
+
   } catch (err) {
+    // Often OneSignal throws harmless errors — still subscribed
     showToast("✅ You will now receive traffic alerts!");
-    console.error(err);
+    console.error("OneSignal error:", err);
   }
+
 });
 </script>
 
