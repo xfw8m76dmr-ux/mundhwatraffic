@@ -14,45 +14,86 @@ main {
 }
 
 /* ------------------------------
-   HERO SECTION
+   HEADER & INTRO
 ------------------------------ */
-/* FIX: Remove empty gap above video */
 header {
-  padding: 0.8rem 0 0.3rem !important;
-  font-size: 1.7rem;
+  padding: 0.8rem 0 0.3rem; /* reduced height to remove top gap */
+  font-size: 1.8rem;
   font-weight: 600;
-  background: #0d0d0d !important; /* REMOVE gradient */
+  background: #0d0d0d !important; /* FIX: remove Safari gradient padding bug */
   margin: 0 !important;
 }
 
 .page-intro {
-  margin-bottom: 0.2rem !important;
+  max-width: 760px;
+  margin: 0.5rem auto 0.4rem !important; /* tighten spacing */
+  padding: 0 1rem;
+  opacity: 0.88;
+  line-height: 1.6;
 }
 
-/* FIX: White border around video */
+/* ------------------------------
+   VIDEO CARD (YT PREVIEW)
+------------------------------ */
 #yt-container {
-  background: #000 !important;
-  margin-top: 0.2rem !important; /* reduce extra space */
-  border-radius: 14px !important;
+  position: relative;
+  max-width: 960px;
+  margin: 0.6rem auto 1.4rem; /* FIX: remove extra top spacing */
+  aspect-ratio: 16/9;
+  background: #000 !important; /* enforce black edge */
+  border-radius: 16px;
   overflow: hidden !important;
-  box-shadow: none !important; /* prevents white halo on Safari */
+  box-shadow: none !important; /* remove Safari light halo */
 }
 
-/* Ensure iframe/video preview has NO border */
-#yt-container iframe,
-#yt-container img {
+/* FIX: Mask out white/glow border from baked PNG */
+#yt-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000; /* covers the unwanted border */
+  border-radius: 16px;
+  z-index: 1;
+  opacity: 1; /* fully cover the glow */
+  pointer-events: none;
+}
+
+#yt-container img,
+#yt-container iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
   border: none !important;
   outline: none !important;
   background: #000 !important;
-  border-radius: 14px !important;
+  border-radius: 16px;
+  position: relative;
+  z-index: 2; /* image/video sits above mask */
 }
 
-/* Fix Safari/WebView gap bug */
+/* Overlay Play Button */
 #yt-overlay {
-  background: transparent !important;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 3;
+  background: none !important;
 }
+
+#yt-overlay span {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 0.65rem 1.6rem;
+  border-radius: 12px;
+  backdrop-filter: blur(3px);
+}
+
 /* ------------------------------
-   NOTIFY BUTTON (CTA)
+   NOTIFY BUTTON
 ------------------------------ */
 .notify-wrap {
   margin-top: 1.4rem;
@@ -106,7 +147,7 @@ header {
 }
 
 /* ------------------------------
-   PRIMARY BUTTONS
+   PRIMARY BUTTON (Install PWA)
 ------------------------------ */
 .primary-btn {
   margin-top: 1.2rem;
@@ -123,7 +164,7 @@ header {
 }
 
 /* ------------------------------
-   CONTENT SECTIONS (CARDS)
+   CONTENT CARDS
 ------------------------------ */
 .section-card {
   background: #111;
@@ -169,14 +210,22 @@ footer a {
 }
 
 /* ------------------------------
-   MOBILE TUNING
+   MOBILE OPTIMIZATION
 ------------------------------ */
 @media (max-width: 600px) {
-  header { font-size: 1.6rem; padding: 2rem 0 0.5rem; }
 
-  .section-card {
-    padding: 18px 18px;
-    margin: 1.4rem auto;
+  header {
+    font-size: 1.6rem;
+    padding: 0.7rem 0 0.3rem;
+  }
+
+  .page-intro {
+    margin-top: 0.3rem !important;
+    padding-top: 0 !important;
+  }
+
+  #yt-container {
+    margin-top: 0.4rem !important;
   }
 
   #yt-overlay span {
