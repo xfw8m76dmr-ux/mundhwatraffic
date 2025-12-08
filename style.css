@@ -1,0 +1,212 @@
+/* ------------------------------
+   GLOBAL
+------------------------------ */
+body {
+  margin: 0;
+  font-family: system-ui, Inter, sans-serif;
+  background: #0b0b0b;
+  color: #fff;
+  text-align: center;
+}
+
+main {
+  padding: 1rem 1rem 90px;
+}
+
+/* ------------------------------
+   HERO SECTION
+------------------------------ */
+header {
+  padding: 2.4rem 0 0.6rem;
+  font-size: 1.9rem;
+  font-weight: 600;
+  background: linear-gradient(180deg, #0f0f0f 0%, #1a1a1a 100%);
+}
+
+.page-intro {
+  max-width: 760px;
+  margin: 0 auto 1rem;
+  padding: 0 1rem 1.4rem;
+  opacity: 0.88;
+  line-height: 1.6;
+}
+
+/* ------------------------------
+   VIDEO CARD
+------------------------------ */
+#yt-container {
+  position: relative;
+  max-width: 960px;
+  margin: 1.4rem auto;
+  aspect-ratio: 16/9;
+  background: #111;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+#yt-container iframe,
+#yt-container img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 16px;
+}
+
+/* Overlay (Play) */
+#yt-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+#yt-overlay span {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 0.65rem 1.6rem;
+  border-radius: 12px;
+  backdrop-filter: blur(3px);
+}
+
+/* ------------------------------
+   NOTIFY BUTTON (CTA)
+------------------------------ */
+.notify-wrap {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.notify-btn {
+  width: 80%;
+  margin: 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 40px;
+  border: none;
+  cursor: pointer;
+  background: #ff9f1c;
+  color: #000;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.notify-btn:hover { background: #ffb347; transform: translateY(-2px); }
+.notify-btn:active { transform: translateY(0); }
+
+.notify-desc {
+  font-size: 0.86rem;
+  opacity: 0.75;
+  max-width: 42ch;
+  margin: 0 auto;
+}
+
+/* ------------------------------
+   SHARE ICONS
+------------------------------ */
+#share-icons {
+  display: flex;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+#share-icons img {
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+}
+
+/* ------------------------------
+   PRIMARY BUTTONS
+------------------------------ */
+.primary-btn {
+  margin-top: 1.2rem;
+  background: #1d87ff;
+  color: #fff;
+  border: none;
+  padding: 0.85rem 2rem;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ------------------------------
+   CONTENT SECTIONS (CARDS)
+------------------------------ */
+.section-card {
+  background: #111;
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+  margin: 1.6rem auto;
+  max-width: 900px;
+  text-align: left;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.section-card h2,
+.section-card h3 {
+  color: rgba(255,255,255,0.92);
+  margin: 0 0 0.8rem;
+  font-weight: 600;
+}
+
+.section-card ul {
+  margin: 0.4rem 0 0 1.2rem;
+  padding: 0;
+}
+
+.section-card li {
+  margin: 0.4rem 0;
+}
+
+/* ------------------------------
+   FOOTER
+------------------------------ */
+footer {
+  opacity: 0.75;
+  font-size: 0.9rem;
+  padding: 2rem 0 1rem;
+  background: #0d0d0d;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+footer a {
+  color: #9cc6ff;
+}
+
+/* ------------------------------
+   MOBILE TUNING
+------------------------------ */
+@media (max-width: 600px) {
+  header { font-size: 1.6rem; padding: 2rem 0 0.5rem; }
+
+  .section-card {
+    padding: 18px 18px;
+    margin: 1.4rem auto;
+  }
+
+  #yt-overlay span {
+    font-size: 1.1rem;
+    padding: 0.55rem 1.3rem;
+  }
+
+  .notify-btn {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+}
