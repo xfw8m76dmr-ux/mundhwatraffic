@@ -1,0 +1,4 @@
+{
+  "name": "ga4-proxy",
+  "main": "src/index.js"
+}
