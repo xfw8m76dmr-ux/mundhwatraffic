@@ -99,16 +99,16 @@
     if (typeof gtag==="function" && window.dataLayer?.push) cb();
     else if (tries>0) setTimeout(()=>waitForGA(cb,tries-1),150);
   }
-  fetch('/geo')
-    .then(r=>r.json())
-    .then(loc=>{
-      waitForGA(() => {
-        gtag('set','user_properties',{
-          user_area: loc.area || 'unknown',
-          user_zone: loc.zone || 'unknown'
-        });
-      });
-    });
+//  fetch('/geo')
+//    .then(r=>r.json())
+//    .then(loc=>{
+ //     waitForGA(() => {
+  //      gtag('set','user_properties',{
+  //        user_area: loc.area || 'unknown',
+ //         user_zone: loc.zone || 'unknown'
+  //      });
+  //    });
+ //   });
   </script>
 
   <script src="/tracking.js" defer></script>
