@@ -18,21 +18,21 @@ main {
 ------------------------------ */
 /* FIX: Remove empty gap above video */
 header {
-  padding: 1rem 0 0.3rem !important;
-  font-size: 1.9rem;
+  padding: 0.8rem 0 0.3rem !important;
+  font-size: 1.7rem;
   font-weight: 600;
-  background: #0f0f0f !important; /* remove gradient */
+  background: #0d0d0d !important; /* REMOVE gradient */
+  margin: 0 !important;
 }
 
 .page-intro {
-  margin-top: 0 !important;
-  padding-top: 0.4rem !important;
+  margin-bottom: 0.2rem !important;
 }
 
 /* FIX: White border around video */
 #yt-container {
   background: #000 !important;
-  margin-top: 0.6rem !important; /* reduce extra space */
+  margin-top: 0.2rem !important; /* reduce extra space */
   border-radius: 14px !important;
   overflow: hidden !important;
   box-shadow: none !important; /* prevents white halo on Safari */
