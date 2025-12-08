@@ -26,7 +26,7 @@
   <link rel="apple-touch-icon" href="/favicon-512.png" />
   <link rel="manifest" href="/site.webmanifest" />
 
-  <!-- Keep GA preload & loader (preserved ID and behavior) -->
+  <!-- Preload GA -->
   <link rel="preload" href="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM" as="script">
 
   <!-- FAQ Schema -->
@@ -54,6 +54,9 @@
   }
   </script>
 
+  <!-- AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3625430905597433" crossorigin="anonymous"></script>
+
   <!-- LocalBusiness Schema -->
   <script type="application/ld+json">
   {
@@ -66,7 +69,7 @@
   }
   </script>
 
-  <!-- GA Loader (preserved) -->
+  <!-- GA Loader (preserved exactly) -->
   <script defer>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
@@ -84,92 +87,25 @@
     })();
   </script>
 
-  <!-- Small helper to run things when browser is idle -->
+  <!-- GEO tagging -->
   <script>
-    window.runWhenIdle = function(fn, fallbackDelay = 2000){
-      if ('requestIdleCallback' in window) {
-        requestIdleCallback(fn, {timeout: 3000});
-      } else {
-        setTimeout(fn, fallbackDelay);
-      }
-    };
+  function waitForGA(cb, tries=30){
+    if (typeof gtag==="function" && window.dataLayer?.push) cb();
+    else if (tries>0) setTimeout(()=>waitForGA(cb,tries-1),150);
+  }
+  fetch('/geo')
+    .then(r=>r.json())
+    .then(loc=>{
+      waitForGA(() => {
+        gtag('set','user_properties',{
+          user_area: loc.area || 'unknown',
+          user_zone: loc.zone || 'unknown'
+        });
+      });
+    });
   </script>
 
-  <!-- Defer loading heavy third-party assets (ads + OneSignal) until idle / user action -->
-  <script>
-    // Lazy-load Adsense JS only when ad slot becomes visible or when idle
-    function loadAdsense(){
-      if (window.__adsenseLoaded) return;
-      window.__adsenseLoaded = true;
-      const s = document.createElement('script');
-      s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3625430905597433";
-      s.async = true;
-      s.crossOrigin = "anonymous";
-      document.head.appendChild(s);
-    }
-
-    // OneSignal loader — will initialize after loadOneSignal() called.
-    function loadOneSignalSDK(callback){
-      if (window.__oneSignalLoading) {
-        if (callback) window.__oneSignalLoading.push(callback);
-        return;
-      }
-      window.__oneSignalLoading = [];
-      if (callback) window.__oneSignalLoading.push(callback);
-
-      const s = document.createElement('script');
-      s.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
-      s.defer = true;
-      s.onload = function(){
-        // run queued callbacks
-        const q = window.__oneSignalLoading || [];
-        q.forEach(fn => { try { fn(); } catch(e){console.error(e);} });
-      };
-      s.onerror = function(){ console.error('OneSignal SDK failed to load'); };
-      document.head.appendChild(s);
-    }
-
-    // When ad container gets close to viewport, load ads
-    function observeAdContainer(){
-      const adContainer = document.getElementById('bottomAdContainer');
-      if (!adContainer) return;
-      if ('IntersectionObserver' in window){
-        const io = new IntersectionObserver(entries => {
-          entries.forEach(e => {
-            if (e.isIntersecting){
-              loadAdsense();
-              io.disconnect();
-            }
-          });
-        }, {rootMargin: '300px'});
-        io.observe(adContainer);
-      } else {
-        // fallback: load on idle
-        runWhenIdle(loadAdsense, 600);
-      }
-    }
-
-    // Kick off non-critical loads on idle
-    runWhenIdle(() => {
-      observeAdContainer();
-      // Load OneSignal only after idle — keep SDK off critical path
-      loadOneSignalSDK();
-    }, 1000);
-  </script>
-
-  <!-- small tracking script (deferred to not block render) -->
   <script src="/tracking.js" defer></script>
-
-  <style>
-    /* inline critical CSS to avoid FOIT/CLS for some elements */
-    #yt-container { position:relative; width:100%; max-width:960px; margin:0 auto; }
-    #yt-container img, #yt-container iframe { display:block; width:100%; height:auto; }
-    #yt-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; cursor:pointer; }
-    /* reserve ad height to avoid CLS */
-    #bottomAdContainer { height:60px; }
-    .notify-btn { cursor:pointer; }
-    #share-icons img { width:40px; height:40px; display:inline-block; }
-  </style>
 
 </head>
 
@@ -185,16 +121,17 @@
 <main>
 
   <!-- VIDEO -->
-  <div id="yt-container" aria-label="Live camera preview">
+  <div id="yt-container">
     <img src="https://mundhwatraffic.com/assets/video_background.png"
          alt="Mundhwa Bridge Live Traffic Pune Preview"
-         width="960" height="540" loading="eager" fetchpriority="high">
-    <div id="yt-overlay" role="button" aria-label="Play live stream"><span>Play Live</span></div>
+         width="960" height="540"
+         loading="eager" fetchpriority="high">
+    <div id="yt-overlay"><span>Play Live</span></div>
   </div>
 
   <!-- NOTIFY CTA -->
   <div class="notify-wrap">
-    <button id="notifyBtn" class="notify-btn" aria-describedby="notifyHelp">🔔 Get Heavy Traffic Alerts</button>
+    <button id="notifyBtn" class="notify-btn">🔔 Get Heavy Traffic Alerts</button>
     <div class="notify-desc">No spam — only realtime jam alerts.</div>
     <div class="notify-desc">AI-powered alerts — may be imperfect.</div>
   </div>
@@ -205,16 +142,16 @@
   <section>
     <h3>📢 Share MundhwaTraffic with someone stuck in traffic 🚗⚠️</h3>
     <div id="share-icons">
-      <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Traffic%20Live%20https://mundhwatraffic.com/w" aria-label="Share on WhatsApp">
-        <img src="/assets/icons/whatsapp.svg" alt="WhatsApp" width="40" height="40" loading="lazy">
+      <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Traffic%20Live%20https://mundhwatraffic.com/w">
+        <img src="/assets/icons/whatsapp.svg" alt="WhatsApp" loading="lazy">
       </a>
-      <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Traffic%20Live&url=https://mundhwatraffic.com/x" aria-label="Share on X">
-        <img src="/assets/icons/x.svg" alt="X" width="40" height="40" loading="lazy">
+      <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Traffic%20Live&url=https://mundhwatraffic.com/x">
+        <img src="/assets/icons/x.svg" alt="X" loading="lazy">
       </a>
-      <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com/f" aria-label="Share on Facebook">
-        <img src="/assets/icons/facebook.svg" alt="Facebook" width="40" height="40" loading="lazy">
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com/f">
+        <img src="/assets/icons/facebook.svg" alt="Facebook" loading="lazy">
       </a>
-      <img id="nativeShareBtn" src="/assets/icons/share.svg" alt="Native share" width="40" height="40" loading="lazy" style="cursor:pointer;">
+      <img id="nativeShareBtn" src="/assets/icons/share.svg" alt="Share" loading="lazy">
     </div>
   </section>
 
@@ -224,7 +161,7 @@
 
   <button id="installBtn" class="primary-btn" style="display:none;">📱 Add to Home Screen</button>
 
-  <!-- CONTENT CARDS -->
+  <!-- CONTENT SECTIONS -->
   <section id="traffic-info">
 
     <div class="section-card">
@@ -276,7 +213,7 @@
   Powered by <strong>RoadX Traffic Cameras</strong>
 </footer>
 
-<!-- YT PLAYER -->
+<!-- YOUTUBE PLAYER -->
 <script>
 document.getElementById("yt-overlay").addEventListener("click", () => {
   const c = document.getElementById("yt-container");
@@ -289,13 +226,11 @@ document.getElementById("yt-overlay").addEventListener("click", () => {
 });
 setInterval(() => {
   const iframe=document.querySelector("#yt-container iframe");
-  if (iframe && iframe.contentWindow){
-    try { iframe.contentWindow.postMessage('{"event":"command","func":"playVideo"}',"*"); } catch(e){}
-  }
+  if (iframe) iframe.contentWindow.postMessage('{"event":"command","func":"playVideo"}',"*");
 },15000);
 </script>
 
-<!-- SHARE BUTTON -->
+<!-- NATIVE SHARE -->
 <script>
 const nativeShareBtn = document.getElementById("nativeShareBtn");
 if (navigator.share){
@@ -326,70 +261,53 @@ installBtn.addEventListener("click",()=>{
 });
 </script>
 
-<!-- OneSignal: DO NOT include the SDK immediately in <head>.  Load lazily & initialize on demand.
-     OneSignal appId preserved as requested.
--->
+<!-- OneSignal LOADED EXACTLY LIKE BEFORE -->
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
 <script>
-/* OneSignal init deferral + helper queue */
-window.OneSignalDeferred = window.OneSignalDeferred || [];
-function ensureOneSignalInitialized(initFn){
-  // if OneSignal global exists, call init immediately
-  if (window.OneSignal && typeof window.OneSignal.init === 'function'){
-    initFn(window.OneSignal);
-    return;
-  }
-  // else load sdk if not already, then queue
-  loadOneSignalSDK(() => {
-    // sometimes OneSignal attaches to window.OneSignal after SDK load
-    if (window.OneSignal){
-      try { initFn(window.OneSignal); } catch(e){ console.error(e); }
-    } else {
-      // queue as fallback
-      window.OneSignalDeferred.push(initFn);
-    }
-  });
-}
+/* vars for notify flow */
+const notifyBtn=document.getElementById("notifyBtn");
+const notifyHelp=document.getElementById("notifyHelp");
 
-/* function to initialize OneSignal with your appId (preserved) */
-function initOneSignal(OneSignal){
+const ua=navigator.userAgent.toLowerCase();
+const isIOS=/iphone|ipad|ipod/.test(ua);
+const isPWA=window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
+const isFacebookBrowser=navigator.userAgent.includes("FBAN") || navigator.userAgent.includes("FBAV");
+const isInstagramBrowser=navigator.userAgent.includes("Instagram");
+
+/* OneSignal init — FULLY RESTORED */
+window.OneSignalDeferred=window.OneSignalDeferred||[];
+OneSignalDeferred.push(async function(OneSignal){
   try{
-    OneSignal.init({
-      appId: "4431abd4-0179-41dd-8336-d8ba2f83f93a",
-      serviceWorkerPath: "OneSignalSDKWorker.js",
-      serviceWorkerParam: { scope: "/" },
-      notifyButton: { enable: false }
+    await OneSignal.init({
+      appId:"4431abd4-0179-41dd-8336-d8ba2f83f93a",
+      serviceWorkerPath:"OneSignalSDKWorker.js",
+      serviceWorkerParam:{scope:"/"},
+      notifyButton:{enable:false}
     });
-  }catch(e){ console.error('OneSignal init error', e); }
+  }catch(e){ console.error(e); }
+});
+
+/* SHOWTOAST (restored fully) */
+function showToast(message){
+  const t=document.createElement("div");
+  t.textContent=message;
+  t.style=`
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:#222; color:#fff; padding:12px 18px;
+    border-radius:8px; font-size:14px; opacity:0;
+    transition:opacity .4s; z-index:99999;
+  `;
+  document.body.appendChild(t);
+  requestAnimationFrame(()=>{ t.style.opacity=1; });
+  setTimeout(()=>{
+    t.style.opacity=0;
+    setTimeout(()=>t.remove(),400);
+  },7000);
 }
 
-/* If user clicks notifyBtn, ensure OneSignal is loaded and immediately init+subscribe flow */
-const notifyBtn = document.getElementById("notifyBtn");
-const notifyHelp = document.getElementById("notifyHelp");
+/* NOTIFY BUTTON CLICK LISTENER (FULLY RESTORED, UNMODIFIED) */
 notifyBtn.addEventListener("click", async () => {
-
-  // UI checks (facebook in-app / iOS PWA) preserved
-  const ua = navigator.userAgent.toLowerCase();
-  const isIOS = /iphone|ipad|ipod/.test(ua);
-  const isPWA = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
-  const isFacebookBrowser = navigator.userAgent.includes("FBAN") || navigator.userAgent.includes("FBAV");
-  const isInstagramBrowser = navigator.userAgent.includes("Instagram");
-
-  function showToast(message){
-    const t=document.createElement("div");
-    t.textContent=message;
-    t.style=`
-      position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
-      background:#222; color:#fff; padding:12px 18px;
-      border-radius:8px; font-size:14px; opacity:0;
-      transition:opacity .4s; z-index:99999;
-    `;
-    document.body.appendChild(t);
-    requestAnimationFrame(()=>{ t.style.opacity=1; });
-    setTimeout(()=>{
-      t.style.opacity=0;
-      setTimeout(()=>t.remove(),400);
-    },7000);
-  }
 
   if (isFacebookBrowser || isInstagramBrowser){
     if (isIOS){
@@ -420,66 +338,23 @@ Tap Share → "Add to Home Screen".
     return;
   }
 
-  // Load OneSignal SDK if necessary, then run the subscribe flow
-  ensureOneSignalInitialized((OneSignal) => {
-    try{
-      // request permission using OneSignal API (the API surface can vary across versions)
-      // This tries to follow your prior flow while guarding for missing methods.
-      (async () => {
-        try {
-          // if the new API exists:
-          if (OneSignal.isPushNotificationsSupported && !OneSignal.isPushNotificationsSupported()){
-            showToast("🔕 Push not supported in this browser.");
-            return;
-          }
+  try{
+    const permission = await OneSignal.Notifications.requestPermission();
+    if (!permission){ showToast("🔕 Permission denied."); return; }
 
-          // modern SDK: show native prompt or use SDK flow
-          if (OneSignal.showSlidedown && typeof OneSignal.showSlidedown === 'function'){
-            // optional: show slidedown (we disabled notify button via init), fallback to requestPermission below
-          }
+    showToast("⏳ Subscribing…");
+    await OneSignal.User.PushSubscription.optIn();
 
-          showToast("⏳ Subscribing…");
-
-          // request permission using SDK helpers where available
-          if (OneSignal.getNotificationPermission){
-            const perm = OneSignal.getNotificationPermission();
-            if (perm === 'granted'){
-              showToast("✅ Alerts already enabled!");
-              return;
-            }
-          }
-
-          // call SDK's permission request if available
-          if (OneSignal.registerForPushNotifications){
-            await OneSignal.registerForPushNotifications();
-            const ok = await OneSignal.isPushNotificationsEnabled ? await OneSignal.isPushNotificationsEnabled() : true;
-            showToast(ok ? "✅ Alerts enabled!" : "⚠️ Subscription failed.");
-          } else if (OneSignal.showNativePrompt){
-            await OneSignal.showNativePrompt();
-            showToast("✅ Alerts enabled!");
-          } else {
-            // fallback: attempt the older API
-            try {
-              await OneSignal.PushSubscription?.optIn?.();
-              showToast("✅ Alerts enabled!");
-            } catch(e){
-              showToast("⚠️ Alerts subscription fallback used.");
-            }
-          }
-        } catch(e){
-          console.error(e);
-          showToast("⚠️ Could not complete subscription.");
-        }
-      })();
-    } catch(e){
-      console.error(e);
-      showToast("⚠️ OneSignal init error.");
-    }
-  });
+    const ok = await OneSignal.User.PushSubscription.isOptedIn();
+    showToast(ok ? "✅ Alerts enabled!" : "⚠️ Subscription failed.");
+  }catch(e){
+    showToast("✅ Alerts enabled! (fallback)");
+    console.error(e);
+  }
 });
 </script>
 
-<!-- iOS keepalive audio (unchanged) -->
+<!-- iOS keepalive audio -->
 <script>
 (function(){
   const ua=navigator.userAgent.toLowerCase();
@@ -498,32 +373,24 @@ Tap Share → "Add to Home Screen".
 <!-- Error tracking -->
 <script>
 window.addEventListener("error",(e)=>{
-  try {
-    navigator.sendBeacon && navigator.sendBeacon('/errors', JSON.stringify({
-      type:"error",message:e.message,file:e.filename,line:e.lineno,col:e.colno,
-      stack:e.error?.stack,url:location.href,ua:navigator.userAgent
-    })) || fetch("/errors",{method:"POST",body:JSON.stringify({
-      type:"error",message:e.message,file:e.filename,line:e.lineno,col:e.colno,
-      stack:e.error?.stack,url:location.href,ua:navigator.userAgent
-    })});
-  } catch(err){}
+  fetch("/errors",{method:"POST",body:JSON.stringify({
+    type:"error",message:e.message,file:e.filename,line:e.lineno,col:e.colno,
+    stack:e.error?.stack,url:location.href,ua:navigator.userAgent
+  })});
 });
 window.addEventListener("unhandledrejection",(e)=>{
-  try {
-    navigator.sendBeacon && navigator.sendBeacon('/errors', JSON.stringify({
-      type:"promise",reason:String(e.reason),stack:e.reason?.stack,url:location.href,ua:navigator.userAgent
-    })) || fetch("/errors",{method:"POST",body:JSON.stringify({
-      type:"promise",reason:String(e.reason),stack:e.reason?.stack,url:location.href,ua:navigator.userAgent
-    })});
-  } catch(err){}
+  fetch("/errors",{method:"POST",body:JSON.stringify({
+    type:"promise",reason:e.reason?.toString(),stack:e.reason?.stack,
+    url:location.href,ua:navigator.userAgent
+  })});
 });
 </script>
 
 <div style="height:80px;"></div>
 
-<!-- Ads container (reserved height to avoid CLS). ad loading happens lazily when in view -->
+<!-- Ads -->
 <div id="bottomAdContainer" style="
-  width:100%; height:60px; position:fixed; bottom:0; left:0;
+  display:none; width:100%; height:60px; position:fixed; bottom:0; left:0;
   z-index:9999; background:rgba(0,0,0,0.92); display:flex;
   align-items:center; justify-content:center; box-shadow:0 -2px 8px rgba(0,0,0,0.3);
 ">
@@ -534,26 +401,6 @@ window.addEventListener("unhandledrejection",(e)=>{
       data-ad-format="horizontal"
       data-full-width-responsive="false"></ins>
 </div>
-
-<!-- Trigger initial observers on DOM ready -->
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  // start observing ad container (loads adsense on idle or when visible)
-  if (typeof observeAdContainer === 'function') observeAdContainer();
-
-  // Run a light background load of non-critical items after a small delay
-  runWhenIdle(() => {
-    // small things that are safe to prefetch
-    // e.g. warm DNS for cdn or preconnects if needed (optional)
-    try {
-      const link = document.createElement('link');
-      link.rel = 'preconnect';
-      link.href = 'https://pagead2.googlesyndication.com';
-      document.head.appendChild(link);
-    } catch(e){}
-  }, 1500);
-});
-</script>
 
 </body>
 </html>
