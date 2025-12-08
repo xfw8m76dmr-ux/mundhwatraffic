@@ -18,7 +18,10 @@ main {
 ------------------------------ */
 /* FIX: Remove empty gap above video */
 header {
-  padding: 1.4rem 0 0.3rem !important; /* smaller height */
+  padding: 1rem 0 0.3rem !important;
+  font-size: 1.9rem;
+  font-weight: 600;
+  background: #0f0f0f !important; /* remove gradient */
 }
 
 .page-intro {
