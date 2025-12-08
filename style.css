@@ -1,61 +1,79 @@
-/* ------------------------------
-   GLOBAL
------------------------------- */
+/* ==========================================================
+   GLOBAL — Layout Stability + Baseline Styles
+   ========================================================== */
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   font-family: system-ui, Inter, sans-serif;
   background: #0b0b0b;
   color: #fff;
   text-align: center;
+
+  /* Prevent reflow during font load */
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 main {
   padding: 1rem 1rem 90px;
+  overflow-anchor: none; /* prevents scroll jumps */
 }
 
-/* ------------------------------
-   HEADER & INTRO
------------------------------- */
+
+/* ==========================================================
+   HEADER + INTRO
+   ========================================================== */
+
 header {
-  padding: 0.8rem 0 0.3rem; /* reduced height to remove top gap */
+  padding: 0.8rem 0 0.3rem;
   font-size: 1.8rem;
   font-weight: 600;
-  background: #0d0d0d !important; /* FIX: remove Safari gradient padding bug */
+  background: #0d0d0d;
   margin: 0 !important;
+  line-height: 1.2;
+  min-height: 48px; /* prevents CLS on font rendering */
 }
 
 .page-intro {
   max-width: 760px;
-  margin: 0.5rem auto 0.4rem !important; /* tighten spacing */
+  margin: 0.5rem auto 0.4rem !important;
   padding: 0 1rem;
   opacity: 0.88;
   line-height: 1.6;
+  overflow-anchor: none;
 }
 
-/* ------------------------------
-   VIDEO CARD (YT PREVIEW)
------------------------------- */
+
+/* ==========================================================
+   VIDEO CARD (CLS-proof YouTube Preview)
+   ========================================================== */
+
 #yt-container {
   position: relative;
   max-width: 960px;
-  margin: 0.6rem auto 1.4rem; /* FIX: remove extra top spacing */
+  margin: 0.6rem auto 1.4rem;
   aspect-ratio: 16/9;
-  background: #000 !important; /* enforce black edge */
+  background: #000 !important;
   border-radius: 16px;
   overflow: hidden !important;
-  box-shadow: none !important; /* remove Safari light halo */
 }
 
-/* FIX: Mask out white/glow border from baked PNG */
+/* Prevent aspect-ratio collapse on slow devices */
 #yt-container::before {
   content: "";
+  display: block;
+  padding-bottom: calc(100% / (16/9));
+  height: 0;
+}
+
+/* Mask the preview glow */
+#yt-container > * {
   position: absolute;
   inset: 0;
-  background: #000; /* covers the unwanted border */
-  border-radius: 16px;
-  z-index: 1;
-  opacity: 1; /* fully cover the glow */
-  pointer-events: none;
 }
 
 #yt-container img,
@@ -63,24 +81,16 @@ header {
   width: 100%;
   height: 100%;
   display: block;
-  border: none !important;
-  outline: none !important;
-  background: #000 !important;
   border-radius: 16px;
-  position: relative;
-  z-index: 2; /* image/video sits above mask */
+  object-fit: cover;
 }
 
-/* Overlay Play Button */
 #yt-overlay {
-  position: absolute;
-  inset: 0;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 3;
-  background: none !important;
 }
 
 #yt-overlay span {
@@ -92,9 +102,11 @@ header {
   backdrop-filter: blur(3px);
 }
 
-/* ------------------------------
-   NOTIFY BUTTON
------------------------------- */
+
+/* ==========================================================
+   NOTIFY BUTTON + NOTIFY HELP (CLS SAFE)
+   ========================================================== */
+
 .notify-wrap {
   margin-top: 1.4rem;
   display: flex;
@@ -105,7 +117,7 @@ header {
 .notify-btn {
   width: 80%;
   margin: 0 auto;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
@@ -130,9 +142,20 @@ header {
   margin: 0 auto;
 }
 
-/* ------------------------------
-   SHARE ICONS
------------------------------- */
+/* Prevent notifyHelp from ever shifting layout */
+#notifyHelp {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+/* ==========================================================
+   SHARE ICONS (CLS SAFE)
+   ========================================================== */
+
 #share-icons {
   display: flex;
   justify-content: center;
@@ -144,11 +167,14 @@ header {
   width: 38px;
   height: 38px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
-/* ------------------------------
-   PRIMARY BUTTON (Install PWA)
------------------------------- */
+
+/* ==========================================================
+   INSTALL BUTTON
+   ========================================================== */
+
 .primary-btn {
   margin-top: 1.2rem;
   background: #1d87ff;
@@ -163,9 +189,11 @@ header {
   gap: 0.5rem;
 }
 
-/* ------------------------------
-   CONTENT CARDS
------------------------------- */
+
+/* ==========================================================
+   CONTENT CARDS (CLS Stabilized)
+   ========================================================== */
+
 .section-card {
   background: #111;
   border-radius: 14px;
@@ -176,6 +204,7 @@ header {
   text-align: left;
   line-height: 1.6;
   font-size: 1rem;
+  overflow-anchor: none; /* prevents auto scroll jumps */
 }
 
 .section-card h2,
@@ -183,6 +212,7 @@ header {
   color: rgba(255,255,255,0.92);
   margin: 0 0 0.8rem;
   font-weight: 600;
+  min-height: 28px; /* ensures headings never collapse */
 }
 
 .section-card ul {
@@ -194,9 +224,11 @@ header {
   margin: 0.4rem 0;
 }
 
-/* ------------------------------
+
+/* ==========================================================
    FOOTER
------------------------------- */
+   ========================================================== */
+
 footer {
   opacity: 0.75;
   font-size: 0.9rem;
@@ -205,23 +237,44 @@ footer {
   border-top: 1px solid rgba(255,255,255,0.05);
 }
 
-footer a {
-  color: #9cc6ff;
+
+/* ==========================================================
+   BOTTOM AD — ABSOLUTELY STABILIZED (NO CLS)
+   ========================================================== */
+
+#bottomAdContainer {
+  width: 100%;
+  height: 60px !important;     /* FIXED HEIGHT */
+  min-height: 60px !important; /* BACKUP */
+  max-height: 60px !important;
+  overflow: hidden;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
 }
 
-/* ------------------------------
-   MOBILE OPTIMIZATION
------------------------------- */
+/* When hidden, keep the space fixed but remove visibility */
+#bottomAdContainer[style*="display:none"] {
+  visibility: hidden !important;
+}
+
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
 @media (max-width: 600px) {
 
   header {
     font-size: 1.6rem;
     padding: 0.7rem 0 0.3rem;
-  }
-
-  .page-intro {
-    margin-top: 0.3rem !important;
-    padding-top: 0 !important;
+    min-height: 44px;
   }
 
   #yt-container {
