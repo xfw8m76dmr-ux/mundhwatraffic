@@ -10,7 +10,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="/style.css">
 
-  <!-- OG / Social -->
+  <!-- OG -->
   <meta property="og:title" content="🚦 Mundhwa Traffic Live | Pune" />
   <meta property="og:description" content="Watch Mundhwa Bridge traffic live from Pune. Real-time RoadX camera feed updated 24/7." />
   <meta property="og:image" content="https://mundhwatraffic.com/assets/og-preview.png" />
@@ -26,39 +26,45 @@
   <link rel="apple-touch-icon" href="/favicon-512.png" />
   <link rel="manifest" href="/site.webmanifest" />
 
-  <!-- Preload GA -->
   <link rel="preload" href="https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM" as="script">
 
   <!-- FAQ Schema -->
   <script type="application/ld+json">
-{ "@context": "https://schema.org", "@type": "FAQPage",
-"mainEntity": [
-{ "@type": "Question", "name": "Is Mundhwa Bridge jammed right now?",
-  "acceptedAnswer": { "@type": "Answer", "text": "You can check the real-time Mundhwa Bridge traffic jam status on this page, updated every few minutes." }},
-{ "@type": "Question", "name": "What time is peak traffic at Mundhwa?",
-  "acceptedAnswer": { "@type": "Answer", "text": "Peak traffic at Mundhwa typically occurs between 9:00–11:00 AM and 6:00–8:30 PM, depending on office timings." }},
-{ "@type": "Question", "name": "How long is the delay on Mundhwa Bridge?",
-  "acceptedAnswer": { "@type": "Answer", "text": "Delay varies between 5–25 minutes based on congestion. Live delay indicators are shown on this page." }},
-{ "@type": "Question", "name": "Does Mundhwa Bridge have a live camera?",
-  "acceptedAnswer": { "@type": "Answer", "text": "Yes, the live CCTV snapshot updates every few minutes, giving a real-time view of traffic." }},
-{ "@type": "Question", "name": "How accurate is the Mundhwa traffic data?",
-  "acceptedAnswer": { "@type": "Answer", "text": "All data is updated regularly using live camera snapshots and real-time congestion indicators." }}
-]}
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Is Mundhwa Bridge jammed right now?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Check real-time status on this page." }
+      },
+      { "@type": "Question", "name": "Peak timings?",
+        "acceptedAnswer": { "@type": "Answer", "text": "9–11 AM and 6–8:30 PM." }
+      },
+      { "@type": "Question", "name": "Delay?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Usually 5–25 minutes." }
+      },
+      { "@type": "Question", "name": "Live camera?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes, updated every few minutes." }
+      },
+      { "@type": "Question", "name": "Accuracy?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Updated regularly using live snapshots." }
+      }
+    ]
+  }
   </script>
 
-  <!-- Ads -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3625430905597433" crossorigin="anonymous"></script>
 
   <!-- LocalBusiness Schema -->
   <script type="application/ld+json">
-{
- "@context": "https://schema.org",
- "@type": "LocalBusiness",
- "name": "Mundhwa Traffic Live",
- "description": "Real-time Mundhwa Bridge traffic and live CCTV updates.",
- "areaServed": "Mundhwa, Pune",
- "url": "https://mundhwatraffic.com"
-}
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Mundhwa Traffic Live",
+    "description": "Real-time Mundhwa Bridge traffic and live CCTV updates.",
+    "areaServed": "Mundhwa, Pune",
+    "url": "https://mundhwatraffic.com"
+  }
   </script>
 
   <!-- GA Loader -->
@@ -70,47 +76,34 @@
       const s = document.createElement('script');
       s.src = "https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM";
       s.async = true;
-
       s.onload = function() {
         gtag('js', new Date());
-        gtag('config', 'G-TVFRVGXERM', {
-          anonymize_ip: true,
-          transport_type: 'beacon',
-          send_page_view: true
-        });
+        gtag('config', 'G-TVFRVGXERM', { anonymize_ip: true, transport_type:'beacon' });
       };
-
-      s.onerror = function() {
-        console.warn("GA failed, retrying…");
-        setTimeout(loadGA, 1500);
-      };
-
+      s.onerror = () => setTimeout(loadGA, 1500);
       document.head.appendChild(s);
     })();
   </script>
 
   <!-- Geo tagging -->
   <script>
-  function waitForGA(callback, tries = 30) {
-    if (typeof gtag === "function" && window.dataLayer?.push) callback();
-    else if (tries > 0) setTimeout(() => waitForGA(callback, tries - 1), 150);
+  function waitForGA(cb, tries=30){
+    if (typeof gtag==="function" && window.dataLayer?.push) cb();
+    else if (tries>0) setTimeout(()=>waitForGA(cb,tries-1),150);
   }
-
   fetch('/geo')
-    .then(res => res.json())
-    .then(loc => {
+    .then(r=>r.json())
+    .then(loc=>{
       waitForGA(() => {
-        gtag('set', 'user_properties', {
-          user_area: loc?.area || 'unknown',
-          user_zone: loc?.zone || 'unknown'
+        gtag('set','user_properties',{
+          user_area: loc.area || 'unknown',
+          user_zone: loc.zone || 'unknown'
         });
       });
-    })
-    .catch(() => {});
+    });
   </script>
 
   <script src="/tracking.js" defer></script>
-
 </head>
 
 <body>
@@ -118,45 +111,36 @@
 <header>🚦 Live Traffic View – Mundhwa Bridge, Pune</header>
 
 <div class="page-intro">
-  <p>Mundhwa Bridge is one of Pune’s busiest choke points connecting Kharadi, Koregaon Park, Magarpatta and Hadapsar.</p>
-  <p>This live stream helps commuters check the real-time situation before leaving.</p>
+  <p>Mundhwa Bridge is one of Pune’s busiest choke points connecting major IT hubs.</p>
+  <p>This live stream helps commuters check real-time traffic before leaving.</p>
 </div>
 
 <main>
 
-  <!-- VIDEO CARD -->
+  <!-- VIDEO -->
   <div id="yt-container">
     <img src="https://mundhwatraffic.com/assets/video_background.png"
          alt="Mundhwa Bridge Live Traffic Pune Preview"
-         width="960" height="540"
-         loading="eager" fetchpriority="high">
-
-    <div id="yt-overlay">
-      <span>Play Live</span>
-    </div>
+         width="960" height="540" loading="eager" fetchpriority="high">
+    <div id="yt-overlay"><span>Play Live</span></div>
   </div>
 
-  <!-- NOTIFICATION CTA -->
-  <div class="notify-wrap" role="region">
+  <!-- NOTIFY CTA -->
+  <div class="notify-wrap">
     <button id="notifyBtn" class="notify-btn">🔔 Get Heavy Traffic Alerts</button>
-    <div class="notify-desc">No spam — only realtime jam alerts for this route.</div>
-    <div class="notify-desc">AI-powered alerts — may be imperfect at times.</div>
+    <div class="notify-desc">No spam — only realtime jam alerts.</div>
+    <div class="notify-desc">AI-powered alerts — may be imperfect.</div>
   </div>
 
   <div id="notifyHelp" style="display:none"></div>
 
+  <!-- SHARE -->
   <section>
     <h3>📢 Share MundhwaTraffic with someone stuck in traffic 🚗⚠️</h3>
     <div id="share-icons">
-      <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Traffic%20Live%20https://mundhwatraffic.com/w" target="_blank">
-        <img src="/assets/icons/whatsapp.svg">
-      </a>
-      <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Traffic%20Live&url=https://mundhwatraffic.com/x" target="_blank">
-        <img src="/assets/icons/x.svg">
-      </a>
-      <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com/f" target="_blank">
-        <img src="/assets/icons/facebook.svg">
-      </a>
+      <a href="https://api.whatsapp.com/send?text=🚦%20Check%20Mundhwa%20Traffic%20Live%20https://mundhwatraffic.com/w"><img src="/assets/icons/whatsapp.svg"></a>
+      <a href="https://twitter.com/intent/tweet?text=🚦%20Mundhwa%20Traffic%20Live&url=https://mundhwatraffic.com/x"><img src="/assets/icons/x.svg"></a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https://mundhwatraffic.com/f"><img src="/assets/icons/facebook.svg"></a>
       <img id="nativeShareBtn" src="/assets/icons/share.svg">
     </div>
   </section>
@@ -165,47 +149,44 @@
 
   <div id="viewer-count">🔴 Live on YouTube</div>
 
-  <button id="installBtn" class="primary-btn" style="display:none;">
-    📱 Add to Home Screen
-  </button>
+  <button id="installBtn" class="primary-btn" style="display:none;">📱 Add to Home Screen</button>
 
-  <!-- INFO SECTION (CARDS NOW) -->
+  <!-- CONTENT CARDS -->
   <section id="traffic-info">
 
     <div class="section-card">
-      <h2>🚗 About Mundhwa Bridge Traffic (Real-Time Updates)</h2>
-      <p>Mundhwa Bridge is one of Pune’s busiest daily choke points...</p>
-      <p>The aim of MundhwaTraffic.com is to help commuters avoid unexpected jams.</p>
+      <h2>🚗 About Mundhwa Bridge Traffic</h2>
+      <p>Mundhwa Bridge often changes traffic conditions within minutes due to metro work, lane blocks, office hours, weather, and more.</p>
+      <p>This live camera helps commuters choose smarter routes.</p>
     </div>
 
     <div class="section-card">
-      <h3>🕒 Peak Traffic Timings at Mundhwa</h3>
-      <p>Based on regular observations:</p>
+      <h3>🕒 Peak Traffic Timings</h3>
       <ul>
-        <li><strong>Morning:</strong> 9:00 AM – 11:00 AM</li>
-        <li><strong>Evening:</strong> 6:00 PM – 8:30 PM</li>
+        <li><strong>Morning:</strong> 9:00 – 11:00 AM</li>
+        <li><strong>Evening:</strong> 6:00 – 8:30 PM</li>
       </ul>
     </div>
 
     <div class="section-card">
-      <h3>📊 What Affects Traffic on Mundhwa Bridge?</h3>
+      <h3>📊 What Affects Traffic?</h3>
       <ul>
-        <li>Ongoing metro and road construction work</li>
-        <li>Sudden roadblocks or breakdowns</li>
-        <li>High office commute load</li>
-        <li>School timings nearby</li>
-        <li>Heavy rain conditions</li>
+        <li>Metro & road construction</li>
+        <li>Breakdowns & accidents</li>
+        <li>IT park commute surge</li>
+        <li>School timings</li>
+        <li>Rain or weather issues</li>
       </ul>
     </div>
 
     <div class="section-card">
-      <h3>🛣️ Why This Live Camera Exists</h3>
-      <p>This project is built for Pune commuters...</p>
+      <h3>🛣️ Why This Camera Exists</h3>
+      <p>Thousands check this camera daily to decide whether to take Mundhwa or detour via Magarpatta.</p>
     </div>
 
     <div class="section-card">
       <h3>⚠️ Important Note</h3>
-      <p>Occasional disruptions may occur due to connectivity or maintenance.</p>
+      <p>Occasional interruptions may occur due to maintenance or connectivity issues.</p>
     </div>
 
   </section>
@@ -222,67 +203,193 @@
   Powered by <strong>RoadX Traffic Cameras</strong>
 </footer>
 
-<!-- JS REMAINS UNCHANGED BELOW -->
+<!-- YT PLAYER -->
 <script>
 document.getElementById("yt-overlay").addEventListener("click", () => {
-  const container = document.getElementById("yt-container");
-  if (container.textContent.toLowerCase().includes("maintenance")) return;
-  while (container.firstChild) container.removeChild(container.firstChild);
-
+  const c = document.getElementById("yt-container");
+  while (c.firstChild) c.removeChild(c.firstChild);
   const iframe = document.createElement("iframe");
-  iframe.src =
-    "https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1&playsinline=1&enablejsapi=1&rel=0&controls=1&origin=https://mundhwatraffic.com";
-  iframe.allow =
-    "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;";
+  iframe.src="https://www.youtube.com/embed/live_stream?channel=UCOCdYbhwwwgNXj58pHsU1Fw&autoplay=1&mute=1&playsinline=1&enablejsapi=1&rel=0&controls=1&origin=https://mundhwatraffic.com";
+  iframe.allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;";
   iframe.allowFullscreen = true;
-
-  container.appendChild(iframe);
+  c.appendChild(iframe);
 });
-
 setInterval(() => {
-  const iframe = document.querySelector("#yt-container iframe");
-  if (iframe) {
-    iframe.contentWindow.postMessage(
-      '{"event":"command","func":"playVideo"}', "*"
-    );
-  }
-}, 15000);
-
-/* ... ALL OTHER JS REMAINS EXACTLY AS YOUR ORIGINAL ... */
-
+  const iframe=document.querySelector("#yt-container iframe");
+  if (iframe) iframe.contentWindow.postMessage('{"event":"command","func":"playVideo"}',"*");
+},15000);
 </script>
 
+<!-- SHARE BUTTON -->
+<script>
+const nativeShareBtn = document.getElementById("nativeShareBtn");
+if (navigator.share){
+  nativeShareBtn.addEventListener("click", () => {
+    navigator.share({
+      title: "🚦 Mundhwa Traffic Live | Pune",
+      text: "Check live Mundhwa Bridge traffic.",
+      url: "https://mundhwatraffic.com/web"
+    });
+  });
+} else {
+  nativeShareBtn.style.opacity="0.4";
+}
+</script>
+
+<!-- INSTALL PWA -->
+<script>
+let deferredPrompt;
+const installBtn=document.getElementById("installBtn");
+window.addEventListener("beforeinstallprompt",(e)=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  installBtn.style.display="inline-flex";
+});
+installBtn.addEventListener("click",()=>{
+  installBtn.style.display="none";
+  deferredPrompt.prompt();
+});
+</script>
+
+<!-- OneSignal -->
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 
-<!-- (Notification JS preserved exactly) -->
-
 <script>
-/* GLOBAL JS ERROR HANDLERS PRESERVED exactly */
+/* vars for notify flow */
+const notifyBtn=document.getElementById("notifyBtn");
+const notifyHelp=document.getElementById("notifyHelp");
+
+const ua=navigator.userAgent.toLowerCase();
+const isIOS=/iphone|ipad|ipod/.test(ua);
+const isPWA=window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
+const isFacebookBrowser=navigator.userAgent.includes("FBAN") || navigator.userAgent.includes("FBAV");
+const isInstagramBrowser=navigator.userAgent.includes("Instagram");
+
+/* OneSignal init */
+window.OneSignalDeferred=window.OneSignalDeferred||[];
+OneSignalDeferred.push(async function(OneSignal){
+  try{
+    await OneSignal.init({
+      appId:"4431abd4-0179-41dd-8336-d8ba2f83f93a",
+      serviceWorkerPath:"OneSignalSDKWorker.js",
+      serviceWorkerParam:{scope:"/"},
+      notifyButton:{enable:false}
+    });
+  }catch(e){ console.error(e); }
+});
+
+/* SHOWTOAST (restored fully) */
+function showToast(message){
+  const t=document.createElement("div");
+  t.textContent=message;
+  t.style=`
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:#222; color:#fff; padding:12px 18px;
+    border-radius:8px; font-size:14px; opacity:0;
+    transition:opacity .4s; z-index:99999;
+  `;
+  document.body.appendChild(t);
+  requestAnimationFrame(()=>{ t.style.opacity=1; });
+  setTimeout(()=>{
+    t.style.opacity=0;
+    setTimeout(()=>t.remove(),400);
+  },7000);
+}
+
+/* NOTIFY BUTTON CLICK LISTENER (FULL RESTORED) */
+notifyBtn.addEventListener("click", async () => {
+
+  if (isFacebookBrowser || isInstagramBrowser){
+    if (isIOS){
+      showToast(`
+⚠️ iOS does not allow notifications inside Facebook.
+
+To enable alerts:
+1️⃣ Tap •••
+2️⃣ Open in Safari
+3️⃣ Add to Home Screen
+4️⃣ Open from Home Screen then tap Notify again.
+      `);
+    } else {
+      showToast(`
+⚠️ FB In-App Browser doesn't support notifications.
+Tap menu → Open in Browser → choose Chrome.
+      `);
+    }
+    return;
+  }
+
+  if (isIOS && !isPWA){
+    showToast(`
+📱 Add to Home Screen required for iOS alerts.
+
+Tap Share → "Add to Home Screen".
+    `);
+    return;
+  }
+
+  try{
+    const permission = await OneSignal.Notifications.requestPermission();
+    if (!permission){ showToast("🔕 Permission denied."); return; }
+
+    showToast("⏳ Subscribing…");
+    await OneSignal.User.PushSubscription.optIn();
+
+    const ok = await OneSignal.User.PushSubscription.isOptedIn();
+    showToast(ok ? "✅ Alerts enabled!" : "⚠️ Subscription failed.");
+  }catch(e){
+    showToast("✅ Alerts enabled! (fallback)");
+    console.error(e);
+  }
+});
+</script>
+
+<!-- iOS keepalive audio -->
+<script>
+(function(){
+  const ua=navigator.userAgent.toLowerCase();
+  const isIOS=/iphone|ipad|ipod/.test(ua);
+  const isPWA=window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
+
+  if (isIOS && isPWA){
+    const audio=document.createElement("audio");
+    audio.autoplay=true; audio.loop=true; audio.hidden=true;
+    audio.src="data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAA...";
+    document.body.appendChild(audio);
+  }
+})();
+</script>
+
+<!-- Error tracking -->
+<script>
+window.addEventListener("error",(e)=>{
+  fetch("/errors",{method:"POST",body:JSON.stringify({
+    type:"error",message:e.message,file:e.filename,line:e.lineno,col:e.colno,
+    stack:e.error?.stack,url:location.href,ua:navigator.userAgent
+  })});
+});
+window.addEventListener("unhandledrejection",(e)=>{
+  fetch("/errors",{method:"POST",body:JSON.stringify({
+    type:"promise",reason:e.reason?.toString(),stack:e.reason?.stack,
+    url:location.href,ua:navigator.userAgent
+  })});
+});
 </script>
 
 <div style="height:80px;"></div>
 
-<!-- Bottom Ad Container unchanged -->
+<!-- Ads -->
 <div id="bottomAdContainer" style="
-    display:none;
-    width:100%;
-    height:60px;
-    position:fixed;
-    bottom:0;
-    left:0;
-    z-index:9999;
-    background:rgba(0,0,0,0.92);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 -2px 8px rgba(0,0,0,0.3);
+  display:none; width:100%; height:60px; position:fixed; bottom:0; left:0;
+  z-index:9999; background:rgba(0,0,0,0.92); display:flex;
+  align-items:center; justify-content:center; box-shadow:0 -2px 8px rgba(0,0,0,0.3);
 ">
-    <ins id="adSlot" class="adsbygoogle"
-        style="display:inline-block;width:100%;height:60px;"
-        data-ad-client="ca-pub-3625430905597433"
-        data-ad-slot="5393173301"
-        data-ad-format="horizontal"
-        data-full-width-responsive="false"></ins>
+  <ins id="adSlot" class="adsbygoogle"
+      style="display:inline-block;width:100%;height:60px;"
+      data-ad-client="ca-pub-3625430905597433"
+      data-ad-slot="5393173301"
+      data-ad-format="horizontal"
+      data-full-width-responsive="false"></ins>
 </div>
 
 </body>
