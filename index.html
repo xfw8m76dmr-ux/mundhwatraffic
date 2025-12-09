@@ -78,59 +78,6 @@
   }
   </script>
 
-  <!-- AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3625430905597433" crossorigin="anonymous"></script>
-
-  <!-- LocalBusiness Schema -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": "Mundhwa Traffic Live",
-    "description": "Real-time Mundhwa Bridge traffic and live CCTV updates.",
-    "areaServed": "Mundhwa, Pune",
-    "url": "https://mundhwatraffic.com"
-  }
-  </script>
-
-  <!-- GA Loader (preserved exactly) -->
-  <script defer>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-
-    (function loadGA(){
-      const s = document.createElement('script');
-      s.src = "https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM";
-      s.async = true;
-      s.onload = function() {
-        gtag('js', new Date());
-        gtag('config', 'G-TVFRVGXERM', { anonymize_ip: true, transport_type:'beacon' });
-      };
-      s.onerror = () => setTimeout(loadGA, 1500);
-      document.head.appendChild(s);
-    })();
-  </script>
-
-  <!-- GEO tagging -->
-  <script>
-  function waitForGA(cb, tries=30){
-    if (typeof gtag==="function" && window.dataLayer?.push) cb();
-    else if (tries>0) setTimeout(()=>waitForGA(cb,tries-1),150);
-  }
-//  fetch('/geo')
-//    .then(r=>r.json())
-//    .then(loc=>{
- //     waitForGA(() => {
-  //      gtag('set','user_properties',{
-  //        user_area: loc.area || 'unknown',
- //         user_zone: loc.zone || 'unknown'
-  //      });
-  //    });
- //   });
-  </script>
-
-  <script src="/tracking.js" defer></script>
-
 </head>
 
 <body>
@@ -276,6 +223,61 @@ if (navigator.share){
   nativeShareBtn.style.opacity="0.4";
 }
 </script>
+
+ 
+  <!-- AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3625430905597433" crossorigin="anonymous"></script>
+
+  <!-- LocalBusiness Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Mundhwa Traffic Live",
+    "description": "Real-time Mundhwa Bridge traffic and live CCTV updates.",
+    "areaServed": "Mundhwa, Pune",
+    "url": "https://mundhwatraffic.com"
+  }
+  </script>
+
+  <!-- GA Loader (preserved exactly) -->
+  <script defer>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+
+    (function loadGA(){
+      const s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=G-TVFRVGXERM";
+      s.async = true;
+      s.onload = function() {
+        gtag('js', new Date());
+        gtag('config', 'G-TVFRVGXERM', { anonymize_ip: true, transport_type:'beacon' });
+      };
+      s.onerror = () => setTimeout(loadGA, 1500);
+      document.head.appendChild(s);
+    })();
+  </script>
+
+  <!-- GEO tagging -->
+  <script>
+  function waitForGA(cb, tries=30){
+    if (typeof gtag==="function" && window.dataLayer?.push) cb();
+    else if (tries>0) setTimeout(()=>waitForGA(cb,tries-1),150);
+  }
+//  fetch('/geo')
+//    .then(r=>r.json())
+//    .then(loc=>{
+ //     waitForGA(() => {
+  //      gtag('set','user_properties',{
+  //        user_area: loc.area || 'unknown',
+ //         user_zone: loc.zone || 'unknown'
+  //      });
+  //    });
+ //   });
+  </script>
+
+  <script src="/tracking.js" defer></script>
+   
 
 <!-- INSTALL PWA -->
 <script>
