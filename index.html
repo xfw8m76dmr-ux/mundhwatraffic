@@ -78,15 +78,7 @@
   }
   </script>
 
-<!-- EZOIC Integration -->
-<!-- EZOIC JS Integrattion -->
-<script src="https://cmp.gatekeeperconsent.com/min.js" data-cfasync="false"></script>
-<script src="https://the.gatekeeperconsent.com/cmp.min.js" data-cfasync="false"></script>
-<script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
-<script>
-    window.ezstandalone = window.ezstandalone || {};
-    ezstandalone.cmd = ezstandalone.cmd || [];
-</script>
+
 </head>
 
 <body>
@@ -415,7 +407,7 @@ Tap Share → "Add to Home Screen".
 })();
 </script>
 
-<!-- Error tracking -->
+<!-- Error tracking 
 <script>
 window.addEventListener("error",(e)=>{
   fetch("/errors",{method:"POST",body:JSON.stringify({
@@ -429,8 +421,18 @@ window.addEventListener("unhandledrejection",(e)=>{
     url:location.href,ua:navigator.userAgent
   })});
 });
-</script>
+</script> -->
 
+   <!-- EZOIC Integration -->
+<!-- EZOIC JS Integrattion -->
+<script src="https://cmp.gatekeeperconsent.com/min.js" data-cfasync="false"></script>
+<script src="https://the.gatekeeperconsent.com/cmp.min.js" data-cfasync="false"></script>
+<script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+<script>
+    window.ezstandalone = window.ezstandalone || {};
+    ezstandalone.cmd = ezstandalone.cmd || [];
+</script>
+    
     <!-- Ezoic - bottom_of_page - bottom_of_page -->
 <div id="ezoic-pub-ad-placeholder-118"></div>
 <script>
