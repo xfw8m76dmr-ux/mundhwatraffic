@@ -281,30 +281,32 @@ footer p {
 ========== */
 #amazonDealsFloating {
   position: fixed !important;
+  bottom: env(safe-area-inset-bottom);
   left: 0;
   width: 100%;
-  background: #232f3e;
-  color: #ff9900 !important;
+  background: #232F3E; /* Amazon deep blue */
+  color: #FFFFFF;
   text-align: center;
-  padding: 12px 0 calc(12px + env(safe-area-inset-bottom)) !important;
-  font-size: 16px;
+  padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+  font-size: 15px;
   font-weight: 600;
   font-family: system-ui, sans-serif;
-  z-index: 2147483647 !important;
-
-  /* Lifts banner above Safari bottom bar */
-  bottom: env(safe-area-inset-bottom);
-  box-shadow: 0 -2px 12px rgba(0,0,0,0.3);
+  z-index: 999999999;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
 }
 
 #amazonDealsFloating a {
-  color: #ff9900 !important;
-  text-decoration: none !important;
+  color: #FF9900; /* Amazon orange */
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-#amazonDealsFloating a:hover {
-  text-decoration: underline !important;
+#amazonDealsFloating img {
+  height: 14px;
 }
+
 
 /* Add space so content doesn’t hide behind banner */
 body {
