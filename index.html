@@ -496,6 +496,17 @@ setRandomDealMessage();
 
 // OPTIONAL: rotate every 8 seconds
 setInterval(setRandomDealMessage, 8000);
+
+// ⭐ ZARAZ CLICK TRACKER ⭐
+document.getElementById("amazonDealLink").addEventListener("click", function () {
+  if (window.zaraz && zaraz.track) {
+    zaraz.track("amazon_deal_click", {
+      location: "sticky_banner",
+      banner_version: "rotating_text_v1"
+    });
+  }
+});
+
 </script>
 </body>
 </html>
