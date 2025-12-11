@@ -284,11 +284,10 @@ footer p {
   bottom: env(safe-area-inset-bottom);
   left: 0;
   width: 100%;
-  background: #232F3E; /* Amazon deep blue */
-  color: #FFFFFF;
-  text-align: center;
+  background: #232F3E; /* Amazon navy */
   padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
-  font-size: 15px;
+  text-align: center;
+  font-size: 16px;
   font-weight: 600;
   font-family: system-ui, sans-serif;
   z-index: 999999999;
@@ -296,15 +295,16 @@ footer p {
 }
 
 #amazonDealsFloating a {
-  color: #FF9900; /* Amazon orange */
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  color: #ffffff !important;
 }
 
 #amazonDealsFloating img {
-  height: 14px;
+  height: 16px;
+  display: inline-block;
 }
 
 
