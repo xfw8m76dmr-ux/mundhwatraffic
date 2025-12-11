@@ -279,31 +279,37 @@ footer p {
 /* ======
    AMAZON DEALS
 ========== */
-#amazonDealsBanner {
-  position: fixed;
-  bottom: 0;
+#amazonDealsFloating {
+  position: fixed !important;
+  bottom: 0 !important;
   left: 0;
   width: 100%;
-  background: #232f3e; /* Amazon dark blue */
-  color: #ffffff;
+  background: #232f3e;
+  color: #ff9900;
   text-align: center;
-  padding: 10px 0;
-  font-size: 15px;
+  padding: 12px 0;
+  font-size: 16px;
   font-weight: 600;
   font-family: system-ui, sans-serif;
-  z-index: 999999;
-  letter-spacing: 0.3px;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+  z-index: 99999999 !important; /* force on top */
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.25);
 }
 
-#amazonDealsBanner a {
-  color: #ff9900; /* Amazon orange */
-  text-decoration: none;
+/* Ensure link styling is not overridden */
+#amazonDealsFloating a {
+  color: #ff9900 !important;
+  text-decoration: none !important;
 }
 
-#amazonDealsBanner a:hover {
-  text-decoration: underline;
+#amazonDealsFloating a:hover {
+  text-decoration: underline !important;
 }
+
+/* Push page content up so banner doesn't cover footer items */
+body {
+  padding-bottom: 60px !important;
+}
+
 
 /* ==========================================================
    MOBILE
