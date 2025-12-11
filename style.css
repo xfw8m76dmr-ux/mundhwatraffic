@@ -281,21 +281,22 @@ footer p {
 ========== */
 #amazonDealsFloating {
   position: fixed !important;
-  bottom: 0 !important;
   left: 0;
   width: 100%;
   background: #232f3e;
-  color: #ff9900;
+  color: #ff9900 !important;
   text-align: center;
-  padding: 12px 0;
+  padding: 12px 0 calc(12px + env(safe-area-inset-bottom)) !important;
   font-size: 16px;
   font-weight: 600;
   font-family: system-ui, sans-serif;
-  z-index: 99999999 !important; /* force on top */
-  box-shadow: 0 -2px 12px rgba(0,0,0,0.25);
+  z-index: 2147483647 !important;
+
+  /* Lifts banner above Safari bottom bar */
+  bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.3);
 }
 
-/* Ensure link styling is not overridden */
 #amazonDealsFloating a {
   color: #ff9900 !important;
   text-decoration: none !important;
@@ -305,10 +306,11 @@ footer p {
   text-decoration: underline !important;
 }
 
-/* Push page content up so banner doesn't cover footer items */
+/* Add space so content doesn’t hide behind banner */
 body {
-  padding-bottom: 60px !important;
+  padding-bottom: calc(60px + env(safe-area-inset-bottom)) !important;
 }
+
 
 
 /* ==========================================================
