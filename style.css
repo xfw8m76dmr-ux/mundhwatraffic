@@ -307,7 +307,6 @@ footer p {
   display: inline-block;
 }
 
-
 /* Add space so content doesn’t hide behind banner */
 body {
   padding-bottom: calc(60px + env(safe-area-inset-bottom)) !important;
