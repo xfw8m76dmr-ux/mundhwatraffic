@@ -498,14 +498,27 @@ setRandomDealMessage();
 setInterval(setRandomDealMessage, 8000);
 
 // ⭐ ZARAZ CLICK TRACKER ⭐
-document.getElementById("amazonDealLink").addEventListener("click", function () {
-  if (window.zaraz && zaraz.track) {
-    zaraz.track("amazon_deal_click", {
-      location: "sticky_banner",
-      banner_version: "rotating_text_v1"
-    });
-  }
+document.getElementById("amazonDealLink").addEventListener("click", function (e) {
+  e.preventDefault();
+
+  const url = this.href;
+
+  zaraz.track("amazon_deal_click", {
+    location: "sticky_banner",
+    banner_version: "rotating_text_v1"
+  });
+
+  setTimeout(() => window.open(url, "_blank"), 100);
 });
+    
+// document.getElementById("amazonDealLink").addEventListener("click", function () {
+//   if (window.zaraz && zaraz.track) {
+//     zaraz.track("amazon_deal_click", {
+//       location: "sticky_banner",
+//       banner_version: "rotating_text_v1"
+//     });
+//   }
+// });
 
 </script>
 </body>
