@@ -385,7 +385,81 @@ Tap Share → "Add to Home Screen".
 
   try{
     const permission = await OneSignal.Notifications.requestPermission();
-    if (!permission){ showToast("🔕 Permission denied."); return; }
+
+        // Detect browser and return actionable guidance
+    function getNotificationGuidance() {
+      const ua = navigator.userAgent.toLowerCase();
+      const isIOS = /iphone|ipad/.test(ua);
+      const isAndroid = /android/.test(ua);
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      const isChrome = /chrome/.test(ua) && !/edge/.test(ua);
+    
+      // ----- iOS Safari -----
+      if (isIOS && isSafari) {
+        return `
+          <b>iPhone / iPad:</b><br>
+          1. Open <b>Settings → Safari</b>.<br>
+          2. Go to <b>Notifications</b>.<br>
+          3. Enable <b>Allow Notifications</b> for this website.<br>
+          4. Then reload the page.
+        `;
+      }
+    
+      // ----- Android Chrome -----
+      if (isAndroid && isChrome) {
+        return `
+          <b>Android (Chrome):</b><br>
+          1. Tap the <b>🔒 lock icon</b> in the address bar.<br>
+          2. Tap <b>Permissions</b> → <b>Notifications</b>.<br>
+          3. Select <b>Allow</b>.<br>
+          4. Reload the page.
+        `;
+      }
+    
+      // ----- Desktop Chrome -----
+      if (!isAndroid && isChrome) {
+        return `
+          <b>Chrome on Desktop:</b><br>
+          1. Click the <b>🔒 lock icon</b> in the address bar.<br>
+          2. Go to <b>Site settings</b>.<br>
+          3. Set <b>Notifications → Allow</b>.<br>
+          4. Reload this page.
+        `;
+      }
+    
+      // ----- Safari macOS -----
+      if (!isIOS && isSafari) {
+        return `
+          <b>Safari (Mac):</b><br>
+          1. Go to <b>Safari → Settings → Websites → Notifications</b>.<br>
+          2. Find this site's domain.<br>
+          3. Set the permission to <b>Allow</b>.<br>
+          4. Reload the page.
+        `;
+      }
+    
+      // ----- Firefox -----
+      if (/firefox/.test(ua)) {
+        return `
+          <b>Firefox:</b><br>
+          1. Click the <b>🔒 lock icon</b> in the address bar.<br>
+          2. Find <b>Permissions → Send Notifications</b>.<br>
+          3. Click <b>Allow</b>.<br>
+          4. Reload the page.
+        `;
+      }
+    
+      // ----- Fallback -----
+      return `
+        Please enable notifications manually from your browser’s site settings,
+        then reload this page.
+      `;
+
+    if (!permission) {
+        const guidance = getNotificationGuidance();
+        showToast(`🔕 Permission denied.<br>${guidance}`);
+        return;
+     }
 
     showToast("⏳ Subscribing…");
     await OneSignal.User.PushSubscription.optIn();
