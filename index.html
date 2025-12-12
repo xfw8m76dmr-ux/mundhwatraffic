@@ -328,7 +328,7 @@ OneSignalDeferred.push(async function(OneSignal){
 /* SHOWTOAST (restored fully) */
 function showToast(message){
   const t=document.createElement("div");
-  t.textContent=message;
+  t.innerHTML=message;
   t.style=`
     position: fixed;
 top: 50%;
