@@ -454,7 +454,8 @@ Tap Share → "Add to Home Screen".
         Please enable notifications manually from your browser’s site settings,
         then reload this page.
       `;
-
+    }
+      
     if (!permission) {
         const guidance = getNotificationGuidance();
         showToast(`🔕 Permission denied.<br>${guidance}`);
