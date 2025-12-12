@@ -468,7 +468,7 @@ Tap Share<br> → "Add to Home Screen".
     const ok = OneSignal.User.PushSubscription.optedIn;
     showToast(ok ? "✅ Alerts enabled!" : "⚠️ Subscription failed.");
   }catch(e){
-    showToast("✅ Alerts enabled! (fallback) ", JSON.stringify(e));
+    showToast("✅ Alerts enabled! (fallback) " + JSON.stringify(e));
     console.error(e);
   }
 });
