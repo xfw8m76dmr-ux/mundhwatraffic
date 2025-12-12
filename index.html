@@ -357,17 +357,17 @@ notifyBtn.addEventListener("click", async () => {
   if (isFacebookBrowser || isInstagramBrowser){
     if (isIOS){
       showToast(`
-⚠️ iOS does not allow notifications inside Facebook.
+⚠️ iOS does not allow notifications inside Facebook.<br>
 
-To enable alerts:
-1️⃣ Tap •••
-2️⃣ Open in Safari
-3️⃣ Add to Home Screen
-4️⃣ Open from Home Screen then tap Notify again.
+To enable alerts:<br>
+1️⃣ Tap •••<br>
+2️⃣ Open in Safari<br>
+3️⃣ Add to Home Screen<br>
+4️⃣ Open from Home Screen then tap Notify again.<br>
       `);
     } else {
       showToast(`
-⚠️ FB In-App Browser doesn't support notifications.
+⚠️ FB In-App Browser doesn't support notifications.<br>
 Tap menu → Open in Browser → choose Chrome.
       `);
     }
@@ -376,9 +376,9 @@ Tap menu → Open in Browser → choose Chrome.
 
   if (isIOS && !isPWA){
     showToast(`
-📱 Add to Home Screen required for iOS alerts.
+📱 Add to Home Screen required for iOS alerts.<br>
 
-Tap Share → "Add to Home Screen".
+Tap Share<br> → "Add to Home Screen".
     `);
     return;
   }
